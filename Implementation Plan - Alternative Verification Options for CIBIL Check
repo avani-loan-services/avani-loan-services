@@ -1,0 +1,23 @@
+# Implementation Plan - Alternative Verification Options for CIBIL Check
+
+The user is experiencing issues with OTP verification and has requested an "other option" if the OTP verification doesn't work.
+
+## Proposed Changes
+
+### CibilCheck Component
+
+#### [MODIFY] [CibilCheck.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.jsx)
+- **Global Master OTP**: Update `handleVerifyOtp` to allow `1234` as a valid OTP for ALL users. This provides an immediate bypass for anyone having trouble.
+- **WhatsApp Verification Button**: Add a primary button below the OTP boxes: "Verify via WhatsApp".
+    - Link: `https://wa.me/917249108474?text=Hi, I am [NAME]. Please verify my CIBIL check request for PAN [PAN].`
+- **Skip & Request Call**: Add a subtle link: "Can't verify? Get estimation & Request Call". This will allow users to see the result immediately but log the status as "Manual Verification Needed".
+- **Logging**: Update `logToGoogleSheets` call to include `verification_status`.
+
+## Verification Plan
+
+### Manual Verification
+- Start CIBIL check.
+- Enter Step 2.
+- Test `1234` with a random email.
+- Test "Verify via WhatsApp" link (check if it opens with correct text).
+- Test "Skip & Request Call" button (ensure it leads to Step 3).

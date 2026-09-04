@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VAPI Admin Checklist</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #111;
+      margin: 0;
+      padding: 24px;
+      background: #f4f4f4;
+    }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: auto;
+      padding: 28mm;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 0 18px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+    h2 {
+      font-size: 18px;
+      margin: 18px 0 8px;
+      color: #0f4c81;
+    }
+    h3 {
+      font-size: 15px;
+      margin: 14px 0 6px;
+      color: #222;
+    }
+    p, li {
+      line-height: 1.5;
+      font-size: 13px;
+      margin: 0;
+    }
+    ul {
+      margin: 8px 0 12px 20px;
+      padding: 0;
+      list-style: none;
+    }
+    ul li {
+      position: relative;
+      padding-left: 26px;
+      margin-bottom: 10px;
+    }
+    ul li::before {
+      content: "☐";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #0f4c81;
+      font-size: 14px;
+    }
+    .note {
+      font-size: 12px;
+      color: #555;
+      margin-top: 6px;
+    }
+    .code {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      padding: 8px 10px;
+      display: inline-block;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      color: #333;
+    }
+    .box {
+      border: 1px solid #ddd;
+      background: #fcfcfc;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+    .payload {
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      background: #f9f9fb;
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+    .footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #666;
+    }
+    @media print {
+      body {
+        background: white;
+      }
+      .page {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        width: auto;
+        min-height: auto;
+        padding: 18mm;
+      }
+      ul li::before {
+        content: "[ ]";
+        left: 0;
+        top: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>VAPI Admin Checklist</h1>
+    <p class="note">One-page printable checklist for VAPI assistant setup, webhook configuration, and pilot launch.</p>
+
+    <h2>1. VAPI Dashboard → Assistants</h2>
+    <p>Confirm these assistants exist and are configured per loan product.</p>
+    <ul>
+      <li>Avani Personal Loan Assistant</li>
+      <li>Avani Business Loan Assistant</li>
+      <li>Avani Doctor Loan Assistant</li>
+      <li>Avani Home Loan Assistant</li>
+      <li>Avani Education Loan Assistant</li>
+      <li>Avani Mortgage Loan Assistant</li>
+    </ul>
+
+    <h3>Required assistant fields</h3>
+    <ul>
+      <li><span class="code">name</span></li>
+      <li><span class="code">model.provider</span> = <span class="code">openai</span></li>
+      <li><span class="code">model.model</span> = <span class="code">gpt-4</span></li>
+      <li><span class="code">voice.provider</span> = <span class="code">google</span></li>
+      <li><span class="code">voice.voiceId</span> = <span class="code">en-US-Neural2-A</span></li>
+      <li><span class="code">firstMessage</span> = <span class="code">Hi! I'm calling from Avani Loan Services...</span></li>
+      <li><span class="code">systemPrompt</span> = loan-specific qualification prompt</li>
+      <li><span class="code">endCallMessage</span> = <span class="code">Thank you for speaking with me. Have a great day!</span></li>
+      <li><span class="code">recordingEnabled</span> = <span class="code">true</span></li>
+      <li><span class="code">analysisPlan.summaryDescription</span></li>
+      <li><span class="code">analysisPlan.structuredData.enabled</span> = <span class="code">true</span></li>
+      <li><span class="code">analysisPlan.structuredData.fields</span> includes:</li>
+    </ul>
+    <div class="box">
+      <p class="note">Structured fields for each assistant:</p>
+      <ul>
+        <li><span class="code">customer_name</span></li>
+        <li><span class="code">phone_number</span></li>
+        <li><span class="code">email</span></li>
+        <li><span class="code">loan_amount</span></li>
+        <li><span class="code">monthly_income</span></li>
+        <li><span class="code">qualification_status</span></li>
+        <li><span class="code">next_action</span></li>
+      </ul>
+    </div>
+
+    <h2>2. VAPI Dashboard → Settings → Webhooks</h2>
+    <ul>
+      <li><span class="code">Event Type</span> = <span class="code">Call Ended</span></li>
+      <li><span class="code">URL</span> = <span class="code">https://&lt;your-domain&gt;/api/webhooks/vapi-callback</span></li>
+      <li><span class="code">Method</span> = <span class="code">POST</span></li>
+      <li><span class="code">Active</span> = <span class="code">true</span></li>
+    </ul>
+    <p class="note">For local testing, use ngrok / LocalTunnel and update the URL to the temporary secure forwarding address.</p>
+
+    <h3>Test webhook endpoint</h3>
+    <div class="box">
+      <p><strong>Endpoint</strong>:</p>
+      <p class="code">POST /api/webhooks/vapi-callback</p>
+    </div>
+
+    <h2>3. Expected VAPI webhook payload</h2>
+    <div class="payload">
+      <pre>{
+  "callId": "call_abc123xyz",
+  "callStatus": "ended",
+  "customerNumber": "+919876543210",
+  "duration": 245,
+  "transcript": "Agent: Hi! I'm calling from Avani...\nCustomer: Hi, tell me about...",
+  "recordingUrl": "https://vapi.ai/recordings/call_abc123xyz.wav",
+  "analysis": {
+    "structuredData": {
+      "customer_name": "Rajesh Kumar",
+      "phone_number": "9876543210",
+      "email": "rajesh.kumar@email.com",
+      "loan_amount": "500000",
+      "monthly_income": "50000",
+      "qualification_status": "Qualified",
+      "next_action": "Send WhatsApp"
+    },
+    "summary": "Customer is highly interested in personal loan, qualified based on income and CIBIL. Recommended to send WhatsApp with loan documents."
+  }
+}</pre>
+    </div>
+
+    <h2>4. Deployment checklist</h2>
+    <ul>
+      <li>Confirm VAPI API key: <span class="code">YOUR_VAPI_API_KEY_HERE</span></li>
+      <li>Confirm assistant ID: <span class="code">9f322737-3bb8-467a-95e3-7a66f9a93dc1</span></li>
+      <li>Confirm webhook URL points to backend endpoint</li>
+      <li>Confirm structured data fields are enabled for all assistants</li>
+      <li>Run one live outbound AI call and verify callback receipt</li>
+      <li>Confirm lead save flow to backend via <span class="code">/api/save-lead</span></li>
+      <li>Confirm WhatsApp follow-up works via <span class="code">/api/send-whatsapp</span></li>
+      <li>Confirm CRM lead path and Google Sheets logging path</li>
+    </ul>
+
+    <h2>5. Pilot launch plan</h2>
+    <ul>
+      <li>Day 0: confirm VAPI, webhook, CRM and WhatsApp paths</li>
+      <li>Day 1–2: test with 10 internal phone numbers</li>
+      <li>Day 3–4: run first 25 pilot leads and validate data</li>
+      <li>Day 5–7: scale to 100 leads and monitor conversion</li>
+      <li>Review after 100 leads: lead quality, call completion, CRM sync, WhatsApp delivery</li>
+    </ul>
+
+    <div class="footer">
+      <p>Reference links:</p>
+      <p>VAPI Dashboard: <span class="code">https://dashboard.vapi.ai</span></p>
+      <p>Exotel: <span class="code">https://my.exotel.com/avanifinserv1</span></p>
+      <p>HubSpot: <span class="code">https://app-na2.hubspot.com/global-home/244236573</span></p>
+      <p>Google Sheets webhook: <span class="code">https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec</span></p>
+      <p>Make.com: <span class="code">https://eu1.make.com/organization/7622610/dashboard</span></p>
+    </div>
+  </div>
+</body>
+</html>

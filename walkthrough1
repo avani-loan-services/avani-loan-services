@@ -1,0 +1,50 @@
+# Walkthrough - Free CIBIL Check Implementation
+
+I have successfully added the **Free CIBIL Check** feature to the Avani Loan Service platform. This feature is designed to generate leads while providing value to your customers with an instant credit score estimation and a professional PDF report.
+
+## Changes Made
+
+### 1. New "CIBIL Check" Page
+- Created [CibilCheck.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.jsx) and [CibilCheck.css](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.css).
+- Features a **3-step interactive form**:
+    - **Step 1**: Personal Info (Name, PAN, Mobile, Email, Income, Age).
+    - **Step 2**: OTP Verification (via EmailJS).
+    - **Step 3**: Result Gauge & PDF Download.
+
+### 2. Google Sheets Integration
+- Created [googleSheets.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/lib/googleSheets.js) to handle background data logging.
+- When a user verifies their OTP, their data is automatically POSTed to your Google Sheets webhook.
+
+### 3. PDF Report Generation
+- Integrated `jspdf` to generate a branded "Credit Score Estimation Report" locally in the user's browser, which they can download immediately.
+
+### 4. Navigation & Localization
+- Registered the `/cibil-check` route in [App.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/App.jsx).
+- Updated the [Navbar](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/components/Navbar.jsx) and added translations in [LanguageContext.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/context/LanguageContext.jsx) for English, Marathi, and Hindi.
+
+---
+
+## Final Setup Instructions
+
+> [!IMPORTANT]
+> **To make the feature fully operational, please update your `.env` file or environment variables with the following:**
+
+### 1. EmailJS (OTP Verification)
+Provide these from your EmailJS Dashboard:
+- `VITE_EMAILJS_SERVICE_ID`
+- `VITE_EMAILJS_TEMPLATE_ID`
+- `VITE_EMAILJS_PUBLIC_KEY`
+
+### 2. Google Sheets (Lead Collection)
+1. Create a Google Sheet.
+2. Go to **Extensions > Apps Script** and paste the code from the [Implementation Plan](file:///c:/Users/ALPHA-1/.gemini/antigravity/brain/2ceae481-7c1b-4e9c-bc2a-6108e006861d/implementation_plan.md).
+3. **Deploy as Web App** (Access: "Anyone").
+4. Add the URL to your project as:
+    - `VITE_GOOGLE_SHEETS_CIBIL_URL`
+
+---
+
+## Verification Results
+- **Form Validation**: PAN, Mobile, and Email fields are strictly validated.
+- **Security**: Data is only logged *after* successful OTP verification.
+- **User Experience**: Smooth transitions and clear "Gauge" visualization for the score.

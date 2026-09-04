@@ -1,0 +1,65 @@
+# 🚀 Hostinger Deployment Manual — Avani Loan Services
+
+Follow these steps to deploy your website directly to your Hostinger 2-year plan hosting account.
+
+## 📦 Step 1: Generate the Build Files
+Before uploading, you must convert the React code into files that a web server can understand.
+
+1. Open your project terminal (PowerShell or Command Prompt).
+2. Run the following command:
+   ```powershell
+   npm run build
+   ```
+3. A folder named `dist` will be created in your project directory. This folder contains your entire website in an optimized format.
+
+---
+
+## 📂 Step 2: Access Hostinger File Manager
+1. Log in to your **Hostinger HPanel**.
+2. Go to **Websites** and click **Manage** next to your domain.
+3. In the sidebar, search for **File Manager** (it’s under the 'Files' section).
+4. Use the **Existing File Manager**. There is no need to create a new one.
+5. Navigate to the folder named `public_html`. **This is your live website directory.**
+
+---
+
+## ⬆️ Step 3: Upload the Website
+1. Inside `public_html`, delete any default files (like `default.php` or `index.php`) if they are present.
+2. Open the `dist` folder on your computer.
+3. Select **EVERYTHING INSIDE** the `dist` folder and drag it into the `public_html` window in your browser.
+   > [!IMPORTANT]
+   > Do NOT upload the `dist` folder itself. Only upload the files and folders *inside* it (e.g., `assets`, `index.html`, `favicon.svg`).
+
+---
+
+## 🛠️ Step 4: Fix Navigation (The .htaccess File)
+Since this is a React app, refreshing the page on Hostinger might result in a "404 Not Found" error. To fix this:
+
+1. In the Hostinger File Manager, create a **New File** inside `public_html`.
+2. Name it exactly: `.htaccess` (with the dot at the beginning).
+3. Open it and paste the following code:
+   ```apache
+   <IfModule mod_rewrite.c>
+     RewriteEngine On
+     RewriteBase /
+     RewriteRule ^index\.html$ - [L]
+     RewriteCond %{REQUEST_FILENAME} !-f
+     RewriteCond %{REQUEST_FILENAME} !-d
+     RewriteRule . /index.html [L]
+   </IfModule>
+   ```
+4. Save and close the file.
+
+---
+
+## 🔗 GitHub & Vercel (Record Keeping)
+I checked your GitHub dashboard link. Since you are not logged into GitHub in this browser session, I couldn't see your private activity. However, looking at the public repo:
+- **Last Sync**: About 1 week ago.
+- **Action Required**: The CIBIL and Google Sheets updates we made today are **local only**. To push them to GitHub and Vercel, please run these commands in your terminal:
+  ```powershell
+  git add .
+  git commit -m "feat: finalised cibil reports and sheets logging"
+  git push
+  ```
+
+*Your website will now be live on your custom domain!*

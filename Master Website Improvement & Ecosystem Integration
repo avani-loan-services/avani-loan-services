@@ -1,0 +1,49 @@
+# Master Website Improvement & Ecosystem Integration
+
+This plan outlines the complete implementation of the AVANI LOAN SERVICES ecosystem integration, including the Loan Eligibility Engine, OmniDM AI Calling, Meta WhatsApp CRM synchronization, and sweeping UI/UX & performance improvements.
+
+## User Review Required
+> **[IMPORTANT]** This overhaul introduces new environment variables (`OMNIDM_CALLBACK_URL`, `OMNIDM_VERIFY_TOKEN`, `META_API_KEY`) and overrides the current Vapi implementation. Please ensure you have these secrets ready for the `.env` template that will be provided.
+
+## Open Questions
+> **[NONE]** All configurations (OmniDM Agent IDs, App ID, workflow steps, engine rules) have been provided in the brief and the `Loan Eligibility Engine Integration.md`.
+
+## Proposed Changes
+
+### Backend: Loan Eligibility Engine & Core Services
+- **Fix `package.json`**: Resolve JSON syntax errors (duplicate `twilio`) and add missing dependencies (`multer`, `@google/generative-ai`, `dotenv`, etc.).
+- **[NEW] `src/services/eligibilityEngine.cjs`**: Implement the core processing engine per the markdown spec (financial calculations + Gemini LLM).
+- **[NEW/MODIFY] `src/routes/eligibility.cjs`**: Create/Update the API endpoint to handle multipart form data (documents) and invoke the `eligibilityEngine`.
+- **[NEW] `src/services/crmService.cjs`**: Create a unified CRM synchronization service that posts to AVANI AI CRM whenever a form is submitted or a WhatsApp chat is initiated.
+- **[NEW] `src/services/omnidmService.cjs`**: Implement the backend routing and callback endpoints for OmniDM and WhatsApp Meta API.
+
+### Frontend: UI, UX, Performance, and SEO
+- **Global Styling**: Update `index.css` and individual component CSS to use a premium, modern design system (better typography, smooth gradients, micro-animations, accessible color contrast).
+- **Component Upgrades**: Enhance `Home`, `About`, `Contact`, `Loans`, `Eligibility`, `CibilCheck`, and `Blog` with lazy loading for images/components to hit >95 Lighthouse score.
+- **Form Enhancements**: Add multi-step capabilities, smart validations, and smooth transitions to `Eligibility` and other forms.
+- **SEO & Head Management**: Implement dynamic meta tags, titles, and schema markup across pages for >95 SEO score.
+
+### Floating Action Buttons (Ecosystem Integration)
+- **[MODIFY] `src/App.jsx`**: Remove old floating widgets. Render exactly two new floating action buttons globally.
+- **[NEW] `src/components/FloatingAIAssistant.jsx`**: A click-to-talk OmniDM Voice Agent button with smart language routing (Marathi/Hindi) and callback requests.
+- **[NEW] `src/components/FloatingWhatsApp.jsx`**: A direct-to-CRM Meta WhatsApp button that preserves UTMs and initializes the welcome flow.
+
+### Deliverables & Documentation
+- **[NEW] `.env.example`**: Clean environment variable template containing all required keys.
+- **[NEW] `TECHNICAL_DOCUMENTATION.md`**: Detailed technical summary of the new architecture.
+- **[NEW] `DEPLOYMENT_GUIDE.md`**: Guide for deploying the finalized code to Vercel/Node.
+- **[NEW] `TESTING_CHECKLIST.md`**: Checklist to verify functionality prior to production launch.
+- **[NEW] `ROLLBACK_PLAN.md`**: Steps to revert changes safely if needed.
+- **[NEW] `FINAL_IMPLEMENTATION_REPORT.md`**: Comprehensive summary of all changes made during this sprint.
+
+## Verification Plan
+
+### Automated Tests
+- `npm run lint` and `npm run build` to ensure no syntax or compilation errors.
+- Internal test endpoints for `POST /api/eligibility/calculate` and `POST /api/crm/sync`.
+
+### Manual Verification
+- Start the dev server and test the multi-step `Eligibility` form, uploading mock documents.
+- Verify the AI Assistant floating button triggers OmniDM logic.
+- Verify the WhatsApp button correctly formats the deep link with UTMs.
+- Run Lighthouse in Chrome DevTools to confirm Performance, Accessibility, Best Practices, and SEO hit the >95 target.

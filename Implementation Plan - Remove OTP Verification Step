@@ -1,0 +1,24 @@
+# Implementation Plan - Remove OTP Verification Step
+
+The user wants to skip the OTP verification option entirely, likely due to delivery issues. The application will now transition directly from data entry to the estimation results.
+
+## Proposed Changes
+
+### CibilCheck Component
+
+#### [MODIFY] [CibilCheck.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.jsx)
+- **Simplify Flow**: Remove `Step 2` (Verification UI) entirely.
+- **Update Submission**: Change `handleGetOtp` to `handleSubmit`. Instead of setting step to 2 and sending an email, it will directly call `calculateResult`.
+- **Remove Logic**: Delete `handleVerifyOtp`, `handleWhatsAppVerify`, `handleSkipVerify`, and EmailJS OTP sending logic to clean up the code.
+- **Update UI**:
+    - Step 1 button text: change from "Get OTP for Verification" to "Check My Score Now".
+    - Remove Step 2 from the `return` statement.
+    - Update step indicators (now only 2 steps: Details and Result).
+
+## Verification Plan
+
+### Manual Verification
+- Enter details in Step 1.
+- Click "Check My Score Now".
+- Verify that the results page (Step 3) appears instantly.
+- Verify that the lead data is still logged to Google Sheets.

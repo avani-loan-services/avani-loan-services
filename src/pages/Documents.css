@@ -1,0 +1,87 @@
+.docs-tip {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7) !important;
+  border-left: 4px solid var(--secondary);
+  margin-bottom: 30px;
+  font-size: 0.98rem;
+}
+
+.tip-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.doc-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.doc-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  transition: background 0.2s ease;
+}
+
+.doc-header:hover {
+  background: rgba(10, 79, 139, 0.04);
+}
+
+.doc-header svg {
+  margin-left: auto;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.doc-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.doc-title {
+  flex: 1;
+  color: var(--primary);
+}
+
+.doc-body {
+  padding: 0 24px 24px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .doc-body { grid-template-columns: repeat(2, 1fr); }
+}
+
+.doc-category h4 {
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-bottom: 10px;
+  margin-top: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.doc-category ul li {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  padding: 4px 0;
+}

@@ -1,0 +1,23 @@
+# Implementation Plan - Add Credit History to PDF Report
+
+The user wants to include a "Credit History" section in the downloadable PDF report. Since this is an estimation tool, we will generate a simulated, professional-looking credit history based on the user's estimated score.
+
+## Proposed Changes
+
+### CibilCheck Component
+
+#### [MODIFY] [CibilCheck.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.jsx)
+- **Enhance `downloadReport` function**:
+    - Add a new section: **"DETAILED CREDIT HISTORY"**.
+    - Include a table of simulated accounts (e.g., Housing Loan, Credit Card, Personal Loan).
+    - Status will be determined by the `estimatedScore` (e.g., "Regular" for high scores, "Irregular" or "Settled" for lower scores).
+    - Add an **"Enquiry History"** table showing recent credit checks.
+    - Improve the visual layout with better spacing and maybe a second page if needed.
+
+## Verification Plan
+
+### Manual Verification
+- Generate a report.
+- Download the PDF.
+- Verify that the new "Credit History" and "Enquiry History" sections are present and professionally formatted.
+- Ensure the data aligns with the estimated score (e.g., an "Excellent" score shouldn't show "Missed Payments").

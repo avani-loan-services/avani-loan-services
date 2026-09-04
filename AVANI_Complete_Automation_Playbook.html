@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AVANI Automation Testing & Deployment Playbook</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #222; background: #f5f5f5; }
+    .container { max-width: 1200px; margin: auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #0f4c81, #1a73e8); color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; }
+    .header h1 { font-size: 32px; margin-bottom: 8px; }
+    .header p { font-size: 14px; opacity: 0.9; }
+    .section { background: white; padding: 24px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .section h2 { color: #0f4c81; font-size: 22px; margin-bottom: 16px; border-bottom: 3px solid #1a73e8; padding-bottom: 10px; }
+    .section h3 { color: #333; font-size: 16px; margin-top: 16px; margin-bottom: 10px; }
+    .subsection { background: #f9f9f9; padding: 16px; border-left: 4px solid #1a73e8; margin: 12px 0; border-radius: 4px; }
+    .step { display: flex; margin-bottom: 14px; align-items: flex-start; }
+    .step-num { background: #1a73e8; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
+    .step-content { flex: 1; }
+    .step-title { font-weight: 600; color: #222; margin-bottom: 4px; }
+    .step-desc { font-size: 13px; color: #666; line-height: 1.5; }
+    .code { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; overflow-x: auto; margin: 10px 0; }
+    .code-inline { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #c7254e; }
+    .link-btn { display: inline-block; background: #1a73e8; color: white; padding: 8px 14px; border-radius: 4px; text-decoration: none; font-size: 13px; margin: 6px 6px 6px 0; }
+    .link-btn:hover { background: #0f4c81; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    table th { background: #0f4c81; color: white; padding: 10px; text-align: left; }
+    table td { padding: 10px; border-bottom: 1px solid #ddd; }
+    table tr:hover { background: #f5f5f5; }
+    .checkbox { width: 16px; height: 16px; margin-right: 8px; }
+    .checklist { list-style: none; }
+    .checklist li { display: flex; align-items: center; margin-bottom: 8px; }
+    .checklist input { margin-right: 10px; }
+    .alert { padding: 12px; border-radius: 4px; margin: 12px 0; }
+    .alert-info { background: #e3f2fd; border-left: 4px solid #1a73e8; color: #0f4c81; }
+    .alert-warning { background: #fff3e0; border-left: 4px solid #ff9800; color: #e65100; }
+    .alert-success { background: #e8f5e9; border-left: 4px solid #4caf50; color: #2e7d32; }
+    .dashboard-link { display: block; background: #f9f9f9; padding: 12px; border-radius: 4px; margin: 8px 0; border: 1px solid #ddd; }
+    .dashboard-link strong { color: #0f4c81; }
+    .timeline { position: relative; }
+    .timeline-item { margin-bottom: 20px; padding-left: 30px; }
+    .timeline-item::before { content: ''; position: absolute; left: 8px; top: 0; width: 14px; height: 14px; background: #1a73e8; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 3px #1a73e8; }
+    .timeline-item:last-child::after { display: none; }
+    .timeline-item::after { content: ''; position: absolute; left: 14px; top: 14px; width: 2px; height: 30px; background: #e0e0e0; }
+    .day-box { background: #e3f2fd; padding: 14px; border-radius: 4px; margin-bottom: 12px; }
+    .day-title { font-weight: 600; color: #0f4c81; margin-bottom: 8px; }
+    @media print { body { background: white; } .container { margin: 0; padding: 10mm; } .section { page-break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 AVANI Loan Services</h1>
+      <h2 style="font-size: 20px; margin-top: 10px;">AI Outbound Automation Testing & 7-Day Deployment Playbook</h2>
+      <p>Complete automation setup with VAPI, Exotel, HubSpot, Google Sheets, Make.com, and Vercel deployment</p>
+    </div>
+
+    <!-- SECTION 1: QUICK REFERENCE -->
+    <div class="section">
+      <h2>📋 Quick Reference: All Account Credentials & Links</h2>
+      
+      <div class="subsection">
+        <strong>Business Details</strong>
+        <table>
+          <tr><td><strong>Business Name</strong></td><td>Avani Loan Services</td></tr>
+          <tr><td><strong>Owner</strong></td><td>Sachin Shinde</td></tr>
+          <tr><td><strong>Phone</strong></td><td><span class="code-inline">+91 9175635165</span></td></tr>
+          <tr><td><strong>Email</strong></td><td><span class="code-inline">enquiry@avanifinserv.com</span></td></tr>
+          <tr><td><strong>Website</strong></td><td><a href="https://www.avanifinserv.com/" class="link-btn">avanifinserv.com</a></td></tr>
+          <tr><td><strong>Office</strong></td><td>Rajiv Gandhi Chowk & Ausa Road, Mantri Nagar, Latur - 413512</td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <strong>VAPI Configuration</strong>
+        <table>
+          <tr><td><strong>Dashboard</strong></td><td><a href="https://dashboard.vapi.ai" class="link-btn">dashboard.vapi.ai</a></td></tr>
+          <tr><td><strong>API Key</strong></td><td><span class="code-inline">YOUR_VAPI_API_KEY_HERE</span></td></tr>
+          <tr><td><strong>Assistant ID</strong></td><td><span class="code-inline">9f322737-3bb8-467a-95e3-7a66f9a93dc1</span></td></tr>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <strong>CRM & Integration Dashboards</strong>
+        <table>
+          <tr><td><strong>Exotel</strong></td><td><a href="https://my.exotel.com/avanifinserv1" class="link-btn">my.exotel.com/avanifinserv1</a></td></tr>
+          <tr><td><strong>HubSpot</strong></td><td><a href="https://app-na2.hubspot.com/global-home/244236573" class="link-btn">HubSpot Dashboard</a></td></tr>
+          <tr><td><strong>Google Sheets Webhook</strong></td><td><a href="https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec" class="link-btn">Google Apps Script</a></td></tr>
+          <tr><td><strong>Make.com Automation</strong></td><td><a href="https://eu1.make.com/organization/7622610/dashboard" class="link-btn">make.com Dashboard</a></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECTION 2: AUTOMATION TESTING GUIDE -->
+    <div class="section">
+      <h2>✅ Automation Testing & Validation Steps</h2>
+      
+      <h3>Test 1: Website Lead Form Integration</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">Open Website Lead Form</div>
+          <div class="step-desc">Go to <a href="https://www.avanifinserv.com/">avanifinserv.com</a> and fill the lead form with test data</div>
+          <div class="code">
+Phone: +91 9876543210
+Email: test@gmail.com
+Loan Type: Personal Loan
+Amount: 500000
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Verify Form Submission</div>
+          <div class="step-desc">Check that form data appears in:</div>
+          <ul style="margin-left: 20px; margin-top: 6px;">
+            <li>HubSpot CRM (new contact created)</li>
+            <li>Google Sheets webhook log</li>
+            <li>Browser console (no JS errors)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Test 2: VAPI AI Call Trigger</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">Trigger AI Outbound Call via Dashboard</div>
+          <div class="step-desc">Go to <span class="code-inline">https://dashboard.vapi.ai</span> → Assistants → Select Personal Loan Assistant</div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Make Test Call</div>
+          <div class="step-desc">Use <span class="code-inline">POST /calls</span> API with test phone number</div>
+          <div class="code">
+{
+  "phoneNumber": "+919876543210",
+  "assistantId": "9f322737-3bb8-467a-95e3-7a66f9a93dc1",
+  "assistantOverrides": {
+    "systemPrompt": "You are calling from Avani Loan Services. Greet and qualify the lead quickly."
+  },
+  "customerNumber": "+91 9175635165"
+}
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Verify Call Completion</div>
+          <div class="step-desc">Check VAPI Dashboard for call logs and confirm webhook received data</div>
+        </div>
+      </div>
+
+      <h3>Test 3: Webhook Payload Verification</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">Expected Webhook Payload</div>
+          <div class="step-desc">After call ends, VAPI sends JSON to backend:</div>
+          <div class="code">
+{
+  "callId": "call_abc123xyz",
+  "callStatus": "ended",
+  "customerNumber": "+919876543210",
+  "duration": 245,
+  "transcript": "Agent: Hello...\nCustomer: Hi...",
+  "recordingUrl": "https://vapi.ai/recordings/call_abc123xyz.wav",
+  "analysis": {
+    "structuredData": {
+      "customer_name": "Test User",
+      "phone_number": "9876543210",
+      "monthly_income": "50000",
+      "qualification_status": "qualified",
+      "next_action": "send_whatsapp"
+    }
+  }
+}
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Verify Backend Processing</div>
+          <div class="step-desc">Check that backend logs show webhook received and processed</div>
+        </div>
+      </div>
+
+      <h3>Test 4: CRM Sync with HubSpot</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">Check HubSpot Contact</div>
+          <div class="step-desc">Go to <a href="https://app-na2.hubspot.com/global-home/244236573" class="link-btn">HubSpot</a> → Contacts and verify new lead from call</div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Verify Custom Fields</div>
+          <div class="step-desc">Confirm these fields populated:</div>
+          <ul style="margin-left: 20px; margin-top: 6px;">
+            <li><span class="code-inline">vapi_call_id</span></li>
+            <li><span class="code-inline">loan_product</span></li>
+            <li><span class="code-inline">qualification_status</span></li>
+            <li><span class="code-inline">monthly_income</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Test 5: Make.com Automation Workflow</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">Open Make.com Dashboard</div>
+          <div class="step-desc">Go to <a href="https://eu1.make.com/organization/7622610/dashboard" class="link-btn">make.com</a> and enable "VAPI → HubSpot → Google Sheets" automation</div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Trigger Automation</div>
+          <div class="step-desc">Complete a test call and verify automation executes:
+            <ul style="margin-left: 20px; margin-top: 6px;">
+              <li>1. Webhook received</li>
+              <li>2. Contact created in HubSpot</li>
+              <li>3. Row added to Google Sheets</li>
+              <li>4. WhatsApp message sent (if applicable)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <h3>Test 6: Exotel Missed Call Automation</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">Configure Missed Call Flow</div>
+          <div class="step-desc">Go to <a href="https://my.exotel.com/avanifinserv1" class="link-btn">Exotel Dashboard</a> and enable missed call IVR</div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Call and Hang Up</div>
+          <div class="step-desc">Simulate missed call by calling <span class="code-inline">+91 9175635165</span> and hanging up immediately</div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Verify Response</div>
+          <div class="step-desc">Confirm WhatsApp callback request message is sent within 30 seconds</div>
+        </div>
+      </div>
+
+      <h3>Test 7: Google Sheets Backup Logging</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="step-title">View Google Sheets Log</div>
+          <div class="step-desc">Open <a href="https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec" class="link-btn">Google Apps Script</a> → Logs</div>
+        </div>
+        <div class="timeline-item">
+          <div class="step-title">Verify Lead Entries</div>
+          <div class="step-desc">Check that all test leads appear with columns:
+            <ul style="margin-left: 20px; margin-top: 6px;">
+              <li>timestamp</li>
+              <li>phone</li>
+              <li>loan_product</li>
+              <li>qualification_status</li>
+              <li>call_id</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-success">
+        <strong>✓ All Tests Passed?</strong> Move to 7-Day Deployment Timeline
+      </div>
+    </div>
+
+    <!-- SECTION 3: 7-DAY DEPLOYMENT CHECKLIST -->
+    <div class="section">
+      <h2>📅 7-Day Deployment Timeline & Checklist</h2>
+
+      <div class="day-box">
+        <div class="day-title">DAY 1: Setup & Configuration</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Verify VAPI API key is set in backend environment</li>
+          <li><input type="checkbox"> Verify assistant ID 9f322737-3bb8-467a-95e3-7a66f9a93dc1 is configured in code</li>
+          <li><input type="checkbox"> Confirm webhook URL: <span class="code-inline">/api/webhooks/vapi-callback</span></li>
+          <li><input type="checkbox"> Enable structured data analysis in VAPI dashboard for all 6 assistants</li>
+          <li><input type="checkbox"> Set call timeout to 5 minutes, retry policy to 2 attempts</li>
+          <li><input type="checkbox"> Verify Exotel business number is configured and active</li>
+        </ul>
+      </div>
+
+      <div class="day-box">
+        <div class="day-title">DAY 2: CRM & Integration Setup</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Create HubSpot custom fields for VAPI integration (see CRM mapping section)</li>
+          <li><input type="checkbox"> Create HubSpot pipeline stages: New Lead → AI Called → Qualified → Follow-up → Won/Lost</li>
+          <li><input type="checkbox"> Configure Make.com webhook trigger for VAPI callback</li>
+          <li><input type="checkbox"> Setup Make.com workflow: VAPI → HubSpot → Google Sheets</li>
+          <li><input type="checkbox"> Test Make.com automation with 1 sample lead</li>
+          <li><input type="checkbox"> Verify Google Sheets webhook URL is accessible</li>
+        </ul>
+      </div>
+
+      <div class="day-box">
+        <div class="day-title">DAY 3: Website & Automation Testing</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Test website lead form submission (3 test submissions)</li>
+          <li><input type="checkbox"> Verify forms appear in HubSpot within 5 minutes</li>
+          <li><input type="checkbox"> Verify forms logged in Google Sheets</li>
+          <li><input type="checkbox"> Test VAPI dashboard call trigger with test phone</li>
+          <li><input type="checkbox"> Verify webhook received and processed (check backend logs)</li>
+          <li><input type="checkbox"> Test Exotel missed call automation</li>
+        </ul>
+      </div>
+
+      <div class="day-box">
+        <div class="day-title">DAY 4: Vercel Deployment & CI/CD</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Push code to GitHub repository</li>
+          <li><input type="checkbox"> Connect GitHub repo to Vercel</li>
+          <li><input type="checkbox"> Set environment variables in Vercel (VAPI_API_KEY, VAPI_ASSISTANT_ID, etc.)</li>
+          <li><input type="checkbox"> Deploy to production: <span class="code-inline">npm run build && vercel deploy --prod</span></li>
+          <li><input type="checkbox"> Verify all endpoints accessible from production URL</li>
+          <li><input type="checkbox"> Update VAPI webhook URL to production endpoint</li>
+          <li><input type="checkbox"> Update Make.com webhook to production endpoint</li>
+          <li><input type="checkbox"> Test full flow from production website</li>
+        </ul>
+      </div>
+
+      <div class="day-box">
+        <div class="day-title">DAY 5: WhatsApp & SMS Setup</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Configure WhatsApp Business API via Twilio or Exotel</li>
+          <li><input type="checkbox"> Create WhatsApp templates (Offer, Reminder, Document, Callback)</li>
+          <li><input type="checkbox"> Test WhatsApp send from Make.com automation</li>
+          <li><input type="checkbox"> Configure SMS gateway (Exotel SMS or Twilio)</li>
+          <li><input type="checkbox"> Create SMS templates for appointment reminders</li>
+          <li><input type="checkbox"> Test SMS delivery (send to internal phone first)</li>
+        </ul>
+      </div>
+
+      <div class="day-box">
+        <div class="day-title">DAY 6: Pilot Campaign (10 test leads)</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Load 10 test phone numbers into campaign</li>
+          <li><input type="checkbox"> Trigger outbound AI calls for all 10 numbers</li>
+          <li><input type="checkbox"> Monitor VAPI dashboard for call metrics</li>
+          <li><input type="checkbox"> Verify all 10 leads captured in HubSpot</li>
+          <li><input type="checkbox"> Check transcripts, recordings, qualification status</li>
+          <li><input type="checkbox"> Verify WhatsApp follow-up messages sent</li>
+          <li><input type="checkbox"> Confirm Google Sheets has 10 entries</li>
+        </ul>
+      </div>
+
+      <div class="day-box">
+        <div class="day-title">DAY 7: Scale to 100 Leads & Monitor</div>
+        <ul class="checklist">
+          <li><input type="checkbox"> Prepare customer contact list (100 verified phone numbers)</li>
+          <li><input type="checkbox"> Segment leads by loan type (Personal, Business, Doctor, Home, Education, Mortgage)</li>
+          <li><input type="checkbox"> Set call spread rate: max 2 calls/minute</li>
+          <li><input type="checkbox"> Start campaign: Day 7 morning</li>
+          <li><input type="checkbox"> Monitor real-time dashboard: call completion, avg duration, qualification rate</li>
+          <li><input type="checkbox"> Check HubSpot for new deals created</li>
+          <li><input type="checkbox"> Monitor WhatsApp delivery and open rates</li>
+          <li><input type="checkbox"> Review sample transcripts for quality</li>
+          <li><input type="checkbox"> Prepare Day 8 report: conversion rate, lead quality, system stability</li>
+        </ul>
+      </div>
+
+      <div class="alert alert-info">
+        <strong>📊 Success Metrics (Target for Day 7 end):</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li>100% call completion rate (100/100 calls dialed)</li>
+          <li>70%+ answer rate (70 calls answered)</li>
+          <li>60%+ qualified leads (42 qualified from 70 answered)</li>
+          <li>100% CRM sync (all 100 in HubSpot)</li>
+          <li>95%+ WhatsApp delivery</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION 4: CAMPAIGN SCRIPTS -->
+    <div class="section">
+      <h2>🎤 Campaign-Specific Scripts for Each Loan Product</h2>
+
+      <h3>1. Personal Loan - Quick Qualification Script</h3>
+      <div class="subsection">
+        <strong>Opening</strong>
+        <div class="code">
+"Hello, this is Sachin from Avani Loan Services, Latur. Am I speaking with [Name]? 
+I'm calling to tell you that you might be eligible for an instant personal loan up to ₹10 lakh. 
+Do you have a quick 2 minutes to check your eligibility?"
+        </div>
+
+        <strong>Qualification Questions</strong>
+        <div class="code">
+1. "Are you currently employed or self-employed?"
+2. "What is your approximate monthly income or salary?"
+3. "Do you have any existing loans or EMIs? If yes, how much?"
+4. "How much loan amount are you looking for?"
+5. "What would you need the loan for? (Home renovation, marriage, education, debt consolidation, etc.)"
+        </div>
+
+        <strong>Qualifying Statement</strong>
+        <div class="code">
+"Based on your income of ₹[amount] and current EMI situation, you look like a strong candidate 
+for our personal loan. Our approval time is typically 24 hours. 
+Can I share our loan documents and requirements via WhatsApp so you can review them?"
+        </div>
+
+        <strong>Not Qualified Response</strong>
+        <div class="code">
+"Thank you for the information. Our personal loan requires a minimum monthly income of ₹15,000. 
+However, you might qualify for our flexible unsecured loan. Can I schedule a call from our loan officer tomorrow?"
+        </div>
+
+        <strong>Objection Handling</strong>
+        <div class="code">
+Objection: "I'm not interested."
+Response: "I understand. The reason I'm calling is because there's a special offer this week. 
+If you take the loan this month, you get ₹0 processing fees. It only takes 2 minutes to check eligibility. 
+Would that work better?"
+
+Objection: "I don't have time now."
+Response: "That's completely fine. I can send you our quick eligibility form via WhatsApp 
+and you can fill it anytime. Then a loan officer will call you at your convenience."
+        </div>
+
+        <strong>Closing & Next Action</strong>
+        <div class="code">
+"Perfect! I'm sending you our personal loan offer on WhatsApp. 
+Please check within an hour and reply 'Ready' if you want to proceed. 
+Our loan officer will call you within 30 minutes to finalize the documents. 
+Your reference ID is [CALL_ID]. Have a great day!"
+        </div>
+      </div>
+
+      <h3>2. Business Loan - Enterprise Qualification Script</h3>
+      <div class="subsection">
+        <strong>Opening</strong>
+        <div class="code">
+"Hello, this is Sachin calling from Avani Loan Services. Are you the business owner? 
+We specialize in business loans up to ₹50 lakh for established businesses in Maharashtra. 
+Do you have 3 minutes to discuss your business loan needs?"
+        </div>
+
+        <strong>Qualification Questions</strong>
+        <div class="code">
+1. "What type of business are you in? (Trading, Manufacturing, Services, Retail, etc.)"
+2. "How long have you been in this business?"
+3. "What is your approximate annual business turnover?"
+4. "How much capital are you looking to raise?"
+5. "What's the purpose? (Expansion, equipment, working capital, debt consolidation, inventory, etc.)"
+6. "Do you have your GST certificate and last 2 years of bank statements handy?"
+        </div>
+
+        <strong>Qualifying Statement</strong>
+        <div class="code">
+"Your business profile looks strong. With an annual turnover of ₹[amount], 
+you're eligible for our business loan of ₹[approved_amount] at [rate]% interest. 
+We can process this within 5 working days. Would you like me to connect you with our business loan specialist?"
+        </div>
+
+        <strong>Not Qualified Response</strong>
+        <div class="code">
+"Thank you for sharing. We typically require a minimum turnover of ₹5 lakh annually 
+and 2+ years in business. Since you're newer to the business, 
+I recommend connecting after another 6 months when your track record is stronger. 
+Can I add you to our follow-up list?"
+        </div>
+
+        <strong>Closing & Next Action</strong>
+        <div class="code">
+"Excellent! I'm connecting you with Rajesh, our business loan specialist. 
+He'll handle all the documentation and ensure a smooth approval. 
+He'll call you within the next 2 hours. Your reference number is [CALL_ID]. Good luck!"
+        </div>
+      </div>
+
+      <h3>3. Doctor Loan - Specialized Healthcare Professional Script</h3>
+      <div class="subsection">
+        <strong>Opening</strong>
+        <div class="code">
+"Hello Doctor, this is Sachin from Avani Loan Services, Latur. 
+We have a specialized loan product exclusively for doctors and medical professionals 
+with premium rates and flexible terms. Do you have 2 minutes?"
+        </div>
+
+        <strong>Qualification Questions</strong>
+        <div class="code">
+1. "Which type of medical practice are you in? (Private clinic, Hospital, Partnership, etc.)"
+2. "What's your specialization?"
+3. "How long have you been practicing?"
+4. "What is your approximate monthly professional income?"
+5. "What would you need the loan for? (Clinic expansion, equipment, LAP, cash flow, etc.)"
+        </div>
+
+        <strong>Qualifying Statement</strong>
+        <div class="code">
+"Perfect! As a [specialization] with [years] years of practice, you're eligible for our doctor loan 
+with these special benefits:
+- Interest rate starting at [rate]%
+- Loan amount up to ₹25 lakh
+- Approval in 3 days
+- Flexible repayment tenure up to 10 years
+- No additional collateral required
+
+How much would you like to borrow?"
+        </div>
+
+        <strong>Objection Handling - Common Objections</strong>
+        <div class="code">
+Objection: "I already have a bank loan."
+Response: "I understand. Some doctors consolidate their existing loans into one and get a lower rate. 
+Would refinancing save you money? Let me show you the numbers on WhatsApp."
+
+Objection: "Why should I borrow when I have cash?"
+Response: "Great that you have cash! But it's more tax-efficient to keep liquid cash 
+and take a professional loan at 10% interest while your money grows at 12-15% in investments. 
+Would that strategy interest you?"
+        </div>
+
+        <strong>Closing & Next Action</strong>
+        <div class="code">
+"Wonderful! I'm sending you a personalized quote for ₹[amount] at [rate]% on WhatsApp. 
+Please review and confirm. Our medical lending specialist will call you tomorrow morning 
+to finalize the documents. Your doctor loan ID is [CALL_ID]. Best wishes for your practice!"
+        </div>
+      </div>
+
+      <h3>4. Home Loan - Property-Based Lending Script</h3>
+      <div class="subsection">
+        <strong>Opening</strong>
+        <div class="code">
+"Hello, this is Sachin from Avani Loan Services. I'm calling about home loan opportunities 
+in your area. Are you planning to buy a property or refinance an existing home loan? 
+Do you have 2 minutes to explore your options?"
+        </div>
+
+        <strong>Qualification Questions</strong>
+        <div class="code">
+1. "Are you looking to buy a new property, resale, or refinance an existing loan?"
+2. "Where is the property located? (Or planning to buy?)"
+3. "What's the approximate property value / loan amount you need?"
+4. "What is your monthly household income?"
+5. "How much down payment can you arrange?"
+6. "Do you have the property papers or sale agreement already?"
+        </div>
+
+        <strong>Qualifying Statement</strong>
+        <div class="code">
+"Based on your income of ₹[amount] and property value, you qualify for a home loan of ₹[approved_amount] 
+at [rate]% interest with an EMI of approximately ₹[emi_amount] per month. 
+We offer:
+- Approval within 5 days
+- Minimal documentation
+- Flexible tenure up to 20 years
+- Processing fee waived this month
+
+Shall we proceed with your property evaluation?"
+        </div>
+
+        <strong>Closing & Next Action</strong>
+        <div class="code">
+"Perfect! I'm connecting you with our home loan specialist, Priya. She'll arrange 
+a property evaluation and send you a pre-approval letter within 48 hours. 
+She'll call you tomorrow morning. Your home loan reference is [CALL_ID]. Congratulations on your new home!"
+        </div>
+      </div>
+
+      <h3>5. Education Loan - Student & Parent Script</h3>
+      <div class="subsection">
+        <strong>Opening</strong>
+        <div class="code">
+"Hello, this is Sachin from Avani Loan Services. I'm calling to help students and parents 
+with education loan for studies in India or abroad. Is this a good time to discuss 
+how we can support your child's education goals?"
+        </div>
+
+        <strong>Qualification Questions</strong>
+        <div class="code">
+1. "What's the student's name and which course/college are they planning?"
+2. "Is it India or abroad education?"
+3. "What's the total annual course fee?"
+4. "What's the co-applicant's (parent's) monthly income?"
+5. "How much loan amount do you need? (Course fees + living expenses)"
+6. "Do you have the admission letter or acceptance from the college?"
+        </div>
+
+        <strong>Qualifying Statement</strong>
+        <div class="code">
+"Wonderful! Education loan for [course] at [college] is definitely possible. 
+With parental income of ₹[amount], we can approve a loan of ₹[amount] at [rate]% interest. 
+Special benefits:
+- Study period + 6 months moratorium (no EMI during study)
+- Flexible repayment after graduation (7-10 years)
+- No collateral for loans up to ₹7 lakh
+- Document assistance and fast processing
+
+When does the course start?"
+        </div>
+
+        <strong>Closing & Next Action</strong>
+        <div class="code">
+"Excellent! I'm sending you the education loan application form and required documents list via WhatsApp. 
+Please collect the admission letter and recent bank statements. 
+Our education loan expert will call you within 24 hours to finalize everything. 
+Your education reference ID is [CALL_ID]. Wish your child a great future!"
+        </div>
+      </div>
+
+      <h3>6. Mortgage Loan (LAP) - Property Collateral Script</h3>
+      <div class="subsection">
+        <strong>Opening</strong>
+        <div class="code">
+"Hello, this is Sachin from Avani Loan Services. I'm calling to offer you an easy way 
+to get business capital or personal funds using your property as security. 
+Do you own a completed property in Maharashtra? Do you have a quick minute?"
+        </div>
+
+        <strong>Qualification Questions</strong>
+        <div class="code">
+1. "What type of property do you own? (Residential, Commercial, Plot, etc.)"
+2. "Where is the property located?"
+3. "What's the approximate current value of your property?"
+4. "Is there any existing loan on this property?"
+5. "How much loan amount are you looking for?"
+6. "What's the purpose? (Business expansion, working capital, debt consolidation, etc.)"
+        </div>
+
+        <strong>Qualifying Statement</strong>
+        <div class="code">
+"Perfect! Your property with an estimated value of ₹[amount] qualifies you for a mortgage loan. 
+Based on 50% loan-to-value ratio, we can offer you ₹[approved_amount] at [rate]% interest 
+with a tenure of up to 15 years. Your monthly EMI would be approximately ₹[emi_amount].
+
+This can be disbursed within 7 days after property evaluation. Interested?"
+        </div>
+
+        <strong>Closing & Next Action</strong>
+        <div class="code">
+"Excellent decision! I'm connecting you with our mortgage specialist who will arrange 
+a free property evaluation at your convenience. He'll send you a pre-approval letter after that. 
+He'll call you tomorrow to schedule the property visit. Your mortgage reference is [CALL_ID]. Thanks!"
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: CRM FIELD MAPPING -->
+    <div class="section">
+      <h2>🗂️ HubSpot CRM Field Mapping - Exact Configuration</h2>
+      
+      <div class="alert alert-info">
+        <strong>Navigation:</strong> HubSpot Dashboard → Settings → Objects → Contacts → Custom Properties
+      </div>
+
+      <h3>Standard Contact Fields (Auto-mapped)</h3>
+      <table>
+        <tr>
+          <th>Field Label</th>
+          <th>Internal Name</th>
+          <th>Type</th>
+          <th>Required</th>
+          <th>Source</th>
+        </tr>
+        <tr>
+          <td>First Name</td>
+          <td>firstname</td>
+          <td>Text</td>
+          <td>Yes</td>
+          <td>VAPI analysis.structuredData.customer_name</td>
+        </tr>
+        <tr>
+          <td>Phone Number</td>
+          <td>phone</td>
+          <td>Phone</td>
+          <td>Yes</td>
+          <td>VAPI analysis.structuredData.phone_number</td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td>email</td>
+          <td>Email</td>
+          <td>No</td>
+          <td>VAPI analysis.structuredData.email</td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td>city</td>
+          <td>Text</td>
+          <td>No</td>
+          <td>Default: Latur</td>
+        </tr>
+      </table>
+
+      <h3>Custom VAPI Integration Fields (Create These)</h3>
+      <table>
+        <tr>
+          <th>Field Label</th>
+          <th>Internal Name</th>
+          <th>Type</th>
+          <th>Options/Format</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>VAPI Call ID</td>
+          <td>vapi_call_id</td>
+          <td>Text</td>
+          <td>-</td>
+          <td>Unique call identifier from VAPI</td>
+        </tr>
+        <tr>
+          <td>Lead Source</td>
+          <td>hs_lead_source</td>
+          <td>Dropdown</td>
+          <td>VAPI AI Outbound, Website Form, Manual, Missed Call</td>
+          <td>How lead originated</td>
+        </tr>
+        <tr>
+          <td>Loan Product</td>
+          <td>loan_product</td>
+          <td>Dropdown</td>
+          <td>Personal Loan, Business Loan, Doctor Loan, Home Loan, Education Loan, Mortgage/LAP</td>
+          <td>Selected loan product</td>
+        </tr>
+        <tr>
+          <td>Loan Amount Required</td>
+          <td>loan_amount_required</td>
+          <td>Number</td>
+          <td>Currency (INR)</td>
+          <td>Loan amount customer mentioned</td>
+        </tr>
+        <tr>
+          <td>Monthly Income</td>
+          <td>monthly_income</td>
+          <td>Number</td>
+          <td>Currency (INR)</td>
+          <td>Customer's reported monthly income</td>
+        </tr>
+        <tr>
+          <td>Employment Type</td>
+          <td>employment_type</td>
+          <td>Dropdown</td>
+          <td>Salaried, Self-Employed, Business Owner, Doctor, Student, Other</td>
+          <td>Type of employment</td>
+        </tr>
+        <tr>
+          <td>Existing EMI</td>
+          <td>existing_emi</td>
+          <td>Number</td>
+          <td>Currency (INR)</td>
+          <td>Monthly EMI obligations</td>
+        </tr>
+        <tr>
+          <td>Qualification Status</td>
+          <td>qualification_status</td>
+          <td>Dropdown</td>
+          <td>Qualified, Needs Review, Not Qualified</td>
+          <td>AI qualification outcome</td>
+        </tr>
+        <tr>
+          <td>Next Action</td>
+          <td>next_action</td>
+          <td>Dropdown</td>
+          <td>Send WhatsApp, Schedule Followup, Human Transfer, Close Lead</td>
+          <td>Recommended next action</td>
+        </tr>
+        <tr>
+          <td>Call Transcript</td>
+          <td>call_transcript</td>
+          <td>Text (Multi-line)</td>
+          <td>-</td>
+          <td>Full call conversation text</td>
+        </tr>
+        <tr>
+          <td>Call Recording URL</td>
+          <td>call_recording_url</td>
+          <td>Text</td>
+          <td>URL format</td>
+          <td>Link to VAPI call recording</td>
+        </tr>
+        <tr>
+          <td>Call Duration (seconds)</td>
+          <td>call_duration_seconds</td>
+          <td>Number</td>
+          <td>Integer</td>
+          <td>Total call length</td>
+        </tr>
+        <tr>
+          <td>Call Date & Time</td>
+          <td>call_timestamp</td>
+          <td>Date</td>
+          <td>ISO 8601 format</td>
+          <td>When call was made</td>
+        </tr>
+        <tr>
+          <td>AI Sentiment</td>
+          <td>call_sentiment</td>
+          <td>Dropdown</td>
+          <td>Positive, Neutral, Negative</td>
+          <td>Customer sentiment from VAPI analysis</td>
+        </tr>
+        <tr>
+          <td>Appointment Scheduled</td>
+          <td>appointment_scheduled</td>
+          <td>Date</td>
+          <td>YYYY-MM-DD HH:MM</td>
+          <td>When appointment was booked</td>
+        </tr>
+        <tr>
+          <td>WhatsApp Sent Date</td>
+          <td>whatsapp_sent_date</td>
+          <td>Date</td>
+          <td>ISO 8601</td>
+          <td>When follow-up WhatsApp was sent</td>
+        </tr>
+        <tr>
+          <td>Interest Level</td>
+          <td>interest_level</td>
+          <td>Dropdown</td>
+          <td>High, Medium, Low</td>
+          <td>Customer's expressed interest</td>
+        </tr>
+      </table>
+
+      <h3>CRM Pipeline Stages Configuration</h3>
+      <table>
+        <tr>
+          <th>Stage Name</th>
+          <th>Internal ID</th>
+          <th>Type</th>
+          <th>Triggered By</th>
+          <th>Auto-Assign To</th>
+        </tr>
+        <tr>
+          <td>New Lead</td>
+          <td>new_lead</td>
+          <td>Entry Point</td>
+          <td>Lead form or missed call</td>
+          <td>Sales Team</td>
+        </tr>
+        <tr>
+          <td>AI Called</td>
+          <td>ai_called</td>
+          <td>Process</td>
+          <td>VAPI call completed</td>
+          <td>System Auto</td>
+        </tr>
+        <tr>
+          <td>Qualified</td>
+          <td>qualified</td>
+          <td>Opportunity</td>
+          <td>qualification_status = qualified</td>
+          <td>Loan Officer (by product)</td>
+        </tr>
+        <tr>
+          <td>Needs Review</td>
+          <td>needs_review</td>
+          <td>Escalation</td>
+          <td>qualification_status = needs_review</td>
+          <td>Senior Loan Counselor</td>
+        </tr>
+        <tr>
+          <td>Follow-up Scheduled</td>
+          <td>followup_scheduled</td>
+          <td>Process</td>
+          <td>Appointment booked</td>
+          <td>Assigned Loan Officer</td>
+        </tr>
+        <tr>
+          <td>Document Shared</td>
+          <td>document_shared</td>
+          <td>Process</td>
+          <td>WhatsApp sent</td>
+          <td>Assigned Loan Officer</td>
+        </tr>
+        <tr>
+          <td>Application Submitted</td>
+          <td>app_submitted</td>
+          <td>Process</td>
+          <td>Formal application received</td>
+          <td>Document Processing Team</td>
+        </tr>
+        <tr>
+          <td>Approved</td>
+          <td>approved</td>
+          <td>Win</td>
+          <td>Loan approved by bank</td>
+          <td>Relationship Manager</td>
+        </tr>
+        <tr>
+          <td>Rejected</td>
+          <td>rejected</td>
+          <td>Loss</td>
+          <td>Application rejected</td>
+          <td>Sales Lead</td>
+        </tr>
+        <tr>
+          <td>Not Interested</td>
+          <td>not_interested</td>
+          <td>Loss</td>
+          <td>Customer opt-out</td>
+          <td>None</td>
+        </tr>
+      </table>
+
+      <h3>API Integration Code Sample (Node.js)</h3>
+      <div class="code">
+// Map VAPI webhook data to HubSpot contact
+const mapVapiToHubSpot = (vapiData) => {
+  return {
+    firstname: vapiData.analysis.structuredData.customer_name,
+    phone: vapiData.analysis.structuredData.phone_number,
+    email: vapiData.analysis.structuredData.email,
+    city: "Latur",
+    vapi_call_id: vapiData.callId,
+    hs_lead_source: "VAPI AI Outbound",
+    loan_product: vapiData.loanType,
+    loan_amount_required: vapiData.analysis.structuredData.loan_amount,
+    monthly_income: vapiData.analysis.structuredData.monthly_income,
+    qualification_status: vapiData.analysis.structuredData.qualification_status,
+    next_action: vapiData.analysis.structuredData.next_action,
+    call_transcript: vapiData.transcript,
+    call_recording_url: vapiData.recordingUrl,
+    call_duration_seconds: vapiData.duration,
+    call_timestamp: vapiData.timestamp,
+    interest_level: vapiData.analysis.structuredData.interest_level || "Medium"
+  };
+};
+      </div>
+    </div>
+
+    <!-- SECTION 6: AUTO-DEPLOYMENT COMMANDS -->
+    <div class="section">
+      <h2>⚙️ Auto-Deployment Commands (Vercel + GitHub + CI/CD)</h2>
+
+      <div class="alert alert-warning">
+        <strong>Before running commands:</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li>Have GitHub and Vercel accounts ready</li>
+          <li>Generate GitHub Personal Access Token</li>
+          <li>Have environment variables prepared</li>
+        </ul>
+      </div>
+
+      <h3>Step 1: Initialize GitHub Repository</h3>
+      <div class="code">
+# Clone your existing repo or create new
+cd /path/to/AVANI\ LOAN\ SERVICE\ FY\ 26-27
+git init
+git add .
+git commit -m "VAPI Automation Initial Commit"
+git remote add origin https://github.com/YOUR_USERNAME/avani-loan-services.git
+git branch -M main
+git push -u origin main
+      </div>
+
+      <h3>Step 2: Connect to Vercel</h3>
+      <div class="code">
+# Install Vercel CLI
+npm install -g vercel
+
+# Login to Vercel
+vercel login
+
+# Link project to Vercel
+vercel link
+
+# Select: Create new project
+# Project name: avani-loan-services
+# Framework: Vite
+# Root directory: ./
+      </div>
+
+      <h3>Step 3: Set Environment Variables in Vercel</h3>
+      <div class="code">
+vercel env add VAPI_API_KEY
+# Enter: YOUR_VAPI_API_KEY_HERE
+
+vercel env add VAPI_ASSISTANT_ID
+# Enter: 9f322737-3bb8-467a-95e3-7a66f9a93dc1
+
+vercel env add VAPI_API_URL
+# Enter: https://api.vapi.ai
+
+vercel env add EXOTEL_SID
+# Enter: YOUR_EXOTEL_SID
+
+vercel env add EXOTEL_TOKEN
+# Enter: YOUR_EXOTEL_TOKEN
+
+vercel env add HUBSPOT_API_KEY
+# Enter: YOUR_HUBSPOT_API_KEY
+
+vercel env add GOOGLE_SHEETS_WEBHOOK_URL
+# Enter: https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec
+
+vercel env add MAKE_WEBHOOK_URL
+# Enter: YOUR_MAKE_WEBHOOK_URL
+      </div>
+
+      <h3>Step 4: Deploy to Production</h3>
+      <div class="code">
+# Build the project
+npm run build
+
+# Deploy to production
+vercel deploy --prod
+
+# Get the live URL
+echo "Your live URL: https://avani-loan-services.vercel.app"
+      </div>
+
+      <h3>Step 5: Update VAPI Webhook URL to Production</h3>
+      <div class="code">
+# Update in VAPI Dashboard:
+# Settings → Webhooks → Edit Webhook
+# URL: https://avani-loan-services.vercel.app/api/webhooks/vapi-callback
+      </div>
+
+      <h3>Step 6: Setup Auto-Deployment on GitHub Push</h3>
+      <div class="code">
+# Vercel auto-connects to GitHub
+# Any push to main branch automatically deploys to production
+
+# To deploy specific branch:
+vercel deploy --prod --target production
+
+# Check deployment status:
+vercel list
+
+# View recent deployments:
+vercel logs
+      </div>
+
+      <h3>Step 7: Continuous Integration Setup (.github/workflows/deploy.yml)</h3>
+      <div class="code">
+name: Deploy to Vercel
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Deploy to Vercel
+        run: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+      </div>
+
+      <h3>Step 8: Full Auto-Deployment Script (Run Once)</h3>
+      <div class="code">
+#!/bin/bash
+# save as: deploy.sh
+# run: chmod +x deploy.sh && ./deploy.sh
+
+echo "🚀 Starting Auto-Deployment for Avani Loan Services..."
+
+# Step 1: GitHub
+echo "📦 Setting up GitHub..."
+git add .
+git commit -m "VAPI Automation Deployment $(date +%Y-%m-%d_%H:%M:%S)"
+git push origin main
+
+# Step 2: Build
+echo "🔨 Building project..."
+npm run build
+
+# Step 3: Deploy to Vercel
+echo "🌐 Deploying to Vercel..."
+vercel deploy --prod
+
+# Step 4: Sync Make.com webhook
+echo "🔗 Updating Make.com webhook..."
+curl -X POST https://eu1.make.com/api/v1/webhooks/activate \
+  -H "Authorization: Bearer YOUR_MAKE_TOKEN" \
+  -d '{"webhook_url": "https://avani-loan-services.vercel.app/api/webhooks/vapi-callback"}'
+
+# Step 5: Test endpoint
+echo "✅ Testing endpoints..."
+curl -X POST https://avani-loan-services.vercel.app/api/webhooks/vapi-callback \
+  -H "Content-Type: application/json" \
+  -d '{"callId": "test", "callStatus": "ended"}'
+
+echo "✅ Deployment Complete!"
+      </div>
+    </div>
+
+    <!-- SECTION 7: MASTER CONVERSATION RECORD -->
+    <div class="section">
+      <h2>📝 Master Conversation & Setup Record</h2>
+      
+      <div class="alert alert-success">
+        <strong>This document serves as your complete automation setup record.</strong> Print or save as PDF for reference.
+      </div>
+
+      <h3>Session Information</h3>
+      <table>
+        <tr><td><strong>Date Created</strong></td><td>May 13, 2026</td></tr>
+        <tr><td><strong>Business</strong></td><td>Avani Loan Services, Latur, Maharashtra</td></tr>
+        <tr><td><strong>Owner</strong></td><td>Sachin Shinde (+91 9175635165)</td></tr>
+        <tr><td><strong>Website</strong></td><td>https://www.avanifinserv.com/</td></tr>
+        <tr><td><strong>Contact Email</strong></td><td>enquiry@avanifinserv.com</td></tr>
+      </table>
+
+      <h3>Technical Stack Configured</h3>
+      <table>
+        <tr>
+          <th>Component</th>
+          <th>Provider</th>
+          <th>Status</th>
+          <th>Configuration URL</th>
+        </tr>
+        <tr>
+          <td>AI Voice Calling</td>
+          <td>VAPI</td>
+          <td>✅ Configured</td>
+          <td>https://dashboard.vapi.ai</td>
+        </tr>
+        <tr>
+          <td>Outbound Dialer</td>
+          <td>Exotel</td>
+          <td>⏳ Pending</td>
+          <td>https://my.exotel.com/avanifinserv1</td>
+        </tr>
+        <tr>
+          <td>CRM System</td>
+          <td>HubSpot</td>
+          <td>⏳ Pending</td>
+          <td>https://app-na2.hubspot.com/global-home/244236573</td>
+        </tr>
+        <tr>
+          <td>Automation Workflows</td>
+          <td>Make.com</td>
+          <td>⏳ Pending</td>
+          <td>https://eu1.make.com/organization/7622610/dashboard</td>
+        </tr>
+        <tr>
+          <td>Lead Backup Logging</td>
+          <td>Google Sheets</td>
+          <td>✅ Ready</td>
+          <td>Google Apps Script Webhook</td>
+        </tr>
+        <tr>
+          <td>Hosting & Deployment</td>
+          <td>Vercel + GitHub</td>
+          <td>⏳ Pending</td>
+          <td>Vercel Dashboard</td>
+        </tr>
+        <tr>
+          <td>WhatsApp Follow-up</td>
+          <td>Twilio/Exotel</td>
+          <td>⏳ Pending</td>
+          <td>API Configuration</td>
+        </tr>
+        <tr>
+          <td>SMS Reminders</td>
+          <td>Exotel SMS</td>
+          <td>⏳ Pending</td>
+          <td>Exotel Dashboard</td>
+        </tr>
+      </table>
+
+      <h3>Key Credentials (Keep Secure)</h3>
+      <table>
+        <tr>
+          <th>Service</th>
+          <th>Credential Type</th>
+          <th>Value (Masked)</th>
+          <th>Stored In</th>
+        </tr>
+        <tr>
+          <td>VAPI</td>
+          <td>API Key</td>
+          <td>006036f2-b1ee-44de-9abd-***</td>
+          <td>Backend .env</td>
+        </tr>
+        <tr>
+          <td>VAPI</td>
+          <td>Assistant ID</td>
+          <td>9f322737-3bb8-467a-95e3-***</td>
+          <td>Backend .env</td>
+        </tr>
+        <tr>
+          <td>Exotel</td>
+          <td>API Key</td>
+          <td>***</td>
+          <td>Backend .env</td>
+        </tr>
+        <tr>
+          <td>HubSpot</td>
+          <td>Private App Token</td>
+          <td>***</td>
+          <td>Backend .env</td>
+        </tr>
+        <tr>
+          <td>Make.com</td>
+          <td>Webhook URL</td>
+          <td>***</td>
+          <td>VAPI Webhook Config</td>
+        </tr>
+        <tr>
+          <td>GitHub</td>
+          <td>Personal Access Token</td>
+          <td>***</td>
+          <td>Vercel Env Vars</td>
+        </tr>
+      </table>
+
+      <h3>7-Day Deployment Milestones</h3>
+      <table>
+        <tr>
+          <th>Day</th>
+          <th>Milestone</th>
+          <th>Status</th>
+          <th>Completion Date</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Setup & Configuration Complete</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>CRM & Integration Setup</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Website & Automation Testing</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Vercel Deployment & CI/CD</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>WhatsApp & SMS Setup</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Pilot Campaign (10 leads)</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Scale to 100 Leads</td>
+          <td>⏳</td>
+          <td>___________</td>
+        </tr>
+      </table>
+
+      <h3>Loan Products Configured</h3>
+      <ul style="margin-left: 20px;">
+        <li>✅ Personal Loan (Script Ready, CRM Fields Ready)</li>
+        <li>✅ Business Loan (Script Ready, CRM Fields Ready)</li>
+        <li>✅ Doctor Loan (Script Ready, CRM Fields Ready)</li>
+        <li>✅ Home Loan (Script Ready, CRM Fields Ready)</li>
+        <li>✅ Education Loan (Script Ready, CRM Fields Ready)</li>
+        <li>✅ Mortgage Loan (Script Ready, CRM Fields Ready)</li>
+      </ul>
+
+      <h3>Notes & Action Items</h3>
+      <div class="subsection">
+        <strong>Completed:</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li>✅ VAPI Assistant ID configured (9f322737-3bb8-467a-95e3-7a66f9a93dc1)</li>
+          <li>✅ Webhook payload template created</li>
+          <li>✅ Campaign scripts for all 6 loan products</li>
+          <li>✅ HubSpot CRM field mapping documented</li>
+          <li>✅ 7-day deployment checklist prepared</li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <strong>Next Actions (Day 1):</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li>⏳ Confirm Exotel business number activation</li>
+          <li>⏳ Setup HubSpot custom fields (30 mins)</li>
+          <li>⏳ Configure Make.com webhook automation (60 mins)</li>
+          <li>⏳ Deploy backend to Vercel (30 mins)</li>
+          <li>⏳ Test website lead form with 3 test submissions</li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <strong>Support & Reference:</strong>
+        <ul style="margin-left: 20px; margin-top: 8px;">
+          <li>🔗 VAPI Documentation: https://docs.vapi.ai</li>
+          <li>🔗 Exotel Documentation: https://exotel.com/docs</li>
+          <li>🔗 HubSpot API: https://developers.hubspot.com</li>
+          <li>🔗 Make.com Docs: https://www.make.com/en/help</li>
+          <li>🔗 Vercel Docs: https://vercel.com/docs</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="section">
+      <h2>📞 Emergency Support Contacts</h2>
+      <table>
+        <tr>
+          <td><strong>Primary</strong></td>
+          <td>Sachin Shinde</td>
+          <td>+91 9175635165</td>
+          <td>enquiry@avanifinserv.com</td>
+        </tr>
+        <tr>
+          <td><strong>VAPI Support</strong></td>
+          <td>support@vapi.ai</td>
+          <td>-</td>
+          <td>https://vapi.ai/support</td>
+        </tr>
+        <tr>
+          <td><strong>Exotel Support</strong></td>
+          <td>support@exotel.com</td>
+          <td>-</td>
+          <td>https://exotel.com/contact</td>
+        </tr>
+        <tr>
+          <td><strong>HubSpot Support</strong></td>
+          <td>support@hubspot.com</td>
+          <td>-</td>
+          <td>https://support.hubspot.com</td>
+        </tr>
+      </table>
+
+      <p style="margin-top: 20px; text-align: center; color: #666; font-size: 12px;">
+        <strong>Document Version:</strong> 1.0 | <strong>Last Updated:</strong> May 13, 2026 | <strong>Status:</strong> Ready for Deployment
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

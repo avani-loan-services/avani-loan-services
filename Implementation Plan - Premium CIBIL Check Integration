@@ -1,0 +1,72 @@
+# Implementation Plan - Premium CIBIL Check Integration
+
+This plan outlines the completion and refinement of the "Free CIBIL Check" feature for Avani Loan Services. The feature will include a multi-step verification process, automated data logging, and a professional credit estimation report.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **EmailJS Integration**: You will need to provide your EmailJS Service ID, Template ID, and Public Key in a `.env` file (or I can help you paste them directly into the code). Without these, the system will run in "Simulation Mode".
+>
+> **Google Apps Script**: I will provide a script below that you must paste into your Google Sheet's "Apps Script" editor to enable data collection.
+
+## Proposed Changes
+
+### Core Logic & API Integration
+
+#### [MODIFY] [CibilCheck.jsx](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.jsx)
+- Finalize the OTP sending logic using `emailjs-com`.
+- Refine the `calculateResult` function to provide a more realistic estimation based on Indian credit score standards.
+- Update the PDF generation with a more professional layout using `jsPDF`.
+- Ensure all form fields (PAN, Mobile, Email) are correctly validated.
+
+#### [MODIFY] [googleSheets.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/lib/googleSheets.js)
+- Ensure the `no-cors` mode is correctly handled to avoid browser blocks when sending data to Google Apps Script.
+
+### UI & Aesthetics
+
+#### [MODIFY] [CibilCheck.css](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/CibilCheck.css)
+- Implement a more premium "Glassmorphism" look for the form.
+- Add smooth GSAP-like animations (using pure CSS transitions/animations) for step transitions.
+- Enhance the Score Gauge visualization with better colors and a premium needle animation.
+
+## Google Apps Script (For User)
+
+You will need to:
+1. Open a new Google Sheet.
+2. Go to **Extensions > Apps Script**.
+3. Paste the following code and click **Deploy > New Deployment** (Type: Web App, Access: Anyone).
+
+```javascript
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  
+  sheet.appendRow([
+    new Date(), 
+    data.name, 
+    data.pan, 
+    data.email, 
+    data.mobile, 
+    data.income, 
+    data.age, 
+    data.estimatedScore
+  ]);
+  
+  return ContentService.createTextOutput(JSON.stringify({"result":"success"})).setMimeType(ContentService.MimeType.JSON);
+}
+```
+
+## Open Questions
+
+- Do you already have an EmailJS account set up with a template? (If not, I can guide you on the template variables).
+- Would you like any specific branding or logos in the downloaded PDF report?
+
+## Verification Plan
+
+### Automated Tests
+- Verify PDF generation download.
+- Test form validation (PAN format check, 10-digit mobile check).
+
+### Manual Verification
+- Test the OTP flow (Simulation mode vs Real mode).
+- Verify data transmission to a mock endpoint.

@@ -1,0 +1,64 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Vercel and Environment Configs
+.vercel
+.vercel/
+.env
+.env.*
+.env*.local
+!.env.example
+backend/.env
+
+# Explicitly Quarantined CRM, Voice, and Operational Artifacts
+HubSpot_CRM_Field_Mapping.csv
+VAPI_Chats*.csv
+eligibility calculation sheet/
+Ref Data/
+scratch/
+uploads/
+migration-forensics/
+SAFE-MIGRATION-BACKUP/
+
+# Operational Exports & Document Quarantine
+*.xlsx
+*.xls
+*.doc
+*.docx
+
+
+# Keys, Tokens, and Credentials
+config/*.json
+*.json.key
+*token*.txt
+*key*.txt
+*Token*.txt
+*.key
+*.pem
+*.p12
+*.pfx
+service-account*.json
+avani-loan-service-*.json

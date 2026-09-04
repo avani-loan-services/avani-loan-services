@@ -1,0 +1,144 @@
+{
+    "name": "Integration Make AI Toolkit",
+    "flow": [
+        {
+            "id": 1,
+            "module": "ai-tools:Extract",
+            "version": 2,
+            "parameters": {
+                "makeConnectionId": 7400066,
+                "model": "large"
+            },
+            "mapper": {
+                "input": "{{add(emptyarray; \"https://avanifinserv.com/\"; \"https://dashboard.vapi.ai\"; \"https://console.twilio.com/dashboard?variant_override=non-dev\"; \"https://app-na2.hubspot.com/global-home/244236573\"; \"https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec\"; \"https://eu1.make.com/organization/7622610/dashboard\")}}\tmy business details are:Business Details: AVANI LOAN SERVICE, ADDRESS: RAJIV GANDHI CHAUK, OPP BANK OF BARODA, ABOVE MONGINIOUS CAKE SHOP, AUSA ROAD, LATUR-413512, PRODUCTS: PERSONAL/SALARY LOAN, BUSINESS LOAN, DOCTOR LOAN, HOME LOAN, MORTGAGE LOAN, EDUCATION LOAN (INDIA AND GLOBAL), WEBSITE: https://avanifinserv.com/, EMAIL: ENQUIRY@AVANIFINSERV.COM. i have following dashboard links want to integrate all in auto mode: website \"https://avanifinserv.com/\" to Vapi Dashboard:    https://dashboard.vapi.ai\r\nTwilo dashboard: https://console.twilio.com/dashboard?variant_override=non-dev\r\nhubspot crm dashboard link: \"https://app-na2.hubspot.com/global-home/244236573\"\r\nGoogle Sheets web app link: \"https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec\"\r\nMake.com dashboard link: \"https://eu1.make.com/organization/7622610/dashboard\" intgrate website to all other tools mentioned above all details run  in auto mode.",
+                "fields": [
+                    {
+                        "name": "avani",
+                        "description": "\tmy business details are:Business Details: AVANI LOAN SERVICE, ADDRESS: RAJIV GANDHI CHAUK, OPP BANK OF BARODA, ABOVE MONGINIOUS CAKE SHOP, AUSA ROAD, LATUR-413512, PRODUCTS: PERSONAL/SALARY LOAN, BUSINESS LOAN, DOCTOR LOAN, HOME LOAN, MORTGAGE LOAN, EDUCATION LOAN (INDIA AND GLOBAL), WEBSITE: https://avanifinserv.com/, EMAIL: ENQUIRY@AVANIFINSERV.COM. i have following dashboard links want to integrate all in auto mode: website \"https://avanifinserv.com/\" to Vapi Dashboard:    https://dashboard.vapi.ai\r\nTwilo dashboard: https://console.twilio.com/dashboard?variant_override=non-dev\r\nhubspot crm dashboard link: \"https://app-na2.hubspot.com/global-home/244236573\"\r\nGoogle Sheets web app link: \"https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec\"\r\nMake.com dashboard link: \"https://eu1.make.com/organization/7622610/dashboard\" intgrate website to all other tools mentioned above all details run  in auto mode.{{executionId}}{{executionId}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "makeConnectionId": {
+                            "label": "AVANI LOAN SERVICE",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "ai-provider"
+                            }
+                        },
+                        "model": {
+                            "mode": "edit",
+                            "nested": []
+                        }
+                    },
+                    "expect": {
+                        "fields": {
+                            "items": [
+                                {
+                                    "type": {
+                                        "mode": "edit"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "makeConnectionId",
+                        "type": "account:ai-provider,openai-gpt-3,anthropic-claude,gemini-ai-q9zyjp,ai-agent-foundry-openai,ai-agent-foundry-non-openai,mistral-ai,cohere,groq,ai-agent-xai,amazon-bedrock,ai-agent-openai-compatible",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "input",
+                        "type": "text",
+                        "label": "Text",
+                        "required": true
+                    },
+                    {
+                        "name": "fields",
+                        "type": "array",
+                        "label": "Information",
+                        "required": true,
+                        "spec": {
+                            "type": "collection",
+                            "label": "Information",
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "type": "text",
+                                    "label": "Name",
+                                    "required": true
+                                },
+                                {
+                                    "name": "description",
+                                    "type": "text",
+                                    "label": "Description",
+                                    "required": true
+                                },
+                                {
+                                    "name": "type",
+                                    "type": "select",
+                                    "label": "Type",
+                                    "required": true,
+                                    "options": [
+                                        {
+                                            "label": "Text",
+                                            "value": "string"
+                                        },
+                                        {
+                                            "label": "Number",
+                                            "value": "number"
+                                        },
+                                        {
+                                            "label": "Boolean",
+                                            "value": "boolean"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "name": "value"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}

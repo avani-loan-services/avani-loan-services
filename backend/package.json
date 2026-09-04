@@ -1,0 +1,33 @@
+{
+  "name": "avani-loan-services-backend",
+  "version": "1.0.0",
+  "description": "VAPI AI Calling System Backend for Avani Loan Services",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vapi",
+    "ai-calling",
+    "loan-management",
+    "crm"
+  ],
+  "author": "Avani Loan Services",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
+    "twilio": "^3.77.3",
+    "googleapis": "^118.0.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}

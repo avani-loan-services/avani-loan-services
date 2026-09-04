@@ -1,0 +1,32 @@
+# Walkthrough - Alternative CIBIL Verification Methods
+
+I have enhanced the CIBIL check verification flow to ensure that no user is blocked if the email OTP system fails.
+
+## Changes Made
+
+### 1. Global Master OTP
+- **Implemented**: `1234` is now a universal master OTP that works for any user.
+- **Tip Added**: A subtle tip is displayed under the OTP boxes: *"Tip: Use 1234 as OTP if you don't receive the email."*
+
+### 2. Multi-Option Verification UI
+- **WhatsApp Button**: Added a primary **"Verify via WhatsApp"** button. This opens a pre-filled message to your number (+91 7249108474) with the user's Name and PAN.
+- **Skip Logic**: Added a **"Skip & Request Call"** link for users who prefer manual verification.
+
+### 3. Data Integrity
+- **Logging**: The system now logs the `verificationMethod` (OTP, Master OTP, WhatsApp, or Manual Skip) to your Google Sheets lead tracker.
+- **Immediate Results**: All alternative methods (WhatsApp/Skip) allow the user to see their result immediately in Step 3.
+
+## How to Test
+
+1.  Go to the **CIBIL Check** page.
+2.  Fill in the details and click **Get OTP**.
+3.  On the verification screen:
+    *   Try entering `1234` - it should instantly take you to the results.
+    *   Try clicking **Verify via WhatsApp** - it should open a new tab with a WhatsApp message.
+    *   Try clicking **Skip & Request Call** - it should proceed to the results page.
+4.  Check your Google Sheets to see the "verificationMethod" column updated.
+
+---
+
+> [!TIP]
+> This "multi-lane" approach ensures the highest possible conversion rate for your leads by removing technical friction.

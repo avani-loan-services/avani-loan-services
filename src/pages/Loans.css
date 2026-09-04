@@ -1,0 +1,241 @@
+.loans-detail-grid {
+  display: grid;
+  gap: 30px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 992px) {
+  .loans-detail-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.loan-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ldc-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.ldc-image-wrapper {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.ldc-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.loan-detail-card:hover .ldc-image {
+  transform: scale(1.05);
+}
+
+.ldc-title {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.ldc-tagline {
+  color: var(--secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.ldc-desc {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.ldc-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.meta-val {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.rate-val {
+  color: var(--primary);
+}
+
+.ldc-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ldc-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.ldc-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.ldc-actions .btn {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* =========================================================
+   NEW DOCUMENT GUIDE STYLES 
+   ========================================================= */
+
+.document-guide-section {
+  padding: 60px 20px;
+  background-color: #f8fafc;
+}
+
+.doc-section-block {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  border-left: 4px solid var(--primary);
+}
+
+.doc-section-block h3 {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.doc-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .doc-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.doc-card {
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doc-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.doc-card.alt {
+  background: white;
+  border: 1px solid var(--border);
+}
+
+.doc-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.doc-card h4 {
+  font-size: 1.2rem;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.doc-gov {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.doc-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  color: var(--text-dark);
+}
+
+.doc-list.sm li {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.doc-list.no-icon li {
+  position: relative;
+  padding-left: 20px;
+}
+
+.doc-list.no-icon li::before {
+  content: '•';
+  color: var(--primary);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.doc-kyc-card {
+  background: linear-gradient(135deg, #0a4f8b, #1670c0);
+  color: white;
+  border-left: none;
+}
+
+.doc-kyc-card h3 {
+  color: white;
+}
+
+.doc-kyc-card p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
+}
+
+.doc-list.white li {
+  color: white;
+}

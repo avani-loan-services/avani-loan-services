@@ -1,0 +1,54 @@
+# 📜 Avani Loan Services — Project Record Summary (FY 2026-27)
+
+*This document serves as a permanent record of all structural changes, feature integrations, and service configurations implemented for your platform.*
+
+---
+
+## ✅ Core Features Implemented
+
+### 1. 🛡️ Premium CIBIL Check Integration (Latest)
+- **EmailJS OTP Flow**: Added secure 4-digit OTP verification via your `emailjs-com` account (`service_ez4cafu`).
+- **Google Sheets Automated Logging**: Connected the form to your Google Apps Script Webhook. All leads are now saved in your "CIBIL TRACKING SHEET".
+- **Branded PDF Generation**: Implemented official-style reports (CIBIL/Experian look) with credit factor analysis and score range legends.
+- **Score Analytics**: Dynamic "Status" indicators (Poor, Fair, Good, Excellent) based on Indian credit standards.
+
+### 2. 📊 Zoho CRM Lead Integration
+- **Direct Form Capture**: All application forms (Personal, Business, Home, etc.) are wired to send data to your Zoho Connected Workflow.
+- **Auto-WhatsApp Redirection**: On form submission, a pre-filled WhatsApp message opens to your number (+917249108474) so you can chat with the lead immediately.
+
+### 3. 🖥️ Website Infrastructure
+- **Vite + React Core**: Built for speed and SEO.
+- **6 Primary Loan Products**: Dedicated cards with rates and tenure details.
+- **10 SEO Blog Articles**: Written to capture local search traffic (CIBIL, Latur loans, etc.).
+- **Live EMI Calculator**: Interactive sliders for loan eligibility estimation.
+
+---
+
+## 🛠️ Service Configuration Details
+
+| Service | Setting | Value |
+|---|---|---|
+| **Vercel URL** | Production Web | `https://avani-loan-services.vercel.app` |
+| **EmailJS Svc ID** | OTP Sending | `service_ez4cafu` |
+| **EmailJS Pub Key** | Public Access | `keeklL2S-cJ4zYcyV` |
+| **Sheets Webhook** | Lead Logging | `https://script.google.com/macros/s/AKfycbyl.../exec` |
+| **Zoho Workflow** | Lead Submission | Linked in `LeadForm.jsx` |
+
+---
+
+## 📈 Changes Timeline (Summary)
+
+*   **Phase 1: Foundation**: Established site structure, routing, and basic loan pages.
+*   **Phase 2: Lead Gen**: Integrated Zoho CRM forms and WhatsApp FAB button.
+*   **Phase 3: Design Polish**: Implemented official Avani brand logos and premium blue/gold color palette.
+*   **Phase 4: Advanced Tools**: Added EMI calculators and Documentation accordions.
+*   **Phase 5: Final Refinement**: Completed "Free CIBIL Check" with OTP and Google Sheets automation.
+
+---
+
+## 💡 Recommended Future Updates
+- [ ] Connect custom domain `avaniloans.com` to Vercel (See hosting advice).
+- [ ] Set up Google Analytics to track visitor count.
+- [ ] Add real customer testimonial photos to the Home page.
+
+*Document generated on: April 21, 2026*

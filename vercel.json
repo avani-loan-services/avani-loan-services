@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    { "source": "/api/eligibility/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/auth/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/omnidm/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/crm/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/whatsapp/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/lead/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/marketing/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/documents/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/meta/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/calculator-auth/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

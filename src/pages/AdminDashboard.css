@@ -1,0 +1,620 @@
+/* Admin Dashboard Styles */
+
+.admin-dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 30px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.dashboard-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.dashboard-nav {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Overview Tab */
+.dashboard-overview {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.metric-card h3 {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.quick-actions {
+  background: #f8f9fa;
+  padding: 30px;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+}
+
+.quick-actions h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.action-btn {
+  padding: 15px 20px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  border-color: #667eea;
+  background: #f0f3ff;
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.btn-primary:hover {
+  background: #667eea;
+  color: white;
+}
+
+.btn-secondary {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.btn-secondary:hover {
+  background: #28a745;
+  color: white;
+}
+
+.btn-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.btn-info:hover {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.btn-warning:hover {
+  background: #ffc107;
+  color: white;
+}
+
+/* Leads Tab */
+.dashboard-leads {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.leads-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.leads-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-select {
+  padding: 10px 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.leads-table {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.leads-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.leads-table th {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.leads-table td {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.leads-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.leads-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.leads-table tr.status-qualified {
+  border-left: 4px solid #28a745;
+}
+
+.leads-table tr.status-pending {
+  border-left: 4px solid #ffc107;
+}
+
+.leads-table tr.status-not_qualified {
+  border-left: 4px solid #dc3545;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge-info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge-primary {
+  background: #d1ecf1;
+  color: #0056b3;
+}
+
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  height: 24px;
+}
+
+.score-bar .score-fill {
+  height: 6px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 3px;
+  min-width: 0;
+  transition: width 0.3s ease;
+  flex: 1;
+}
+
+.score-bar span {
+  font-weight: 600;
+  min-width: 30px;
+  color: #667eea;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-small {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-call {
+  background: #007bff;
+  color: white;
+}
+
+.btn-call:hover {
+  background: #0056b3;
+}
+
+.btn-whatsapp {
+  background: #25d366;
+  color: white;
+}
+
+.btn-whatsapp:hover {
+  background: #20ba5a;
+}
+
+.btn-schedule {
+  background: #ffc107;
+  color: white;
+}
+
+.btn-schedule:hover {
+  background: #e0a800;
+}
+
+/* Campaigns Tab */
+.dashboard-campaigns {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.campaigns-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.campaigns-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.upload-section {
+  position: relative;
+}
+
+.file-input {
+  display: none;
+}
+
+.btn-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-upload:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.campaigns-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.campaign-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.campaign-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+  transform: translateY(-3px);
+}
+
+.campaign-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.campaign-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.campaign-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.campaign-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-small.btn-primary {
+  background: #667eea;
+  color: white;
+  flex: 1;
+}
+
+.btn-small.btn-secondary {
+  background: #6c757d;
+  color: white;
+  flex: 1;
+}
+
+.btn-small.btn-danger {
+  background: #dc3545;
+  color: white;
+  flex: 1;
+}
+
+.btn-small.btn-primary:hover,
+.btn-small.btn-secondary:hover,
+.btn-small.btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* Analytics Tab */
+.dashboard-analytics {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.dashboard-analytics h3 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.analytics-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 25px;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.analytics-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-card h4 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.analytics-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #667eea;
+  margin: 0 0 10px 0;
+}
+
+.analytics-trend {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 20px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .leads-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .leads-table {
+    font-size: 0.85rem;
+  }
+
+  .leads-table th,
+  .leads-table td {
+    padding: 10px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .campaigns-list {
+    grid-template-columns: 1fr;
+  }
+}

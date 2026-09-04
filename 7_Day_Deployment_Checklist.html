@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7-Day Deployment Checklist - AVANI Loan Services</title>
+  </style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; color: #222; background: #f5f5f5; line-height: 1.6; }
+    .container { max-width: 900px; margin: auto; padding: 20px; }
+    .page { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    h1 { color: #0f4c81; font-size: 28px; margin-bottom: 5px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+    .day-section { margin-bottom: 30px; page-break-inside: avoid; }
+    .day-header { background: linear-gradient(135deg, #0f4c81, #1a73e8); color: white; padding: 12px 16px; border-radius: 6px 6px 0 0; }
+    .day-header h2 { font-size: 18px; margin: 0; }
+    .day-header p { font-size: 12px; opacity: 0.9; margin: 4px 0 0 0; }
+    .day-content { border: 2px solid #1a73e8; border-top: none; padding: 16px; border-radius: 0 0 6px 6px; }
+    .task-list { list-style: none; padding: 0; }
+    .task-list li { padding: 8px 0; padding-left: 28px; position: relative; font-size: 13px; }
+    .task-list li::before { 
+      content: "☐"; 
+      position: absolute; 
+      left: 0; 
+      top: 0; 
+      font-size: 16px; 
+      color: #1a73e8;
+      cursor: pointer;
+    }
+    .task-list li.completed::before { content: "☑"; color: #4caf50; }
+    .task-list li.completed { color: #999; text-decoration: line-through; }
+    .subtask { margin-left: 20px; padding: 6px 0; font-size: 12px; color: #666; }
+    .note { background: #f0f7ff; border-left: 4px solid #1a73e8; padding: 10px 12px; margin: 12px 0; border-radius: 4px; font-size: 12px; }
+    .warning { background: #fff8f0; border-left: 4px solid #ff9800; padding: 10px 12px; margin: 12px 0; border-radius: 4px; font-size: 12px; }
+    .success-box { background: #e8f5e9; border: 2px solid #4caf50; padding: 16px; border-radius: 6px; margin: 20px 0; }
+    .success-box h3 { color: #2e7d32; margin-bottom: 8px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric { background: #f5f5f5; padding: 10px; border-radius: 4px; border-left: 3px solid #1a73e8; }
+    .metric strong { color: #0f4c81; display: block; }
+    .metric p { font-size: 12px; color: #666; margin-top: 4px; }
+    .contact-info { background: #f9f9f9; padding: 12px; border-radius: 4px; font-size: 12px; margin: 12px 0; }
+    .dashboard-link { display: inline-block; background: #1a73e8; color: white; padding: 6px 10px; border-radius: 3px; text-decoration: none; font-size: 12px; margin: 4px 0; }
+    .time-estimate { color: #ff9800; font-weight: bold; font-size: 12px; }
+    @media print {
+      body { background: white; }
+      .page { box-shadow: none; page-break-inside: avoid; }
+      .day-section { page-break-inside: avoid; }
+      .dashboard-link { color: #0f4c81; text-decoration: underline; background: transparent; }
+    }
+  </style>
+  <link rel="stylesheet" href="/css/checklist.css">
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+      <h1>🚀 7-Day Deployment Checklist</h1>
+      <p class="subtitle">Avani Loan Services - AI Outbound Automation | May 13 - May 20, 2026</p>
+
+      <!-- DAY 1 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 1: Setup & Configuration</h2>
+          <p>Monday - Core infrastructure verification | ⏱ 3-4 hours</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li>Verify VAPI API key is set in backend environment variables
+              <div class="subtask">API Key: YOUR_VAPI_API_KEY_HERE</div>
+            </li>
+            <li>Verify VAPI Assistant ID in code and environment
+              <div class="subtask">Assistant ID: 9f322737-3bb8-467a-95e3-7a66f9a93dc1</div>
+            </li>
+            <li>Confirm webhook endpoint is configured
+              <div class="subtask">/api/webhooks/vapi-callback</div>
+            </li>
+            <li>Enable structured data analysis in VAPI dashboard for all 6 assistants
+              <div class="subtask">Settings → Assistants → Enable Analysis Plan</div>
+            </li>
+            <li>Set call timeout to 5 minutes and retry policy to 2 attempts
+              <div class="subtask">VAPI Settings → Call Configuration</div>
+            </li>
+            <li>Verify Exotel business number is active
+              <div class="subtask">Number: +91 9175635165 | Dashboard: <a href="https://my.exotel.com/avanifinserv1" class="dashboard-link">Exotel</a></div>
+            </li>
+            <li>Create .env file with all credentials (keep secure)
+              <div class="subtask">VAPI_API_KEY, VAPI_ASSISTANT_ID, EXOTEL_SID, HUBSPOT_API_KEY, etc.</div>
+            </li>
+          </ul>
+          <div class="note">
+            <strong>✓ Day 1 Success Criteria:</strong> All API keys verified, webhook endpoint responding, VAPI assistants showing in dashboard
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 2 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 2: CRM & Integration Setup</h2>
+          <p>Tuesday - HubSpot configuration and Make.com automation | ⏱ 4-5 hours</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li><span class="time-estimate">[30 min]</span> Create HubSpot custom fields
+              <div class="subtask">Go to: Settings → Objects → Contacts → Custom Properties</div>
+              <div class="subtask">Create: vapi_call_id, loan_product, qualification_status, monthly_income, next_action, call_timestamp</div>
+              <div class="subtask">Refer to: HubSpot_CRM_Field_Mapping.csv for complete field list</div>
+            </li>
+            <li><span class="time-estimate">[20 min]</span> Create HubSpot pipeline stages
+              <div class="subtask">Sales → Deals → Pipeline Settings</div>
+              <div class="subtask">Add: New Lead → AI Called → Qualified → Needs Review → Follow-up Scheduled → Won/Lost</div>
+            </li>
+            <li><span class="time-estimate">[60 min]</span> Configure Make.com webhook trigger
+              <div class="subtask">Dashboard: <a href="https://eu1.make.com/organization/7622610/dashboard" class="dashboard-link">make.com</a></div>
+              <div class="subtask">Create trigger for VAPI webhook → receives POST from /api/webhooks/vapi-callback</div>
+            </li>
+            <li><span class="time-estimate">[60 min]</span> Setup Make.com workflow: VAPI → HubSpot → Google Sheets
+              <div class="subtask">Module 1: Wait for webhook from VAPI</div>
+              <div class="subtask">Module 2: Create/update contact in HubSpot</div>
+              <div class="subtask">Module 3: Append row to Google Sheets</div>
+              <div class="subtask">Module 4: Send WhatsApp (if applicable)</div>
+            </li>
+            <li><span class="time-estimate">[30 min]</span> Test Make.com workflow with 1 sample lead
+              <div class="subtask">Manually trigger workflow with test data</div>
+              <div class="subtask">Verify contact appears in HubSpot</div>
+              <div class="subtask">Verify row added to Google Sheets</div>
+            </li>
+            <li>Verify Google Sheets webhook URL is accessible and logged in
+              <div class="subtask">URL: <a href="https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9JijcJQQQZc49s_gI02LhhqhZbl5K3-aWuM2QJTkmdWABrQExqg3_vB/exec" class="dashboard-link">Google Apps Script</a></div>
+            </li>
+          </ul>
+          <div class="note">
+            <strong>✓ Day 2 Success Criteria:</strong> Make.com automation workflow created and tested successfully; HubSpot fields visible; test lead appears in both HubSpot and Google Sheets
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 3 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 3: Website & Automation Testing</h2>
+          <p>Wednesday - End-to-end testing with real interactions | ⏱ 3-4 hours</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li>Test website lead form submission with 3 test entries
+              <div class="subtask">Website: <a href="https://www.avanifinserv.com/" class="dashboard-link">avanifinserv.com</a></div>
+              <div class="subtask">Test data: Full name, valid phone, email, loan type, amount</div>
+            </li>
+            <li>Verify forms appear in HubSpot within 5 minutes
+              <div class="subtask">HubSpot Contacts → Check if new contacts created</div>
+            </li>
+            <li>Verify forms logged in Google Sheets
+              <div class="subtask">Open Google Sheets → check for new rows from website submission</div>
+            </li>
+            <li>Test VAPI dashboard call trigger with test phone number
+              <div class="subtask">VAPI Dashboard → Assistants → Make Call button</div>
+              <div class="subtask">Use internal test phone (ask manager for test number)</div>
+            </li>
+            <li>Verify webhook received and processed
+              <div class="subtask">Check backend logs for "VAPI Webhook Received" message</div>
+              <div class="subtask">Confirm callId, duration, transcript logged</div>
+            </li>
+            <li>Test Exotel missed call automation
+              <div class="subtask">Call +91 9175635165 and hang up immediately</div>
+              <div class="subtask">Verify WhatsApp callback request received within 30 seconds</div>
+            </li>
+            <li>Review sample transcripts for quality and completeness
+              <div class="subtask">VAPI Dashboard → Calls → Review transcript content</div>
+            </li>
+          </ul>
+          <div class="note">
+            <strong>✓ Day 3 Success Criteria:</strong> 3 test forms successfully synced to HubSpot; 1 VAPI call completed with webhook processed; missed call automation working
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 4 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 4: Vercel Deployment & CI/CD</h2>
+          <p>Thursday - Production deployment | ⏱ 3-4 hours</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li><span class="time-estimate">[30 min]</span> Push code to GitHub repository
+              <div class="subtask">git add . && git commit -m "VAPI Automation Setup"</div>
+              <div class="subtask">git push origin main</div>
+            </li>
+            <li><span class="time-estimate">[30 min]</span> Connect GitHub repo to Vercel
+              <div class="subtask">Vercel Dashboard → Import Project from GitHub</div>
+              <div class="subtask">Select: avani-loan-services repo</div>
+              <div class="subtask">Framework: Vite | Build: npm run build</div>
+            </li>
+            <li><span class="time-estimate">[30 min]</span> Set environment variables in Vercel
+              <div class="subtask">Settings → Environment Variables</div>
+              <div class="subtask">Add: VAPI_API_KEY, VAPI_ASSISTANT_ID, EXOTEL_SID, EXOTEL_TOKEN, HUBSPOT_API_KEY, GOOGLE_SHEETS_WEBHOOK_URL, MAKE_WEBHOOK_URL</div>
+            </li>
+            <li><span class="time-estimate">[30 min]</span> Deploy to production
+              <div class="subtask">Run: npm run build && vercel deploy --prod</div>
+              <div class="subtask">Get live URL: e.g., https://avani-loan-services.vercel.app</div>
+            </li>
+            <li>Verify all endpoints accessible from production URL
+              <div class="subtask">Test: /api/webhooks/vapi-callback → Should return 200 OK</div>
+              <div class="subtask">Test: /api/save-lead → Should return 200 OK</div>
+            </li>
+            <li>Update VAPI webhook URL to production endpoint
+              <div class="subtask">VAPI Dashboard → Settings → Webhooks → Edit</div>
+              <div class="subtask">Update URL: https://avani-loan-services.vercel.app/api/webhooks/vapi-callback</div>
+            </li>
+            <li>Update Make.com webhook to production endpoint
+              <div class="subtask">Make.com Dashboard → Scenario → Update webhook URL</div>
+            </li>
+            <li>Test full flow from production website
+              <div class="subtask">Submit form on live website</div>
+              <div class="subtask">Verify data syncs to HubSpot</div>
+            </li>
+          </ul>
+          <div class="warning">
+            <strong>⚠️ Important:</strong> After updating webhook URL in VAPI, test with 1 call before scaling
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 5 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 5: WhatsApp & SMS Setup</h2>
+          <p>Friday - Communication channels | ⏱ 2-3 hours</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li><span class="time-estimate">[60 min]</span> Configure WhatsApp Business API
+              <div class="subtask">Option 1: Twilio → Setup WhatsApp sandbox or production number</div>
+              <div class="subtask">Option 2: Exotel → Enable WhatsApp integration</div>
+              <div class="subtask">Get WhatsApp API credentials and save to .env</div>
+            </li>
+            <li>Create WhatsApp templates
+              <div class="subtask">Template 1: Loan Offer (after qualified call)</div>
+              <div class="subtask">Template 2: Appointment Reminder</div>
+              <div class="subtask">Template 3: Document Request</div>
+              <div class="subtask">Template 4: Callback Request (for missed calls)</div>
+            </li>
+            <li>Test WhatsApp send from Make.com automation
+              <div class="subtask">Manually trigger workflow with test phone</div>
+              <div class="subtask">Verify message received on phone within 10 seconds</div>
+            </li>
+            <li>Configure SMS gateway
+              <div class="subtask">Use Exotel SMS or Twilio SMS</div>
+              <div class="subtask">Get SMS API credentials</div>
+            </li>
+            <li>Create SMS templates
+              <div class="subtask">Template: Appointment reminder (max 160 chars)</div>
+              <div class="subtask">Template: Callback request after missed call</div>
+            </li>
+            <li>Test SMS delivery
+              <div class="subtask">Send test SMS to internal phone first</div>
+              <div class="subtask">Verify delivery within 30 seconds</div>
+            </li>
+          </ul>
+          <div class="note">
+            <strong>✓ Day 5 Success Criteria:</strong> WhatsApp test message received; SMS test message delivered
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 6 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 6: Pilot Campaign (10 Leads)</h2>
+          <p>Saturday - Small-scale testing | ⏱ 4-5 hours</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li>Prepare 10 test phone numbers (internal team, friends, trusted contacts)
+              <div class="subtask">Verify all numbers are authentic and available</div>
+              <div class="subtask">Segment by loan type if possible (at least 2 personal, 2 business, etc.)</div>
+            </li>
+            <li>Upload leads to campaign in VAPI or via API
+              <div class="subtask">Format: JSON array with phoneNumber, assistantId, loanType</div>
+            </li>
+            <li>Trigger outbound AI calls for all 10 numbers
+              <div class="subtask">Use VAPI Dashboard or API batch call function</div>
+              <div class="subtask">Spread calls over 10 minutes (1 call/minute)</div>
+            </li>
+            <li>Monitor VAPI dashboard for call metrics in real-time
+              <div class="subtask">Total calls: should be 10</div>
+              <div class="subtask">Completed: track which calls connected</div>
+              <div class="subtask">Duration: check average call length</div>
+            </li>
+            <li>Verify all 10 leads captured in HubSpot
+              <div class="subtask">HubSpot Contacts → Filter by "Source = VAPI AI Outbound"</div>
+              <div class="subtask">Count should be 10</div>
+            </li>
+            <li>Check call transcripts and recordings
+              <div class="subtask">VAPI Dashboard → Calls → Review 3-5 random calls</div>
+              <div class="subtask">Assess: clarity, conversation flow, qualification questions asked</div>
+            </li>
+            <li>Verify qualification status assigned
+              <div class="subtask">HubSpot → Contacts → Check "Qualification Status" field is populated</div>
+            </li>
+            <li>Confirm WhatsApp follow-up messages sent
+              <div class="subtask">Count delivery notifications in WhatsApp</div>
+              <div class="subtask">Target: 8+ of 10 delivered</div>
+            </li>
+            <li>Confirm Google Sheets has 10 entries
+              <div class="subtask">Google Sheets → Count rows in AVANI_Leads sheet</div>
+            </li>
+          </ul>
+          <div class="success-box">
+            <h3>✓ Pilot Campaign Metrics (Day 6 End)</h3>
+            <div class="metrics">
+              <div class="metric">
+                <strong>Calls Completed:</strong>
+                <p>Target: 10/10</p>
+              </div>
+              <div class="metric">
+                <strong>Leads in HubSpot:</strong>
+                <p>Target: 10</p>
+              </div>
+              <div class="metric">
+                <strong>WhatsApp Delivered:</strong>
+                <p>Target: 8+</p>
+              </div>
+              <div class="metric">
+                <strong>Average Call Duration:</strong>
+                <p>Target: 3-4 min</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 7 -->
+      <div class="day-section">
+        <div class="day-header">
+          <h2>📅 DAY 7: Scale to 100 Leads & Monitor</h2>
+          <p>Sunday - Full campaign launch | ⏱ 6-8 hours (monitoring)</p>
+        </div>
+        <div class="day-content">
+          <ul class="task-list">
+            <li>Prepare customer contact list (100 verified phone numbers)
+              <div class="subtask">CSV format: phone, name (optional), loan_type (optional)</div>
+              <div class="subtask">Remove duplicates and invalid numbers</div>
+            </li>
+            <li>Segment leads by loan type for better script matching
+              <div class="subtask">Personal Loan: ~25 leads</div>
+              <div class="subtask">Business Loan: ~20 leads</div>
+              <div class="subtask">Home Loan: ~20 leads</div>
+              <div class="subtask">Education Loan: ~15 leads</div>
+              <div class="subtask">Doctor Loan: ~15 leads</div>
+              <div class="subtask">Mortgage/LAP: ~5 leads</div>
+            </li>
+            <li>Set call spread rate: max 2 calls/minute (120 calls/hour)
+              <div class="subtask">VAPI Settings → Call Configuration → Rate Limit</div>
+            </li>
+            <li>Start campaign: Day 7 morning (10:00 AM start time recommended)
+              <div class="subtask">Use VAPI Dashboard or API to batch upload 100 leads</div>
+              <div class="subtask">Monitor first call in real-time before continuing</div>
+            </li>
+            <li>Monitor real-time dashboard: completion rate, avg duration, qualification %
+              <div class="subtask">VAPI Dashboard → Active Campaign view</div>
+              <div class="subtask">Update every 15 minutes</div>
+            </li>
+            <li>Check HubSpot for new deals created
+              <div class="subtask">HubSpot → Deals → Filter by created date = today</div>
+              <div class="subtask">Track deal creation rate</div>
+            </li>
+            <li>Monitor WhatsApp delivery and engagement
+              <div class="subtask">WhatsApp Business → Message Insights</div>
+              <div class="subtask">Track delivery rate, open rate, click rate</div>
+            </li>
+            <li>Review 10 random sample transcripts for quality
+              <div class="subtask">VAPI → Calls → Random sampling</div>
+              <div class="subtask">Quality checklist: greeting, questions asked, objection handled, qualification</div>
+            </li>
+            <li>Monitor system stability
+              <div class="subtask">Check backend logs for errors</div>
+              <div class="subtask">Verify webhook processing all responses</div>
+            </li>
+            <li>Prepare Day 8 report with these metrics:
+              <div class="subtask">Total calls dialed, completion rate, qualified rate, avg duration</div>
+              <div class="subtask">CRM sync rate, WhatsApp delivery rate, system uptime</div>
+            </li>
+          </ul>
+          <div class="success-box">
+            <h3>✓ Campaign Success Targets (Day 7 End)</h3>
+            <div class="metrics">
+              <div class="metric">
+                <strong>Call Completion:</strong>
+                <p>Target: 95%+ (95/100)</p>
+              </div>
+              <div class="metric">
+                <strong>Answer Rate:</strong>
+                <p>Target: 60-70% (60-70 answered)</p>
+              </div>
+              <div class="metric">
+                <strong>Qualified Leads:</strong>
+                <p>Target: 50-60% of answered</p>
+              </div>
+              <div class="metric">
+                <strong>CRM Sync:</strong>
+                <p>Target: 100% in HubSpot</p>
+              </div>
+              <div class="metric">
+                <strong>WhatsApp Delivery:</strong>
+                <p>Target: 90%+</p>
+              </div>
+              <div class="metric">
+                <strong>System Uptime:</strong>
+                <p>Target: 99.9%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMERGENCY CONTACTS -->
+      <div class="day-section">
+        <div class="emergency-box">
+          <h3 class="emergency-title">📞 Emergency Support Contacts</h3>
+          <div class="contact-info">
+            <strong>Primary Contact:</strong> Sachin Shinde<br>
+            Phone: +91 9175635165 | Email: enquiry@avanifinserv.com
+          </div>
+          <div class="contact-info">
+            <strong>VAPI Support:</strong> support@vapi.ai<br>
+            Docs: https://docs.vapi.ai
+          </div>
+          <div class="contact-info">
+            <strong>HubSpot Support:</strong> support@hubspot.com<br>
+            Help: https://support.hubspot.com
+          </div>
+          <div class="contact-info">
+            <strong>Make.com Support:</strong> support@make.com<br>
+            Docs: https://www.make.com/en/help
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <p class="footer-note">
+        <strong>Document:</strong> 7-Day Deployment Checklist | <strong>Business:</strong> Avani Loan Services<br>
+        <strong>Created:</strong> May 13, 2026 | <strong>Period:</strong> May 13-20, 2026
+      </p>
+    </div>
+  </div>
+</body>
+</html>

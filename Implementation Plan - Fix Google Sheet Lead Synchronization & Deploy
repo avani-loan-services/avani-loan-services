@@ -1,0 +1,66 @@
+# Implementation Plan - Fix Google Sheet Lead Synchronization & Deploy
+
+Standardize lead synchronization endpoints and environment variables across frontend, serverless API functions, and backend server files, and deploy the application to ensure lead data flows seamlessly to the new Google Sheet sheet.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Production Webhook URL**: We identified that the Vercel Production environment variable is set to `GOOGLE_SHEET_APP_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwadPvvLiVgLOUbIcnQm7ZeLEOsh1bamEYVJKi11ub8fZc-EAVugAv2WvgfTc5Izg7A4w/exec"`. This appears to be the correct Apps Script URL for your new spreadsheet shown in image2.
+>
+> We will update the code to check this environment variable and fall back to it, replacing the old, hardcoded Apps Script URL (`AKfycby-BeIa9P8-XoutWpBKRq3SnxG-EcWH9MoEDep1C3Gs9_6lJqA6ZFc5cO44mryIg4qOoQ`).
+
+## Proposed Changes
+
+### [Backend Server & Routes]
+
+#### [MODIFY] [server.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/backend/server.js)
+- Import the missing `leadsRouter` on backend startup to avoid a runtime `ReferenceError` when the server starts.
+
+#### [MODIFY] [leads.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/backend/routes/leads.js)
+- Update `sendToGoogleSheets` helper to check `process.env.GOOGLE_SHEET_APP_SCRIPT_URL` or fallback to `process.env.GOOGLE_SHEETS_WEBHOOK_URL` to support both configurations.
+
+---
+
+### [Serverless API Handlers]
+
+#### [MODIFY] [save-lead.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/api/save-lead.js)
+- Update `GOOGLE_WEB_APP_URL` assignment to check `process.env.GOOGLE_SHEET_APP_SCRIPT_URL` or fallback to `process.env.GOOGLE_WEB_APP_URL` to align with the production Vercel environment variable naming.
+
+---
+
+### [Frontend Code]
+
+#### [MODIFY] [googleSheets.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/lib/googleSheets.js)
+- Update `GOOGLE_SHEETS_WEBHOOK_URL` to dynamically retrieve `import.meta.env.VITE_GOOGLE_SHEET_APP_SCRIPT_URL` with a fallback to the correct production webhook URL.
+
+#### [MODIFY] [syncLeads.js](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/lib/syncLeads.js)
+- Standardize `GOOGLE_FORM_URL` fallback hierarchy to check `env.VITE_GOOGLE_SHEET_APP_SCRIPT_URL` first.
+
+---
+
+### [Environment Configurations]
+
+#### [MODIFY] [.env](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/.env)
+- Add/update `VITE_GOOGLE_SHEET_APP_SCRIPT_URL` to point to the new Google Apps Script endpoint.
+
+#### [MODIFY] [backend/.env](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/backend/.env)
+- Add/update `GOOGLE_SHEET_APP_SCRIPT_URL` to point to the new Google Apps Script endpoint.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Run the synchronization verification test:
+  ```powershell
+  node scratch/test-sync.cjs
+  ```
+- Run the build tool to ensure Vite bundles correctly:
+  ```powershell
+  npm run build
+  ```
+
+### Manual Verification
+- Deploy changes to Vercel.
+- Submit a test lead through the Eligibility Checker form.
+- Verify that a new lead record appears in the Google Sheet: `AVANI LOAN SERVICE FY26-27`.

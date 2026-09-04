@@ -1,0 +1,44 @@
+.privacy-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+  line-height: 1.8;
+}
+
+.privacy-body h2 {
+  font-size: 1.3rem;
+  color: var(--primary);
+  margin: 32px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+
+.privacy-body p {
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.privacy-body ul {
+  list-style: disc;
+  margin-left: 24px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+
+.privacy-body ul li {
+  padding: 4px 0;
+}
+
+.privacy-body a {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.privacy-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text-light) !important;
+  text-align: center;
+}

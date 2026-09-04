@@ -1,0 +1,26 @@
+@echo off
+echo ===========================================
+echo   STARTING WINDOWS C DRIVE CLEANUP SYSTEM
+echo ===========================================
+echo.
+
+echo [1/5] Clearing User Temp Files...
+del /q /f /s "%TEMP%\*" >nul 2>&1
+
+echo [2/5] Clearing System Temp Files...
+del /q /f /s "C:\Windows\Temp\*" >nul 2>&1
+
+echo [3/5] Clearing Prefetch Cache...
+del /q /f /s "C:\Windows\Prefetch\*" >nul 2>&1
+
+echo [4/5] Emptying Recycle Bin...
+rd /s /q C:\$Recycle.bin >nul 2>&1
+
+echo [5/5] Flushing DNS Cache...
+ipconfig /flushdns >nul 2>&1
+
+echo.
+echo ===========================================
+echo   CLEANUP COMPLETE! PRESS ANY KEY TO EXIT.
+echo ===========================================
+pause

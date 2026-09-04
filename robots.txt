@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /about
+Disallow: /loans
+Disallow: /eligibility
+Disallow: /cibilcheck
+Disallow: /documents
+Allow: /

@@ -1,0 +1,358 @@
+# 📋 Avani Loan Services — Master Project Reference
+
+> **Last Updated:** April 11, 2026 | **Status:** ✅ LIVE IN PRODUCTION — All 20 checks PASSED
+
+---
+
+## 🌐 Live URLs & Accounts
+
+| Resource | Link |
+|---|---|
+| 🌐 **Live Website** | https://avani-loan-services.vercel.app |
+| 📁 **GitHub Repository** | https://github.com/avaniagrofoods/avani-loan-services |
+| ☁️ **Vercel Dashboard** | https://vercel.com/avaniagrofoods1356-4705s-projects/avani-loan-services |
+| 📊 **Zoho CRM Dashboard** | https://crmplus.zoho.in/starpowerzlatur22101/99778000000010008/index.do/cxapp/home/dashboards/99778000000010101 |
+| 🔗 **Zoho Connected Workflow** | https://crmplus.zoho.in/starpowerzlatur22101/index.do/cxapp/crm/org60057545957/settings/connected-workflow |
+| 🔗 **CIBIL Partner Link** | https://b2c.creditsamadhaan.com/?refer_code=FY665935 |
+
+---
+
+## 👤 Business Details
+
+| Field | Value |
+|---|---|
+| **Business Name** | Avani Loan Services |
+| **Mobile / WhatsApp** | +91-7249108474 |
+| **Email** | starpowerzlatur2210@gmail.com |
+| **Location** | Latur, Maharashtra, India |
+| **Service Area** | All Maharashtra |
+| **GitHub Account** | avaniagrofoods |
+| **Vercel Account** | avaniagrofoods1356-4705 |
+
+---
+
+## 🖥️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Framework** | Vite + React (SPA) |
+| **Styling** | Vanilla CSS (no Tailwind) |
+| **Routing** | react-router-dom |
+| **Icons** | lucide-react + inline SVGs |
+| **Fonts** | Inter (Google Fonts) |
+| **Package Manager** | npm |
+| **Version Control** | Git + GitHub |
+| **Hosting** | Vercel (Free Tier — auto-deploy on push) |
+| **CRM** | Zoho CRM Plus |
+| **WhatsApp** | wa.me/917249108474 |
+
+---
+
+## 📂 Local Project Location
+
+```
+c:\Users\ALPHA-1\Desktop\AVANI LOAN SERVICE FY 26-27\
+```
+
+### Start Development Server
+```powershell
+cd "c:\Users\ALPHA-1\Desktop\AVANI LOAN SERVICE FY 26-27"
+npm run dev
+# Opens at: http://localhost:5173/
+```
+
+### Build for Production
+```powershell
+npm run build
+```
+
+### Deploy to Vercel (after any changes)
+```powershell
+git add .
+git commit -m "describe your change"
+git push
+# Vercel auto-deploys in ~60 seconds
+```
+
+---
+
+## 📁 Full File Structure
+
+```
+AVANI LOAN SERVICE FY 26-27/
+├── index.html                  ← SEO meta tags, Google Fonts
+├── vite.config.js
+├── vercel.json                 ← SPA routing fix (CRITICAL — do not delete)
+├── package.json
+├── public/
+│   └── favicon.svg             ← Blue "A" branded favicon
+└── src/
+    ├── main.jsx                ← Entry point + BrowserRouter
+    ├── App.jsx                 ← All routes + WhatsApp FAB
+    ├── App.css
+    ├── index.css               ← Global styles, CSS variables, animations
+    ├── assets/
+    │   ├── logo.png            ← Avani Loan Services logo (blue+gold, generated)
+    │   ├── personal-loan.png   ← Salary/Personal loan product image
+    │   ├── business-loan.png   ← Business loan product image
+    │   ├── education-loan.png  ← Education loan product image
+    │   ├── home-loan.png       ← Home loan product image
+    │   ├── mortgage-loan.png   ← Mortgage/LAP product image
+    │   ├── cibil-banner.png    ← CIBIL correction section banner image
+    │   └── hero.png            ← Legacy hero image
+    ├── components/
+    │   ├── Navbar.jsx + .css   ← Logo + sticky nav + mobile hamburger
+    │   ├── Footer.jsx + .css   ← Links, contact info, social icons
+    │   └── LeadForm.jsx + .css ← Zoho CRM form (used on Home, About, Contact)
+    └── pages/
+        ├── Home.jsx + .css     ← Hero, loan cards w/ images, CIBIL section, testimonials
+        ├── About.jsx + .css    ← Logo display, story, stats, bank partners
+        ├── Loans.jsx + .css    ← 6 loan products with images + full details
+        ├── Eligibility.jsx + .css  ← EMI Calculator (3 sliders, live results)
+        ├── Documents.jsx + .css    ← Accordion — docs per loan type
+        ├── Blog.jsx + .css     ← 10 SEO articles
+        ├── Contact.jsx + .css  ← Full form + map + WhatsApp
+        └── Privacy.jsx + .css  ← Privacy Policy
+```
+
+> ⚠️ **IMPORTANT:** `vercel.json` is critical for direct-URL access to any page. Without it, pages other than Home return 404 on Vercel.
+
+---
+
+## 📄 Website Pages — Full Audit (April 11, 2026)
+
+| Page | Route | Status | Key Features |
+|---|---|---|---|
+| 🏠 Home | `/` | ✅ LIVE | Hero "48 Hours", loan cards + images, CIBIL section, testimonials, lead form |
+| ℹ️ About | `/about` | ✅ LIVE | Logo displayed, story, 500+ stats, 10 bank partners |
+| 💳 Loan Products | `/loans` | ✅ LIVE | 6 loans with professional images + rates + features |
+| 📊 EMI Calculator | `/eligibility` | ✅ LIVE | 3 live sliders, real-time EMI + interest breakdown |
+| 📋 Documents | `/documents` | ✅ LIVE | Accordion per loan type |
+| 📝 Blog | `/blog` | ✅ LIVE | 10 SEO articles (CIBIL, home loan, education, LAP) |
+| 📞 Contact | `/contact` | ✅ LIVE | Lead form + phone + email + Google map |
+| 🔒 Privacy | `/privacy` | ✅ LIVE | Full privacy policy |
+
+---
+
+## 💳 Loan Products
+
+| # | Loan Type | Image File | Interest Rate | Max Amount |
+|---|---|---|---|---|
+| 1 | Salary / Personal Loan | `personal-loan.png` | 10.5–18% p.a. | ₹50 Lakhs |
+| 2 | Business Loan | `business-loan.png` | 12–24% p.a. | ₹2 Crores |
+| 3 | Education Loan (India) | `education-loan.png` | 8.15–12% p.a. | ₹75 Lakhs |
+| 4 | Education Loan (Abroad) | `education-loan.png` | 9–14% p.a. | ₹1.5 Crores |
+| 5 | Home Loan | `home-loan.png` | 8.5–12% p.a. | ₹5 Crores |
+| 6 | Mortgage / LAP | `mortgage-loan.png` | 9–14% p.a. | ₹10 Crores |
+
+---
+
+## 🎨 Design System
+
+### Color Palette (CSS Variables in `src/index.css`)
+| Variable | Value | Usage |
+|---|---|---|
+| `--primary` | `#0a4f8b` | Deep Trust Blue — main brand color |
+| `--primary-light` | `#1670c0` | Hover states |
+| `--secondary` | `#e8a317` | Gold — CTAs, highlights |
+| `--bg-dark` | `#0f172a` | Footer, dark sections |
+| `--bg-light` | `#f8fafc` | Page backgrounds |
+| `--text-dark` | `#1e293b` | Body text |
+| `--text-light` | `#64748b` | Muted text |
+| `--radius-md` | `12px` | Card border radius |
+
+### Key CSS Classes
+- `.glass-card` — glassmorphism white card with shadow
+- `.btn-primary` — deep blue CTA button
+- `.btn-secondary` — gold button
+- `.badge` — small tag/pill labels
+- `.section` — standard section padding (80px)
+- `.container` — max-width centered wrapper
+- `.animate-fade-in` — entrance animation
+
+---
+
+## 📌 CIBIL Correction Section (Home Page)
+
+This section promotes the Credit Samadhaan affiliate service. It appears on the Home page below the loan cards.
+
+**Message displayed:**
+> "Do you or someone you know is in need of a loan but has a low score? 📲 Chat with me – I am ready to help find a solution!"
+
+**CTA Button:** "Fix CIBIL Score Now"
+**External Link:** `https://b2c.creditsamadhaan.com/?refer_code=FY665935`
+
+**Contact details shown in section:**
+- AVANI LOAN SERVICE LATUR
+- MAHARASHTRA INDIA
+- 📞 7249108474
+- 📧 starpowerzlatur2210@gmail.com
+
+**Code location:** `src/pages/Home.jsx` → `.cibil-section`
+**Styling:** `src/pages/Home.css` → `.cibil-section`, `.cibil-grid`, `.cibil-message`
+
+---
+
+## 🔗 Zoho CRM Integration
+
+### Current Setup
+- All 3 lead forms (Home, About, Contact pages) submit via `fetch()` with `mode: 'no-cors'` to the Zoho Connected Workflow URL
+- Fields captured: **Name, Mobile, Email, Loan Type, Loan Amount, City**
+- On form submit → WhatsApp auto-opens with pre-filled message to `+91-7249108474`
+
+### Code Location
+```
+src/components/LeadForm.jsx
+```
+
+### ⚠️ To Finalize Zoho Webform Integration
+1. Login to Zoho CRM → **Settings → Webforms**
+2. Create Webform with fields: Name, Mobile, Email, Loan Type, Amount, City
+3. Copy the **Form Action URL** (e.g., `https://crm.zoho.in/crm/WebToLeadForm`)
+4. In `LeadForm.jsx` line 4, replace:
+   ```js
+   const ZOHO_URL = 'https://crmplus.zoho.in/...';
+   ```
+   With the new Webform Action URL
+5. Then push:
+   ```powershell
+   git add .; git commit -m "fix: Zoho Webform URL"; git push
+   ```
+   Vercel auto-redeploys in ~60 seconds ✅
+
+---
+
+## 💬 WhatsApp Integration
+
+| Component | Detail |
+|---|---|
+| **Floating Button** | Fixed position, bottom-right, all pages, green color |
+| **Link** | `https://wa.me/917249108474?text=Hello!%20I'm%20interested%20in%20a%20loan.%20Please%20guide%20me.` |
+| **Form Fallback** | On lead form submit → new tab opens with pre-filled WhatsApp message including the lead's details |
+| **Contact page button** | Direct "Chat on WhatsApp" link |
+
+---
+
+## ⚙️ Vercel SPA Routing Fix
+
+**File:** `vercel.json` (project root)
+
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+> This is required for React Router to work on Vercel. Without it, direct URL access (e.g., `avani-loan-services.vercel.app/contact`) returns 404. **Do NOT delete this file.**
+
+---
+
+## ⚙️ Auto-Deploy Flow
+
+```
+Edit code locally
+      ↓
+git add . → git commit -m "..." → git push
+      ↓
+GitHub receives push
+      ↓
+Vercel auto-detects → runs npm run build
+      ↓
+Live at https://avani-loan-services.vercel.app ✅
+(~60 seconds total)
+```
+
+---
+
+## 🏦 Bank Partners Listed
+
+| # | Bank / NBFC |
+|---|---|
+| 1 | State Bank of India (SBI) |
+| 2 | HDFC Bank |
+| 3 | ICICI Bank |
+| 4 | Axis Bank |
+| 5 | Kotak Mahindra Bank |
+| 6 | Bank of Baroda |
+| 7 | Punjab National Bank (PNB) |
+| 8 | Bajaj Finserv |
+| 9 | Tata Capital |
+| 10 | Fullerton India |
+
+---
+
+## 🔍 SEO Keywords Targeted
+
+| Keyword | Target Page |
+|---|---|
+| loan agent Latur | Home (H1) |
+| personal loan Latur | Home / Salary Loan |
+| business loan Marathwada | Loans / Business |
+| home loan Latur | Loans / Home |
+| education loan MBBS Maharashtra | Loans / Education |
+| study abroad loan Maharashtra | Loans / Education Global |
+| CIBIL score kaise badhayein | Blog article #1 |
+| loan DSA Maharashtra | About page |
+| EMI calculator personal loan | Eligibility page |
+| LAP loan property Latur | Loans / Mortgage |
+| CIBIL correction Latur | Home CIBIL section |
+
+---
+
+## ✅ Final Audit Results (April 11, 2026)
+
+| Check | Status |
+|---|---|
+| Logo in Navbar | ✅ PASS |
+| Hero "48 Hours" message | ✅ PASS |
+| Loan cards with professional images | ✅ PASS |
+| CIBIL section with correct message + link | ✅ PASS |
+| Fix CIBIL button → creditsamadhaan.com | ✅ PASS |
+| WhatsApp FAB on all pages | ✅ PASS |
+| About page logo displayed | ✅ PASS |
+| About stats (500+, 98%, ₹50Cr+) | ✅ PASS |
+| 10 Bank partner pills | ✅ PASS |
+| Loans page — 6 products + images | ✅ PASS |
+| EMI Calculator — 3 sliders | ✅ PASS |
+| Documents accordion | ✅ PASS |
+| Blog — 10 SEO articles | ✅ PASS |
+| Contact — form + phone + map | ✅ PASS |
+| Privacy Policy | ✅ PASS |
+| All 7 nav links working | ✅ PASS |
+| No 404 on direct URL access (vercel.json fix) | ✅ FIXED |
+| Build clean — no errors | ✅ PASS |
+| GitHub — latest code pushed | ✅ PASS |
+| Vercel — production deployment | ✅ PASS |
+
+**🎯 Score: 20/20 — FULLY PRODUCTION READY**
+
+---
+
+## 📈 Remaining Growth Steps
+
+| Priority | Action |
+|---|---|
+| 🔴 High | Finalize Zoho Webform URL for live CRM lead capture |
+| 🔴 High | Set up Google Analytics 4 (add GA4 script to `index.html`) |
+| 🟡 Medium | Submit sitemap to Google Search Console |
+| 🟡 Medium | Connect custom domain (e.g., `avaniloanservice.in`) via Vercel Dashboard |
+| 🟡 Medium | Replace generated product images with real business photos |
+| 🟢 Low | Set up WhatsApp Business API auto-reply via Zoho Flow |
+| 🟢 Low | Add 10 more blog articles targeting district-level keywords |
+| 🟢 Low | Add real client testimonial photos |
+
+---
+
+## 🔒 Security Notes
+
+- All forms use HTTPS
+- No API keys or passwords stored in frontend code
+- WhatsApp links use `rel="noopener noreferrer"`
+- Zoho integration uses `no-cors` fetch (no credentials exposed)
+- All `target="_blank"` links are safe
+
+---
+
+*Document maintained by Antigravity AI · Avani Loan Services · FY 2026-27 · Last verified April 11, 2026*

@@ -1,0 +1,88 @@
+.wa-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.wa-fab {
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.wa-fab:hover {
+  transform: scale(1.1);
+}
+
+.wa-fab svg {
+  width: 35px;
+  height: 35px;
+}
+
+.wa-form-popup {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 280px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.wa-form-popup h4 {
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.wa-form-popup p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.wa-form-popup input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+
+.wa-form-popup button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background: #25d366;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+}
