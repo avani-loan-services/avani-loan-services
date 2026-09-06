@@ -128,31 +128,31 @@ export default function LeadForm({ compact = false, loanType = '' }) {
 
       <div className={compact ? 'compact-grid' : ''}>
         <div className="form-group">
-          <label className="form-label">Full Name *</label>
-          <input className="form-input" name="name" value={form.name} onChange={handleChange} placeholder="Your full name" required />
+          <label className="form-label" htmlFor="lead-name">Full Name *</label>
+          <input id="lead-name" className="form-input" name="name" value={form.name} onChange={handleChange} placeholder="Your full name" required />
         </div>
         <div className="form-group">
-          <label className="form-label">Mobile Number *</label>
-          <input className="form-input" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXXXXXXXX" required pattern="[0-9+\-\s]{10,13}" />
+          <label className="form-label" htmlFor="lead-phone">Mobile Number *</label>
+          <input id="lead-phone" className="form-input" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+91 XXXXXXXXXX" required pattern="[0-9+\-\s]{10,13}" />
         </div>
         <div className="form-group">
-          <label className="form-label">Email</label>
-          <input className="form-input" name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" />
+          <label className="form-label" htmlFor="lead-email">Email</label>
+          <input id="lead-email" className="form-input" name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" />
         </div>
         <div className="form-group">
-          <label className="form-label">Loan Type *</label>
-          <select className="form-select" name="loanType" value={form.loanType} onChange={handleChange} required>
+          <label className="form-label" htmlFor="lead-loan-type">Loan Type *</label>
+          <select id="lead-loan-type" className="form-select" name="loanType" value={form.loanType} onChange={handleChange} required>
             <option value="">-- Select Loan Type --</option>
             {loanTypes.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div className="form-group">
-          <label className="form-label">Loan Amount (₹) *</label>
-          <input className="form-input" name="amount" value={form.amount} onChange={handleChange} placeholder="e.g. 5,00,000" required />
+          <label className="form-label" htmlFor="lead-amount">Loan Amount (₹) *</label>
+          <input id="lead-amount" className="form-input" name="amount" value={form.amount} onChange={handleChange} placeholder="e.g. 5,00,000" required />
         </div>
         <div className="form-group">
-          <label className="form-label">City</label>
-          <input className="form-input" name="city" value={form.city} onChange={handleChange} placeholder="Your city" />
+          <label className="form-label" htmlFor="lead-city">City</label>
+          <input id="lead-city" className="form-input" name="city" value={form.city} onChange={handleChange} placeholder="Your city" />
         </div>
       </div>
 

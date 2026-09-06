@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────
 
 export const WHATSAPP_NUMBER = '919175635165';
-export const PHONE_NUMBER = '+919175635165';
+export const PHONE_NUMBER = 'tel:+919175635165';
 export const DISPLAY_PHONE = '9175635165';
 
 const PRODUCT_MESSAGES = {
