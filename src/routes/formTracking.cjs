@@ -11,8 +11,8 @@ const axios = require('axios');
 
 const { processIncomingLead } = require('../services/centralLeadEngine.cjs');
 
-// ── 1. POST /api/lead/submit (Centralized Master Lead Capture) ───
-router.post('/submit', async (req, res) => {
+// ── 1. POST /api/lead/submit & /api/lead/capture ───
+router.post(['/submit', '/capture'], async (req, res) => {
   try {
     const rawData = req.body;
     console.log('[FormTracking] New Lead submission received:', rawData.name || rawData.fullName);
@@ -56,7 +56,8 @@ router.post('/submit', async (req, res) => {
       message: 'Thank you for contacting AVANI LOAN SERVICES. Fast application processing and professional loan guidance.',
       leadId: masterRecord.leadId,
       priority: masterRecord.leadPriority,
-      whatsAppUrl: getWhatsAppProductLink(masterRecord.loanProduct)
+      whatsAppUrl: getWhatsAppProductLink(masterRecord.loanProduct),
+      lead: lead
     });
   } catch (err) {
     console.error('[FormTracking] Error submitting lead:', err.message);

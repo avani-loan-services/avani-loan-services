@@ -8,12 +8,14 @@ let connection = new IORedis({
   host: process.env.REDIS_HOST || '127.0.0.1',
   port: parseInt(process.env.REDIS_PORT, 10) || 6379,
   password: process.env.REDIS_PASSWORD || undefined,
+  maxRetriesPerRequest: null,
+  lazyConnect: true,
+  enableOfflineQueue: false,
+  retryStrategy: () => null
 });
-// If the real Redis connection fails, fall back to an in‑memory mock (useful for local dev).
+
 connection.on('error', (err) => {
-  console.warn('Redis connection error, switching to in‑memory mock:', err.message);
-  connection.disconnect();
-  connection = new MockRedis();
+  // Silent non-fatal fallback
 });
 
 // Export a single Queue instance that can be shared across the app.

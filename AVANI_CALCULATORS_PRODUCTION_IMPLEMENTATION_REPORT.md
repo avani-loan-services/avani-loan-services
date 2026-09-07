@@ -121,11 +121,11 @@ The FOIR Eligibility Calculator (`/calculators/loan/foir-eligibility`) implement
 
 ## 4. Specialized Loan Products & Requirement Checklists
 
-1. **[[[[[[Salary Loan](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)**: Personal KYC (PAN, Aadhaar), 3M Salary Slips, 6M Salary Bank Statements, Form 16.
-2. **[[[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)**: Business & Promoter PAN, GST Certificate & Returns, 3Y Audited ITR/Balance Sheet/P&L, 12M Current Account Statements, Business Vintage Proof.
+1. **[[[[[[[[[[Salary Loan](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)**: Personal KYC (PAN, Aadhaar), 3M Salary Slips, 6M Salary Bank Statements, Form 16.
+2. **[[[[[[[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)**: Business & Promoter PAN, GST Certificate & Returns, 3Y Audited ITR/Balance Sheet/P&L, 12M Current Account Statements, Business Vintage Proof.
 3. **[Education Loan](/services/education-loan) (India)**: Student KYC, Academic Marksheets, College Admission & Fee Structure, Co-Applicant KYC/Salary/ITR/Bank Statements, Collateral Deeds (Secured).
 4. **Education Loan (Global Studies)**: Student Passport, Foreign University Admission Letter, Cost of Attendance Schedule, Co-Applicant Financials, Collateral Documents (Secured).
-5. **[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)**: Applicant & Co-Applicant KYC, 3M Salary / 3Y ITR, 6M Bank Statements, Agreement to Sale, Chain Title Deeds & Approved Blueprint Plans.
+5. **[[[[[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)**: Applicant & Co-Applicant KYC, 3M Salary / 3Y ITR, 6M Bank Statements, Agreement to Sale, Chain Title Deeds & Approved Blueprint Plans.
 6. **Mortgage / Loan Against Property (LAP)**: Co-Owners KYC, 3Y ITR & Balance Sheets, 6M Bank Statements, Original Title Deeds / 7/12 Extract / Index II, Property Tax Receipts & Valuation.
 7. **Chartered Accountant (CA) Loan**: PAN & Aadhaar, ICAI Certificate of Practice (COP), 2Y ITR with Computation, 6-12M Bank Statements.
 8. **Doctor / Medical Professional Loan**: PAN & Aadhaar, Medical Council Registration & Degree Certificates, 2Y ITR Returns, 6M Primary Bank Statements.

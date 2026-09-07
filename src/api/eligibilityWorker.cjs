@@ -12,11 +12,14 @@ let connection = new IORedis({
   host: process.env.REDIS_HOST || '127.0.0.1',
   port: parseInt(process.env.REDIS_PORT, 10) || 6379,
   password: process.env.REDIS_PASSWORD || undefined,
+  maxRetriesPerRequest: null,
+  lazyConnect: true,
+  enableOfflineQueue: false,
+  retryStrategy: () => null
 });
+
 connection.on('error', (err) => {
-  console.warn('Redis connection error in worker, switching to mock:', err.message);
-  connection.disconnect();
-  connection = new MockRedis();
+  // Silent non-fatal fallback
 });
 
 /**

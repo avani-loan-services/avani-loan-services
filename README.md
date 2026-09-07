@@ -16,11 +16,11 @@ Avani Loan Services is a premier financial advisory and loan consultancy firm de
 
 ### 1. Retail & Salaried Financing
 - **Salary / Personal Loan:** Quick unsecured financing for salaried employees with minimal documentation.
-- **[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan):** Competitive housing finance, plot loans, and construction loans.
+- **[[[[[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan):** Competitive housing finance, plot loans, and construction loans.
 - **Mortgage / Loan Against Property (LAP):** High-value secured loans against residential or commercial properties.
 
 ### 2. Commercial & Business Financing
-- **[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan):** Unsecured working capital and growth capital for MSMEs, traders, and manufacturers.
+- **[[[[[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan):** Unsecured working capital and growth capital for MSMEs, traders, and manufacturers.
 - **Machinery & Equipment Finance:** Asset-backed capital expenditure loans.
 
 ### 3. Professional Practice Loans

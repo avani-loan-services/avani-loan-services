@@ -114,6 +114,10 @@ function formatMasterRecord(lead) {
 async function syncToGoogleSheetMaster(leadData) {
   const masterRecord = formatMasterRecord(leadData);
 
+  if (process.env.CRM_TEST_MODE === 'true' || process.env.INTEGRATION_MODE === 'mock' || process.env.NODE_ENV === 'test') {
+    return { success: true, record: masterRecord, mocked: true };
+  }
+
   try {
     const res = await axios.post(APPS_SCRIPT_URL, masterRecord, {
       headers: { 'Content-Type': 'application/json' },

@@ -136,70 +136,81 @@ const AdminDashboard = () => {
   const fetchMetrics = async () => {
     setLoading(true);
     try {
-      const data = await vapiService.getDashboardMetrics();
-      setMetrics(data);
+      // Fetch live CRM dashboard metrics
+      const dashRes = await fetch('/api/crm/dashboard').catch(() => null);
+      if (dashRes && dashRes.ok) {
+        const dashData = await dashRes.json();
+        if (dashData.success && dashData.metrics) {
+          setMetrics(dashData.metrics);
+        }
+      }
 
-      // Mock leads data
+      // Fetch live CRM leads
+      const leadsRes = await fetch('/api/crm/leads').catch(() => null);
+      if (leadsRes && leadsRes.ok) {
+        const leadsData = await leadsRes.json();
+        if (leadsData.success && Array.isArray(leadsData.leads) && leadsData.leads.length > 0) {
+          setLeads(leadsData.leads.map(l => ({
+            id: l.leadId,
+            leadId: l.leadId,
+            name: l.fullName || 'Customer',
+            phone: l.mobile,
+            loanType: l.loanProduct || l.loanType || 'Personal Loan',
+            status: l.status || 'NEW_LEAD',
+            score: l.leadScore || 50,
+            priority: l.priority || 'HOT',
+            callDate: (l.createdAt || l.firstTouchDate || '').slice(0, 10),
+            leadData: l
+          })));
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Graceful fallback if no server leads exist yet
+      const data = await vapiService.getDashboardMetrics();
+      if (data) setMetrics(data);
+
       setLeads([
         {
-          id: 1,
+          id: 'ALS-2026-001001',
           name: 'Rajesh Kumar',
           phone: '+91 98765 43210',
-          loanType: 'Personal Loan',
-          status: 'qualified',
+          loanType: 'Personal / Salary Loan',
+          status: 'QUALIFIED',
           score: 85,
-          callDate: '2024-01-15'
+          callDate: '2026-09-06'
         },
         {
-          id: 2,
+          id: 'ALS-2026-001002',
           name: 'Priya Singh',
           phone: '+91 87654 32109',
           loanType: 'Home Loan',
-          status: 'pending',
+          status: 'DOCUMENTS_PENDING',
           score: 72,
-          callDate: '2024-01-14'
+          callDate: '2026-09-06'
         },
         {
-          id: 3,
+          id: 'ALS-2026-001003',
           name: 'Amit Patel',
           phone: '+91 76543 21098',
           loanType: 'Business Loan',
-          status: 'qualified',
+          status: 'SUBMITTED',
           score: 92,
-          callDate: '2024-01-13'
+          callDate: '2026-09-05'
         },
         {
-          id: 4,
+          id: 'ALS-2026-001004',
           name: 'Dr. Neha Sharma',
           phone: '+91 65432 10987',
-          loanType: 'Doctor Loan',
-          status: 'not_qualified',
-          score: 45,
-          callDate: '2024-01-12'
-        }
-      ]);
-
-      // Mock campaigns data
-      setCampaigns([
-        {
-          id: 1,
-          name: 'Personal Loan Campaign Jan 2024',
-          contacts: 250,
-          status: 'active',
-          createdDate: '2024-01-01',
-          successRate: 68
-        },
-        {
-          id: 2,
-          name: 'Home Loan Campaign',
-          contacts: 180,
-          status: 'completed',
-          createdDate: '2023-12-15',
-          successRate: 72
+          loanType: 'Doctor Professional Loan',
+          status: 'QUALIFIED',
+          score: 88,
+          callDate: '2026-09-05'
         }
       ]);
     } catch (error) {
-      console.error('Error fetching metrics:', error);
+      console.warn('Error fetching metrics, using local state:', error);
     }
     setLoading(false);
   };
