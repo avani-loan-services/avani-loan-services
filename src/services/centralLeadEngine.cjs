@@ -41,19 +41,78 @@ function normalizeMobile(phone) {
 }
 
 /**
- * Generate Sequential Lead ID (ALS-2026-000001)
+ * Generate Sequential Monotonic Lead ID (ALS-2026-000001)
+ * Scans existing leads to find max number to guarantee zero collisions.
  */
 function generateLeadId(leads) {
-  const nextNum = leads.length + 1001;
-  const formatted = ("000000" + nextNum).slice(-6);
+  let maxSeq = 1000;
+  if (Array.isArray(leads)) {
+    for (const l of leads) {
+      if (l && l.leadId) {
+        const match = l.leadId.match(/ALS-2026-(\d+)/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxSeq) maxSeq = num;
+        }
+      }
+    }
+  }
+  const nextNum = maxSeq + 1;
+  const formatted = String(nextNum).padStart(6, '0');
   return `ALS-2026-${formatted}`;
 }
 
 /**
- * Generate Secure Token for Customer Upload Portal
+ * Generate Cryptographically Secure 32-Byte Token for Customer Upload Portal
  */
 function generateSecureToken() {
-  return crypto.randomBytes(16).toString('hex');
+  return crypto.randomBytes(32).toString('hex');
+}
+
+/**
+ * Compute SHA-256 Hash of a token
+ */
+function hashToken(token) {
+  return crypto.createHash('sha256').update(String(token || '')).digest('hex');
+}
+
+/**
+ * Get Lead by Secure Document Portal Token
+ * Enforces token expiration, revocation checks, and hash matching
+ */
+function getLeadByPortalToken(token) {
+  if (!token || typeof token !== 'string' || token.trim() === '') return null;
+  const leads = loadLeads();
+  const incomingHash = hashToken(token.trim());
+  const now = Date.now();
+
+  const lead = leads.find(l => {
+    if (l.portalTokenHash && l.portalTokenHash === incomingHash) {
+      if (l.portalTokenRevoked) return false;
+      if (l.portalTokenExpiresAt && l.portalTokenExpiresAt < now) return false;
+      return true;
+    }
+    // Backward compatibility for existing records
+    if (l.secureToken === token.trim()) {
+      if (l.portalTokenRevoked) return false;
+      if (l.portalTokenExpiresAt && l.portalTokenExpiresAt < now) return false;
+      return true;
+    }
+    return false;
+  });
+
+  return lead || null;
+}
+
+/**
+ * Revoke a customer's document portal token
+ */
+function revokePortalToken(leadId, reason = 'Revoked by Advisor') {
+  return updateLead(leadId, {
+    portalTokenRevoked: true,
+    portalTokenRevokedAt: new Date().toISOString(),
+    portalTokenRevocationReason: reason
+  });
 }
 
 /**
@@ -69,6 +128,7 @@ function normalizeSource(source) {
   if (s.includes('GOOGLE_SHEET')) return 'GOOGLE_SHEET';
   if (s.includes('AISENSY')) return 'AISENSY';
   if (s.includes('OMNIDM')) return 'OMNIDM';
+  if (s.includes('MANUAL')) return 'MANUAL_CRM';
   if (s.includes('REFERRAL')) return 'REFERRAL';
   if (s.includes('WEBSITE')) return 'WEBSITE';
   return 'WEBSITE';
@@ -80,10 +140,17 @@ function normalizeSource(source) {
 function processIncomingLead(leadPayload) {
   const leads = loadLeads();
   const mobile = normalizeMobile(leadPayload.mobile || leadPayload.phone);
-  const normalizedSrc = normalizeSource(leadPayload.source || leadPayload.utm_source);
+  const normalizedSrc = normalizeSource(leadPayload.source || leadPayload.utm_source || leadPayload.leadSource);
+  const idempotencyKey = leadPayload.idempotencyKey || leadPayload.sourceEventId || '';
 
-  // Check for existing lead by mobile number
-  const existingIndex = leads.findIndex(l => l.mobile === mobile);
+  // Check for existing lead by idempotencyKey first, then mobile number
+  let existingIndex = -1;
+  if (idempotencyKey) {
+    existingIndex = leads.findIndex(l => l.idempotencyKey === idempotencyKey);
+  }
+  if (existingIndex === -1 && mobile) {
+    existingIndex = leads.findIndex(l => l.mobile === mobile);
+  }
 
   if (existingIndex !== -1) {
     // DUPLICATE DETECTED
@@ -96,14 +163,16 @@ function processIncomingLead(leadPayload) {
       source: normalizedSrc,
       campaign: leadPayload.campaign || leadPayload.utm_campaign || 'N/A',
       adSet: leadPayload.adSet || 'N/A',
-      ad: leadPayload.ad || leadPayload.utm_content || 'N/A'
+      ad: leadPayload.ad || leadPayload.utm_content || 'N/A',
+      idempotencyKey: idempotencyKey || 'N/A'
     });
 
     existing.duplicateEvents = duplicateHistory;
     existing.lastTouchDate = new Date().toISOString();
+    existing.updatedAt = new Date().toISOString();
     existing.duplicateCount = (existing.duplicateCount || 0) + 1;
-    existing.status = existing.status === 'NEW' ? 'DUPLICATE' : existing.status;
 
+    // Preserve original status if progressing, otherwise mark as DUPLICATE event logged
     leads[existingIndex] = existing;
     saveLeads(leads);
 
@@ -117,11 +186,16 @@ function processIncomingLead(leadPayload) {
   // NEW LEAD CREATION
   const leadId = generateLeadId(leads);
   const secureToken = generateSecureToken();
+  const tokenHash = hashToken(secureToken);
+  const tokenExpiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7-day expiration
   const timestamp = new Date().toISOString();
 
   const newLead = {
     leadId: leadId,
     secureToken: secureToken,
+    portalTokenHash: tokenHash,
+    portalTokenExpiresAt: tokenExpiresAt,
+    portalTokenRevoked: false,
     fullName: leadPayload.fullName || leadPayload.name || 'Valued Customer',
     mobile: mobile,
     whatsapp: normalizeMobile(leadPayload.whatsapp || mobile),
@@ -131,6 +205,7 @@ function processIncomingLead(leadPayload) {
     preferredLanguage: leadPayload.preferredLanguage || 'English/Marathi',
 
     leadSource: normalizedSrc,
+    source: normalizedSrc,
     platform: leadPayload.platform || 'Meta / Web',
     campaign: leadPayload.campaign || leadPayload.utm_campaign || 'ALS_CAMPAIGN_2026',
     adSet: leadPayload.adSet || 'Default AdSet',
@@ -146,29 +221,71 @@ function processIncomingLead(leadPayload) {
 
     firstTouchDate: timestamp,
     lastTouchDate: timestamp,
+    createdAt: timestamp,
+    updatedAt: timestamp,
 
+    // Loan details
+    loanType: leadPayload.loanType || leadPayload.loanProduct || 'Personal / Salary Loan',
     loanProduct: leadPayload.loanProduct || leadPayload.loanType || 'Personal / Salary Loan',
-    loanAmount: leadPayload.loanAmount || leadPayload.amount || 'Below ₹5 Lakh',
+    requestedAmount: leadPayload.requestedAmount || leadPayload.loanAmount || leadPayload.amount || 'Below ₹5 Lakh',
+    loanAmount: leadPayload.loanAmount || leadPayload.requestedAmount || leadPayload.amount || 'Below ₹5 Lakh',
+    applicantType: leadPayload.applicantType || 'INDIVIDUAL',
     employmentType: leadPayload.employmentType || 'Salaried',
+    profession: leadPayload.profession || 'OTHER_PROFESSIONAL',
     monthlyIncome: leadPayload.monthlyIncome || '₹25,000–₹50,000',
     businessTurnover: leadPayload.businessTurnover || '',
     existingEmi: leadPayload.existingEmi || 'No',
     cibilStatus: leadPayload.cibilStatus || 'Prefer to discuss',
-    propertyDetails: leadPayload.propertyDetails || '',
-    educationDetails: leadPayload.educationDetails || '',
+    cibilScore: leadPayload.cibilScore || 0,
+    propertyInfo: leadPayload.propertyInfo || leadPayload.propertyDetails || '',
+    educationInfo: leadPayload.educationInfo || leadPayload.educationDetails || '',
 
-    status: 'NEW', // Initial lifecycle status
+    // Pipeline
+    status: 'NEW_LEAD',
+    currentWorkflowState: 'NEW_LEAD',
     priority: leadPayload.priority || 'HOT',
-    assignedTo: 'Unassigned',
-    documentStatus: 'DOCUMENTS_PENDING',
+    leadScore: leadPayload.leadScore || 50,
+    leadScoreGrade: leadPayload.leadScoreGrade || 'WARM',
+    assignedAdvisor: leadPayload.assignedAdvisor || 'Sachin Shinde',
+    qualificationStatus: 'NOT_EVALUATED',
+    qualificationAnswers: leadPayload.qualificationAnswers || {},
+    documentStatus: 'NOT_REQUESTED',
+    requiredDocuments: [],
     receivedDocuments: [],
     missingDocuments: [],
+    followUps: [],
+    nextFollowUp: '',
+    lastContactedAt: '',
+
+    // Audit & Timeline
+    createdBy: leadPayload.createdBy || normalizedSrc,
+    updatedBy: 'SYSTEM',
+    sourceEventId: leadPayload.sourceEventId || '',
+    idempotencyKey: idempotencyKey,
+    correlationId: leadPayload.correlationId || `CORR-${Date.now()}`,
     duplicateEvents: [],
-    duplicateCount: 0
+    duplicateCount: 0,
+    communicationHistory: [],
+    timeline: [{
+      timestamp: timestamp,
+      fromStatus: null,
+      toStatus: 'NEW_LEAD',
+      reason: 'Initial Lead Creation',
+      actor: normalizedSrc
+    }]
   };
 
   leads.push(newLead);
   saveLeads(leads);
+
+  // Sync to in-memory store if present
+  try {
+    const { getInMemoryStore } = require('../models/database.cjs');
+    const store = getInMemoryStore();
+    if (store && store.leads && mobile) {
+      store.leads.set(mobile, newLead);
+    }
+  } catch (e) {}
 
   // Background sync to Google Sheet Master
   syncToGoogleSheetMaster(newLead).catch(err => console.warn('[CentralLeadEngine] Sheets sync non-fatal:', err.message));
@@ -181,31 +298,73 @@ function processIncomingLead(leadPayload) {
 }
 
 /**
- * Get Lead by Lead ID or Secure Token
+ * Get Lead by Lead ID or Secure Token or Mobile
  */
 function getLead(identifier) {
   const leads = loadLeads();
-  return leads.find(l => l.leadId === identifier || l.secureToken === identifier) || null;
+  const norm = normalizeMobile(identifier);
+  return leads.find(l => l.leadId === identifier || l.secureToken === identifier || (norm && l.mobile === norm)) || null;
 }
 
 /**
  * Update Lead Lifecycle Status
  */
-function updateLeadStatus(identifier, newStatus, notes = '') {
+function updateLeadStatus(identifier, newStatus, notes = '', actor = 'SYSTEM') {
   const leads = loadLeads();
-  const index = leads.findIndex(l => l.leadId === identifier || l.secureToken === identifier);
+  const norm = normalizeMobile(identifier);
+  const index = leads.findIndex(l => l.leadId === identifier || l.secureToken === identifier || (norm && l.mobile === norm));
 
   if (index === -1) return null;
 
   const oldStatus = leads[index].status;
+  const timestamp = new Date().toISOString();
   leads[index].status = newStatus;
-  leads[index].lastTouchDate = new Date().toISOString();
+  leads[index].currentWorkflowState = newStatus;
+  leads[index].lastTouchDate = timestamp;
+  leads[index].updatedAt = timestamp;
   if (notes) leads[index].followUpNotes = notes;
+
+  leads[index].timeline = leads[index].timeline || [];
+  leads[index].timeline.push({
+    timestamp,
+    fromStatus: oldStatus,
+    toStatus: newStatus,
+    reason: notes || 'Status update',
+    actor
+  });
 
   saveLeads(leads);
   console.log(`[CentralLeadEngine] Status transition for ${leads[index].leadId}: ${oldStatus} ➔ ${newStatus}`);
 
   return { lead: leads[index], oldStatus, newStatus };
+}
+
+/**
+ * Update Lead with arbitrary fields
+ */
+function updateLead(identifier, updates, actor = 'SYSTEM') {
+  const leads = loadLeads();
+  const norm = normalizeMobile(identifier);
+  const index = leads.findIndex(l => l.leadId === identifier || l.secureToken === identifier || (norm && l.mobile === norm));
+
+  if (index === -1) return null;
+
+  const timestamp = new Date().toISOString();
+  Object.assign(leads[index], updates, { updatedAt: timestamp });
+
+  if (updates.status && updates.status !== leads[index].status) {
+    leads[index].timeline = leads[index].timeline || [];
+    leads[index].timeline.push({
+      timestamp,
+      fromStatus: leads[index].status,
+      toStatus: updates.status,
+      reason: updates.statusReason || 'Lead updated',
+      actor
+    });
+  }
+
+  saveLeads(leads);
+  return leads[index];
 }
 
 /**
@@ -218,7 +377,12 @@ function getAllLeads() {
 module.exports = {
   processIncomingLead,
   getLead,
+  getLeadByPortalToken,
+  revokePortalToken,
+  hashToken,
+  generateSecureToken,
   updateLeadStatus,
+  updateLead,
   getAllLeads,
   normalizeMobile,
   generateLeadId
