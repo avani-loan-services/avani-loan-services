@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
 
 /**
  * HubSpot OAuth callback – receives ?code=... from HubSpot and exchanges it
- * for an access token and refresh token. The refresh token is stored in the
- * .env file so the server can obtain fresh access tokens in the future.
+ * for an access token and refresh token. Validates the exchange without
+ * filesystem writes to ensure compatibility with serverless environments.
  */
 router.get('/hubspot/callback', async (req, res) => {
   const { code } = req.query;
@@ -24,19 +22,19 @@ router.get('/hubspot/callback', async (req, res) => {
         code,
       },
     });
-    const { refresh_token } = tokenResp.data;
-    // Persist refresh token to .env (append if not already present)
-    const envPath = path.resolve(__dirname, '../../.env');
-    let envContent = fs.readFileSync(envPath, 'utf8');
-    if (!envContent.includes('HUBSPOT_REFRESH_TOKEN')) {
-      envContent += `\nHUBSPOT_REFRESH_TOKEN=${refresh_token}`;
-    } else {
-      envContent = envContent.replace(/HUBSPOT_REFRESH_TOKEN=.*/, `HUBSPOT_REFRESH_TOKEN=${refresh_token}`);
+    const { refresh_token, access_token } = tokenResp.data || {};
+    if (!refresh_token || !access_token) {
+      return res.status(502).send('OAuth exchange succeeded but required credentials were missing from the response.');
     }
-    fs.writeFileSync(envPath, envContent, 'utf8');
-    res.send('HubSpot OAuth successful – refresh token saved. You may close this window.');
+
+    // In serverless production, tokens are not persisted to the read-only filesystem.
+    // The operator must configure HUBSPOT_REFRESH_TOKEN in the secure server environment settings.
+    res.status(200).send(
+      'HubSpot OAuth authorization successful. Refresh token received and validated. Please configure HUBSPOT_REFRESH_TOKEN in your secure server environment settings.'
+    );
   } catch (err) {
-    console.error('HubSpot OAuth error', err.response?.data || err.message);
+    const errMsg = err.response?.data?.message || err.message;
+    console.error('[HubSpot OAuth] Exchange error:', errMsg);
     res.status(500).send('OAuth exchange failed');
   }
 });
