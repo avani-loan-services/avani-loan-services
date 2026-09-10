@@ -12,8 +12,26 @@ validateEnvironmentIsolation();
 connectDB().catch(err => console.warn('[Database] Initial connection warning:', err.message));
 
 app.use(cors());
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ extended: true, limit: '20mb' }));
+app.use(express.json({
+  limit: '20mb',
+  verify: (req, res, buf) => {
+    req.rawBody = Buffer.from(buf);
+  }
+}));
+app.use(express.urlencoded({
+  extended: true,
+  limit: '20mb',
+  verify: (req, res, buf) => {
+    if (!req.rawBody) req.rawBody = Buffer.from(buf);
+  }
+}));
+// Graceful JSON parse error handler (returns 400 instead of unhandled crash)
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ success: false, error: 'Malformed JSON payload' });
+  }
+  next(err);
+});
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../dist')));
 
