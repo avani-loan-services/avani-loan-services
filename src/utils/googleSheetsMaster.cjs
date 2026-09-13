@@ -29,7 +29,7 @@ function calculatePriority(lead) {
   let score = 0;
   const amount = String(lead.amount || lead.loanAmount || '');
   const prefTime = String(lead.preferredCallTime || '');
-  const income = String(lead.monthlyIncome || '');
+  const income = String(lead.monthlyIncomeRange || lead.monthlyIncome || '');
 
   if (amount.includes('50') || amount.includes('1 Crore') || amount.includes('Above')) score += 3;
   if (prefTime.toLowerCase().includes('immediately') || prefTime.toLowerCase().includes('1 hour')) score += 3;
@@ -70,7 +70,7 @@ function formatMasterRecord(lead) {
     loanProduct: lead.loanProduct || lead.loanType || 'Personal / Salary Loan', // J: Loan Product
     loanAmount: lead.loanAmount || lead.amount || 'Below ₹5 Lakh', // K: Loan Amount
     employmentType: lead.employmentType || 'Salaried',          // L: Employment Type
-    monthlyIncomeRange: lead.monthlyIncome || '₹25,000–₹50,000', // M: Monthly Income Range
+    monthlyIncomeRange: lead.monthlyIncomeRange || lead.monthlyIncome || '₹25,000–₹50,000', // M: Monthly Income Range
     existingLoan: lead.existingLoan || 'No',                    // N: Existing Loan
     cibilRange: lead.cibilRange || 'Prefer to discuss',          // O: CIBIL Range
     educationCountry: lead.educationCountry || '',              // P: Education Country
@@ -112,7 +112,9 @@ function formatMasterRecord(lead) {
  * Synchronize full record to Google Sheet Apps Script Web App
  */
 async function syncToGoogleSheetMaster(leadData) {
-  const masterRecord = formatMasterRecord(leadData);
+  const masterRecord = (leadData && leadData.monthlyIncomeRange && leadData.leadId)
+    ? leadData
+    : formatMasterRecord(leadData);
 
   if (process.env.CRM_TEST_MODE === 'true' || process.env.INTEGRATION_MODE === 'mock' || process.env.NODE_ENV === 'test') {
     return { success: true, record: masterRecord, mocked: true };
