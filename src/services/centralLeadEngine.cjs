@@ -219,8 +219,10 @@ function processIncomingLead(leadPayload) {
 
   persistSaveLead(newLead);
 
-  // Background sync to Google Sheet Master
-  syncToGoogleSheetMaster(newLead).catch(err => console.warn('[CentralLeadEngine] Sheets sync non-fatal:', err.message));
+  // Background sync to Google Sheet Master (skip if caller handles formatted sync)
+  if (!leadPayload._skipSheetsSync) {
+    syncToGoogleSheetMaster(newLead).catch(err => console.warn('[CentralLeadEngine] Sheets sync non-fatal:', err.message));
+  }
 
   return {
     isDuplicate: false,

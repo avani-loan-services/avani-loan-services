@@ -19,37 +19,42 @@ router.post(['/submit', '/capture'], async (req, res) => {
     console.log('[FormTracking] New Lead submission received:', rawData.name || rawData.fullName);
 
     // Process through Central Lead Engine (Deduplication, Lead ID generation, persistence)
-    const centralResult = await processIncomingLeadAsync(rawData);
+    const centralResult = await processIncomingLeadAsync({ ...rawData, _skipSheetsSync: true });
     const lead = centralResult.lead;
 
-    // Format full Columns A to AU record
-    const masterRecord = formatMasterRecord({
-      ...rawData,
-      leadId: lead.leadId,
-      secureToken: lead.secureToken,
-      mobile: lead.mobile,
-      leadStatus: lead.status
-    });
+    let sheetRes = { success: true, skipped: true, reason: 'DUPLICATE_LEAD' };
+    if (!centralResult.isDuplicate) {
+      // Format full Columns A to AU record
+      const masterRecord = formatMasterRecord({
+        ...rawData,
+        leadId: lead.leadId,
+        secureToken: lead.secureToken,
+        mobile: lead.mobile,
+        leadStatus: lead.status
+      });
 
-    // Sync to Google Sheet Master
-    const sheetRes = await syncToGoogleSheetMaster(masterRecord);
+      // Sync to Google Sheet Master (only for fresh non-duplicate leads)
+      sheetRes = await syncToGoogleSheetMaster(masterRecord);
+    } else {
+      console.log(`[FormTracking] Lead ${lead.leadId} (mobile: ${lead.mobile}) is a recognized duplicate. Skipping Google Sheets row creation.`);
+    }
 
     // Sync to HubSpot CRM
     syncToHubSpot({
-      name: masterRecord.fullName,
-      email: masterRecord.email,
-      phone: masterRecord.mobile,
-      city: masterRecord.city,
-      loanType: masterRecord.loanProduct,
-      amount: masterRecord.loanAmount,
-      source: masterRecord.leadSource,
-      status: masterRecord.leadStatus
+      name: rawData.fullName || rawData.name || lead.fullName,
+      email: rawData.email || lead.email,
+      phone: rawData.mobile || rawData.phone || lead.mobile,
+      city: rawData.city || lead.city,
+      loanType: rawData.loanProduct || rawData.loanType || lead.loanProduct,
+      amount: rawData.loanAmount || rawData.amount || lead.loanAmount,
+      source: rawData.leadSource || rawData.source || lead.leadSource,
+      status: lead.status
     }).catch(err => console.warn('[HubSpot] non-fatal sync err:', err.message));
 
     // Sync to Zapier / Pabbly Webhook
     const zapierUrl = process.env.ZAPIER_WEBHOOK_URL || process.env.PABBLY_CONNECT_URL;
-    if (zapierUrl) {
-      axios.post(zapierUrl, masterRecord).catch(err => console.warn('[Zapier] non-fatal err:', err.message));
+    if (zapierUrl && !centralResult.isDuplicate) {
+      axios.post(zapierUrl, rawData).catch(err => console.warn('[Zapier] non-fatal err:', err.message));
     }
 
     const dbAlive = typeof isConnected === 'function' && isConnected();
@@ -57,11 +62,13 @@ router.post(['/submit', '/capture'], async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Thank you for contacting AVANI LOAN SERVICES. Fast application processing and professional loan guidance.',
-      leadId: masterRecord.leadId,
-      priority: masterRecord.leadPriority,
-      whatsAppUrl: getWhatsAppProductLink(masterRecord.loanProduct),
+      leadId: lead.leadId,
+      priority: lead.priority || 'HOT',
+      whatsAppUrl: getWhatsAppProductLink(lead.loanProduct || rawData.loanProduct),
       persistenceStatus: lead.persistenceStatus || (dbAlive ? 'DURABLY_PERSISTED' : 'ACCEPTED_FOR_PROCESSING'),
       storageLayer: lead.storageLayer || (dbAlive ? 'MONGODB_ATLAS' : 'IN_MEMORY_BUFFER'),
+      googleSheetsSync: sheetRes,
+      isDuplicate: !!centralResult.isDuplicate,
       lead: lead
     });
   } catch (err) {
