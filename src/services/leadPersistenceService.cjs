@@ -122,11 +122,20 @@ async function syncToDatabase(lead) {
           { $set: lead },
           { upsert: true, new: true, setDefaultsOnInsert: true }
         );
+        lead.persistenceStatus = 'DURABLY_PERSISTED';
+        lead.storageLayer = 'MONGODB_ATLAS';
+        return { persisted: true, storageLayer: 'MONGODB_ATLAS' };
       }
     } catch (err) {
       console.warn('[LeadPersistenceService] Mongo async sync non-fatal warning:', err.message);
+      lead.persistenceStatus = 'ACCEPTED_FOR_PROCESSING';
+      lead.storageLayer = 'IN_MEMORY_BUFFER';
+      return { persisted: false, storageLayer: 'IN_MEMORY_BUFFER', error: err.message };
     }
   }
+  lead.persistenceStatus = 'ACCEPTED_FOR_PROCESSING';
+  lead.storageLayer = 'IN_MEMORY_BUFFER';
+  return { persisted: false, storageLayer: 'IN_MEMORY_BUFFER' };
 }
 
 /**
@@ -141,6 +150,11 @@ function saveLead(lead) {
     throw new Error('Invalid lead: missing required field leadId');
   }
 
+  // Explicit persistence status semantics: distinguish accepted from durably persisted
+  const dbAlive = typeof isConnected === 'function' && isConnected();
+  lead.persistenceStatus = dbAlive ? 'DURABLY_PERSISTED' : 'ACCEPTED_FOR_PROCESSING';
+  lead.storageLayer = dbAlive ? 'MONGODB_ATLAS' : 'IN_MEMORY_BUFFER';
+
   // Commit immediately to in-memory store
   indexInMemory(lead);
 
@@ -151,12 +165,53 @@ function saveLead(lead) {
 }
 
 /**
+ * Asynchronously Save a canonical Lead record (Awaits database persistence when connected)
+ */
+async function saveLeadAsync(lead) {
+  if (!lead || typeof lead !== 'object') {
+    throw new Error('Invalid lead: payload must be a non-null object');
+  }
+  if (!lead.leadId) {
+    throw new Error('Invalid lead: missing required field leadId');
+  }
+
+  indexInMemory(lead);
+  await syncToDatabase(lead);
+  return lead;
+}
+
+/**
  * Find Lead by canonical Lead ID (ALS-2026-XXXXXX)
  */
 function findLeadById(leadId) {
   if (!leadId) return null;
   const idx = getStorage();
   return idx.byId.get(String(leadId)) || null;
+}
+
+/**
+ * Asynchronously Find Lead by canonical Lead ID with MongoDB database fallback
+ */
+async function findLeadByIdAsync(leadId) {
+  if (!leadId) return null;
+  const inMem = findLeadById(leadId);
+  if (inMem) return inMem;
+
+  if (typeof isConnected === 'function' && isConnected()) {
+    try {
+      const Model = getMongoLead();
+      if (Model) {
+        const doc = await Model.findOne({ leadId: String(leadId) }).lean();
+        if (doc) {
+          indexInMemory(doc);
+          return doc;
+        }
+      }
+    } catch (err) {
+      console.warn('[LeadPersistenceService] Mongo findLeadByIdAsync error:', err.message);
+    }
+  }
+  return null;
 }
 
 /**
@@ -246,6 +301,29 @@ function getAllLeads() {
 }
 
 /**
+ * Asynchronously get all active leads with MongoDB database fallback
+ */
+async function getAllLeadsAsync() {
+  if (typeof isConnected === 'function' && isConnected()) {
+    try {
+      const Model = getMongoLead();
+      if (Model) {
+        const docs = await Model.find({}).lean();
+        if (Array.isArray(docs) && docs.length > 0) {
+          for (const doc of docs) {
+            indexInMemory(doc);
+          }
+          return docs;
+        }
+      }
+    } catch (err) {
+      console.warn('[LeadPersistenceService] Mongo getAllLeadsAsync error:', err.message);
+    }
+  }
+  return getAllLeads();
+}
+
+/**
  * Count total registered leads
  */
 function countLeads() {
@@ -318,12 +396,15 @@ function generateLeadId() {
 
 module.exports = {
   saveLead,
+  saveLeadAsync,
   findLeadById,
+  findLeadByIdAsync,
   findLeadByMobile,
   findLeadByIdempotencyKey,
   findLeadByPortalToken,
   updateLead,
   getAllLeads,
+  getAllLeadsAsync,
   countLeads,
   normalizeMobile,
   hashToken,

@@ -9,7 +9,8 @@ const { getCompleteLinkLibrary, PRODUCTS, PLATFORMS, getWhatsAppProductLink } = 
 const { syncToHubSpot } = require('../utils/hubSpot.cjs');
 const axios = require('axios');
 
-const { processIncomingLead } = require('../services/centralLeadEngine.cjs');
+const { processIncomingLead, processIncomingLeadAsync, getAllLeads, getAllLeadsAsync, updateLeadStatus } = require('../services/centralLeadEngine.cjs');
+const { isConnected } = require('../models/database.cjs');
 
 // ── 1. POST /api/lead/submit & /api/lead/capture ───
 router.post(['/submit', '/capture'], async (req, res) => {
@@ -17,8 +18,8 @@ router.post(['/submit', '/capture'], async (req, res) => {
     const rawData = req.body;
     console.log('[FormTracking] New Lead submission received:', rawData.name || rawData.fullName);
 
-    // Process through Central Lead Engine (Deduplication & Lead ID generation)
-    const centralResult = processIncomingLead(rawData);
+    // Process through Central Lead Engine (Deduplication, Lead ID generation, persistence)
+    const centralResult = await processIncomingLeadAsync(rawData);
     const lead = centralResult.lead;
 
     // Format full Columns A to AU record
@@ -51,12 +52,16 @@ router.post(['/submit', '/capture'], async (req, res) => {
       axios.post(zapierUrl, masterRecord).catch(err => console.warn('[Zapier] non-fatal err:', err.message));
     }
 
+    const dbAlive = typeof isConnected === 'function' && isConnected();
+
     return res.status(200).json({
       success: true,
       message: 'Thank you for contacting AVANI LOAN SERVICES. Fast application processing and professional loan guidance.',
       leadId: masterRecord.leadId,
       priority: masterRecord.leadPriority,
       whatsAppUrl: getWhatsAppProductLink(masterRecord.loanProduct),
+      persistenceStatus: lead.persistenceStatus || (dbAlive ? 'DURABLY_PERSISTED' : 'ACCEPTED_FOR_PROCESSING'),
+      storageLayer: lead.storageLayer || (dbAlive ? 'MONGODB_ATLAS' : 'IN_MEMORY_BUFFER'),
       lead: lead
     });
   } catch (err) {
@@ -66,13 +71,14 @@ router.post(['/submit', '/capture'], async (req, res) => {
 });
 
 // ── 3. GET /api/lead/all (Central Lead Database Fetch) ───────────
-const { getAllLeads, updateLeadStatus } = require('../services/centralLeadEngine.cjs');
-
-router.get('/all', (req, res) => {
+router.get('/all', async (req, res) => {
   try {
-    const leads = getAllLeads();
+    const leads = await getAllLeadsAsync();
+    const dbAlive = typeof isConnected === 'function' && isConnected();
     return res.json({
       success: true,
+      persistenceStatus: dbAlive ? 'DURABLY_PERSISTED' : 'ACCEPTED_FOR_PROCESSING',
+      storageLayer: dbAlive ? 'MONGODB_ATLAS' : 'IN_MEMORY_BUFFER',
       totalLeads: leads.length,
       leads: leads
     });

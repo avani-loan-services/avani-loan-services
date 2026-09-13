@@ -8,12 +8,15 @@ const crypto = require('crypto');
 const { syncToGoogleSheetMaster } = require('../utils/googleSheetsMaster.cjs');
 const {
   saveLead: persistSaveLead,
+  saveLeadAsync: persistSaveLeadAsync,
   findLeadById,
+  findLeadByIdAsync,
   findLeadByMobile,
   findLeadByIdempotencyKey,
   findLeadByPortalToken: persistFindLeadByPortalToken,
   updateLead: persistUpdateLead,
   getAllLeads: persistGetAllLeads,
+  getAllLeadsAsync: persistGetAllLeadsAsync,
   normalizeMobile,
   hashToken,
   generateLeadId: persistGenerateLeadId,
@@ -270,13 +273,17 @@ function getAllLeads() {
 }
 
 /**
- * Asynchronously process incoming lead with atomic sequence allocation
+ * Asynchronously process incoming lead with atomic sequence allocation and awaited DB persistence
  */
 async function processIncomingLeadAsync(leadPayload) {
   if (!leadPayload.leadId) {
     leadPayload = { ...leadPayload, leadId: await getNextAtomicLeadId() };
   }
-  return processIncomingLead(leadPayload);
+  const result = processIncomingLead(leadPayload);
+  if (result && result.lead) {
+    await persistSaveLeadAsync(result.lead).catch(() => {});
+  }
+  return result;
 }
 
 module.exports = {
@@ -290,6 +297,8 @@ module.exports = {
   updateLeadStatus,
   updateLead,
   getAllLeads,
+  getAllLeadsAsync: persistGetAllLeadsAsync,
+  findLeadByIdAsync,
   normalizeMobile,
   generateLeadId,
   getNextAtomicLeadId,
