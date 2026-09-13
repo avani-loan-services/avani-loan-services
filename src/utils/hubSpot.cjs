@@ -46,14 +46,16 @@ async function syncToHubSpot(meta) {
     const nameParts = (meta.name || '').split(' ');
     const body = {
       properties: {
-        email       : meta.email    || '',
-        phone       : meta.phone    || '',
-        firstname   : nameParts[0]  || '',
-        lastname    : nameParts.slice(1).join(' ') || '',
-        city        : meta.city     || '',
-        loan_type__c: meta.loanType || '',
-        loan_amount : meta.amount   || '',
-        source      : meta.source   || '',
+        email         : meta.email    || '',
+        phone         : meta.phone    || '',
+        firstname     : nameParts[0]  || '',
+        lastname      : nameParts.slice(1).join(' ') || '',
+        city          : meta.city     || '',
+        loan_type__c  : meta.loanType || '',
+        loan_amount   : meta.amount   || '',
+        monthly_income: meta.monthlyIncomeRange || meta.monthlyIncome || '',
+        avani_lead_id : meta.leadId || meta.avaniLeadId || '',
+        source        : meta.source   || '',
         hs_lead_status: meta.status || process.env.ADMIN_STATUS_DEFAULT || 'Pending'
       }
     };
