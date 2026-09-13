@@ -1,65 +1,33 @@
 // src/services/centralLeadEngine.cjs
 // ─────────────────────────────────────────────────────────────────
 // Central Lead Engine & Lifecycle Management for AVANI LOAN SERVICES
+// AVANI LOAN SERVICES — ZERO LOCAL FILESYSTEM / ZERO /TMP DEPENDENCY
 // ─────────────────────────────────────────────────────────────────
 
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
 const { syncToGoogleSheetMaster } = require('../utils/googleSheetsMaster.cjs');
-
-const LEADS_FILE = path.join(__dirname, '../../uploads/central_leads.json');
-
-// Ensure storage file exists
-function ensureStorage() {
-  const dir = path.dirname(LEADS_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(LEADS_FILE)) fs.writeFileSync(LEADS_FILE, JSON.stringify([], null, 2));
-}
-
-function loadLeads() {
-  ensureStorage();
-  try {
-    const raw = fs.readFileSync(LEADS_FILE, 'utf8');
-    return JSON.parse(raw);
-  } catch (e) {
-    return [];
-  }
-}
-
-function saveLeads(leads) {
-  ensureStorage();
-  fs.writeFileSync(LEADS_FILE, JSON.stringify(leads, null, 2));
-}
+const {
+  saveLead: persistSaveLead,
+  findLeadById,
+  findLeadByMobile,
+  findLeadByIdempotencyKey,
+  findLeadByPortalToken: persistFindLeadByPortalToken,
+  updateLead: persistUpdateLead,
+  getAllLeads: persistGetAllLeads,
+  normalizeMobile,
+  hashToken,
+  generateLeadId: persistGenerateLeadId,
+  getNextAtomicLeadId,
+  formatCanonicalLeadId
+} = require('./leadPersistenceService.cjs');
 
 /**
- * Normalize phone number to 10 digits
- */
-function normalizeMobile(phone) {
-  const digits = String(phone || '').replace(/[^0-9]/g, '');
-  return digits.length > 10 ? digits.slice(-10) : digits;
-}
-
-/**
- * Generate Sequential Monotonic Lead ID (ALS-2026-000001)
- * Scans existing leads to find max number to guarantee zero collisions.
+ * Generate Lead ID (Canonical ALS-2026-XXXXXX format)
+ * Production MongoDB persistence executes getNextAtomicLeadId() atomically.
+ * Synchronous calls delegate to the persistence service fallback generator.
  */
 function generateLeadId(leads) {
-  let maxSeq = 1000;
-  if (Array.isArray(leads)) {
-    for (const l of leads) {
-      if (l && l.leadId) {
-        const match = l.leadId.match(/ALS-2026-(\d+)/);
-        if (match) {
-          const num = parseInt(match[1], 10);
-          if (num > maxSeq) maxSeq = num;
-        }
-      }
-    }
-  }
-  const nextNum = maxSeq + 1;
-  const formatted = String(nextNum).padStart(6, '0');
-  return `ALS-2026-${formatted}`;
+  return persistGenerateLeadId();
 }
 
 /**
@@ -70,38 +38,11 @@ function generateSecureToken() {
 }
 
 /**
- * Compute SHA-256 Hash of a token
- */
-function hashToken(token) {
-  return crypto.createHash('sha256').update(String(token || '')).digest('hex');
-}
-
-/**
  * Get Lead by Secure Document Portal Token
  * Enforces token expiration, revocation checks, and hash matching
  */
 function getLeadByPortalToken(token) {
-  if (!token || typeof token !== 'string' || token.trim() === '') return null;
-  const leads = loadLeads();
-  const incomingHash = hashToken(token.trim());
-  const now = Date.now();
-
-  const lead = leads.find(l => {
-    if (l.portalTokenHash && l.portalTokenHash === incomingHash) {
-      if (l.portalTokenRevoked) return false;
-      if (l.portalTokenExpiresAt && l.portalTokenExpiresAt < now) return false;
-      return true;
-    }
-    // Backward compatibility for existing records
-    if (l.secureToken === token.trim()) {
-      if (l.portalTokenRevoked) return false;
-      if (l.portalTokenExpiresAt && l.portalTokenExpiresAt < now) return false;
-      return true;
-    }
-    return false;
-  });
-
-  return lead || null;
+  return persistFindLeadByPortalToken(token);
 }
 
 /**
@@ -138,23 +79,21 @@ function normalizeSource(source) {
  * Create or Deduplicate Incoming Lead
  */
 function processIncomingLead(leadPayload) {
-  const leads = loadLeads();
   const mobile = normalizeMobile(leadPayload.mobile || leadPayload.phone);
   const normalizedSrc = normalizeSource(leadPayload.source || leadPayload.utm_source || leadPayload.leadSource);
   const idempotencyKey = leadPayload.idempotencyKey || leadPayload.sourceEventId || '';
 
   // Check for existing lead by idempotencyKey first, then mobile number
-  let existingIndex = -1;
+  let existing = null;
   if (idempotencyKey) {
-    existingIndex = leads.findIndex(l => l.idempotencyKey === idempotencyKey);
+    existing = findLeadByIdempotencyKey(idempotencyKey);
   }
-  if (existingIndex === -1 && mobile) {
-    existingIndex = leads.findIndex(l => l.mobile === mobile);
+  if (!existing && mobile) {
+    existing = findLeadByMobile(mobile);
   }
 
-  if (existingIndex !== -1) {
+  if (existing) {
     // DUPLICATE DETECTED
-    const existing = leads[existingIndex];
     console.log(`[CentralLeadEngine] Duplicate detected for mobile ${mobile}. Original Lead ID: ${existing.leadId}`);
 
     const duplicateHistory = existing.duplicateEvents || [];
@@ -167,24 +106,24 @@ function processIncomingLead(leadPayload) {
       idempotencyKey: idempotencyKey || 'N/A'
     });
 
-    existing.duplicateEvents = duplicateHistory;
-    existing.lastTouchDate = new Date().toISOString();
-    existing.updatedAt = new Date().toISOString();
-    existing.duplicateCount = (existing.duplicateCount || 0) + 1;
+    const updates = {
+      duplicateEvents: duplicateHistory,
+      lastTouchDate: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      duplicateCount: (existing.duplicateCount || 0) + 1
+    };
 
-    // Preserve original status if progressing, otherwise mark as DUPLICATE event logged
-    leads[existingIndex] = existing;
-    saveLeads(leads);
+    const updated = persistUpdateLead(existing.leadId, updates);
 
     return {
       isDuplicate: true,
-      lead: existing,
+      lead: updated || existing,
       message: `Duplicate lead matched to existing Lead ID ${existing.leadId}`
     };
   }
 
   // NEW LEAD CREATION
-  const leadId = generateLeadId(leads);
+  const leadId = leadPayload.leadId || generateLeadId();
   const secureToken = generateSecureToken();
   const tokenHash = hashToken(secureToken);
   const tokenExpiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7-day expiration
@@ -275,17 +214,7 @@ function processIncomingLead(leadPayload) {
     }]
   };
 
-  leads.push(newLead);
-  saveLeads(leads);
-
-  // Sync to in-memory store if present
-  try {
-    const { getInMemoryStore } = require('../models/database.cjs');
-    const store = getInMemoryStore();
-    if (store && store.leads && mobile) {
-      store.leads.set(mobile, newLead);
-    }
-  } catch (e) {}
+  persistSaveLead(newLead);
 
   // Background sync to Google Sheet Master
   syncToGoogleSheetMaster(newLead).catch(err => console.warn('[CentralLeadEngine] Sheets sync non-fatal:', err.message));
@@ -301,81 +230,58 @@ function processIncomingLead(leadPayload) {
  * Get Lead by Lead ID or Secure Token or Mobile
  */
 function getLead(identifier) {
-  const leads = loadLeads();
-  const norm = normalizeMobile(identifier);
-  return leads.find(l => l.leadId === identifier || l.secureToken === identifier || (norm && l.mobile === norm)) || null;
+  if (!identifier) return null;
+  return findLeadById(identifier) || findLeadByMobile(identifier) || persistFindLeadByPortalToken(identifier) || null;
 }
 
 /**
  * Update Lead Lifecycle Status
  */
 function updateLeadStatus(identifier, newStatus, notes = '', actor = 'SYSTEM') {
-  const leads = loadLeads();
-  const norm = normalizeMobile(identifier);
-  const index = leads.findIndex(l => l.leadId === identifier || l.secureToken === identifier || (norm && l.mobile === norm));
+  const lead = getLead(identifier);
+  if (!lead) return null;
 
-  if (index === -1) return null;
+  const oldStatus = lead.status;
+  const updates = {
+    status: newStatus,
+    currentWorkflowState: newStatus,
+    lastTouchDate: new Date().toISOString()
+  };
+  if (notes) updates.followUpNotes = notes;
 
-  const oldStatus = leads[index].status;
-  const timestamp = new Date().toISOString();
-  leads[index].status = newStatus;
-  leads[index].currentWorkflowState = newStatus;
-  leads[index].lastTouchDate = timestamp;
-  leads[index].updatedAt = timestamp;
-  if (notes) leads[index].followUpNotes = notes;
+  const updated = persistUpdateLead(lead.leadId, updates, actor);
+  console.log(`[CentralLeadEngine] Status transition for ${lead.leadId}: ${oldStatus} ➔ ${newStatus}`);
 
-  leads[index].timeline = leads[index].timeline || [];
-  leads[index].timeline.push({
-    timestamp,
-    fromStatus: oldStatus,
-    toStatus: newStatus,
-    reason: notes || 'Status update',
-    actor
-  });
-
-  saveLeads(leads);
-  console.log(`[CentralLeadEngine] Status transition for ${leads[index].leadId}: ${oldStatus} ➔ ${newStatus}`);
-
-  return { lead: leads[index], oldStatus, newStatus };
+  return { lead: updated || lead, oldStatus, newStatus };
 }
 
 /**
  * Update Lead with arbitrary fields
  */
 function updateLead(identifier, updates, actor = 'SYSTEM') {
-  const leads = loadLeads();
-  const norm = normalizeMobile(identifier);
-  const index = leads.findIndex(l => l.leadId === identifier || l.secureToken === identifier || (norm && l.mobile === norm));
-
-  if (index === -1) return null;
-
-  const timestamp = new Date().toISOString();
-  Object.assign(leads[index], updates, { updatedAt: timestamp });
-
-  if (updates.status && updates.status !== leads[index].status) {
-    leads[index].timeline = leads[index].timeline || [];
-    leads[index].timeline.push({
-      timestamp,
-      fromStatus: leads[index].status,
-      toStatus: updates.status,
-      reason: updates.statusReason || 'Lead updated',
-      actor
-    });
-  }
-
-  saveLeads(leads);
-  return leads[index];
+  return persistUpdateLead(identifier, updates, actor);
 }
 
 /**
  * Get All Leads
  */
 function getAllLeads() {
-  return loadLeads();
+  return persistGetAllLeads();
+}
+
+/**
+ * Asynchronously process incoming lead with atomic sequence allocation
+ */
+async function processIncomingLeadAsync(leadPayload) {
+  if (!leadPayload.leadId) {
+    leadPayload = { ...leadPayload, leadId: await getNextAtomicLeadId() };
+  }
+  return processIncomingLead(leadPayload);
 }
 
 module.exports = {
   processIncomingLead,
+  processIncomingLeadAsync,
   getLead,
   getLeadByPortalToken,
   revokePortalToken,
@@ -385,5 +291,7 @@ module.exports = {
   updateLead,
   getAllLeads,
   normalizeMobile,
-  generateLeadId
+  generateLeadId,
+  getNextAtomicLeadId,
+  formatCanonicalLeadId
 };

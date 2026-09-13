@@ -71,9 +71,49 @@ const LeadSchema = new mongoose.Schema({
 
 const MongoLead = mongoose.models.Lead || mongoose.model('Lead', LeadSchema);
 
-function generateDeterministicLeadId(sequence = 1) {
-  const seqStr = String(sequence).padStart(6, '0');
+// Dedicated Counter Schema for Atomic Sequence Generation
+const CounterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 }
+}, { collection: 'counters' });
+
+const MongoCounter = mongoose.models.Counter || mongoose.model('Counter', CounterSchema);
+
+/**
+ * Format canonical Lead ID: ALS-2026-XXXXXX
+ * Preserves existing numbering convention: sequence 1 -> 1001 -> ALS-2026-001001
+ */
+function formatCanonicalLeadId(sequence = 1) {
+  const num = Number(sequence);
+  const normalizedSeq = num >= 1000 ? num : (1000 + num);
+  const seqStr = String(normalizedSeq).padStart(6, '0');
   return `ALS-2026-${seqStr}`;
+}
+
+function generateDeterministicLeadId(sequence = 1) {
+  return formatCanonicalLeadId(sequence);
+}
+
+/**
+ * Atomic Lead ID Generator
+ * Uses MongoDB findOneAndUpdate with $inc: { seq: 1 } when connected.
+ * In-memory fallback is strictly non-production and explicitly logged.
+ */
+async function getNextAtomicLeadId() {
+  if (isConnected()) {
+    const counter = await MongoCounter.findOneAndUpdate(
+      { _id: 'leadId' },
+      { $inc: { seq: 1 } },
+      { upsert: true, new: true }
+    );
+    return formatCanonicalLeadId(counter.seq);
+  }
+
+  // Fallback when MongoDB is offline / disconnected
+  console.warn('[LeadModel] WARNING: MongoDB is unavailable. Utilizing local fallback sequence generation. This fallback is NOT production-grade persistence and cannot guarantee globally unique distributed IDs across independent serverless invocations.');
+  const store = getInMemoryStore();
+  store._fallbackSeq = (store._fallbackSeq || 1000) + 1;
+  return formatCanonicalLeadId(store._fallbackSeq);
 }
 
 async function findOrCreateLead(leadData) {
@@ -108,8 +148,8 @@ async function findOrCreateLead(leadData) {
       return { isDuplicate: true, lead: existing };
     }
 
-    const count = await MongoLead.countDocuments();
-    const leadId = generateDeterministicLeadId(count + 1001);
+    // Atomic MongoDB-backed sequence generation
+    const leadId = await getNextAtomicLeadId();
 
     const newLead = new MongoLead({
       leadId,
@@ -183,7 +223,7 @@ async function findOrCreateLead(leadData) {
       return { isDuplicate: true, lead: existing };
     }
 
-    const leadId = generateDeterministicLeadId(store.leads.size + 1001);
+    const leadId = await getNextAtomicLeadId();
     const newLead = {
       leadId,
       fullName: leadData.fullName || leadData.name || 'Valued Customer',
@@ -273,9 +313,12 @@ async function updateLeadState(leadId, updates) {
 
 module.exports = {
   MongoLead,
+  MongoCounter,
   findOrCreateLead,
   getLeadByMobile,
   updateLeadState,
+  getNextAtomicLeadId,
+  formatCanonicalLeadId,
   generateDeterministicLeadId
 };
 
