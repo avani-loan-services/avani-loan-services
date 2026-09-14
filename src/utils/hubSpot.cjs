@@ -40,27 +40,121 @@ async function getAccessToken() {
   return accessToken;
 }
 
+/**
+ * Maps AVANI loan product display labels to authoritative HubSpot internal enumeration values.
+ * Portal 244236573 allowed options:
+ * - personal_salary_loan
+ * - business_loan
+ * - doctor_loan
+ * - home_loan
+ * - mortgage_loan
+ * - education_loan_india
+ * - education_loan_global
+ */
+function mapLoanTypeToHubSpot(loanType) {
+  if (!loanType || typeof loanType !== 'string') return '';
+  const norm = loanType.trim().toLowerCase();
+
+  if (norm.includes('global') || norm.includes('abroad') || norm.includes('overseas')) {
+    return 'education_loan_global';
+  }
+  if (norm.includes('edu') || norm.includes('student')) {
+    return 'education_loan_india';
+  }
+  if (norm.includes('doctor') || norm.includes('medical') || norm.includes('dr')) {
+    return 'doctor_loan';
+  }
+  if (norm.includes('home') || norm.includes('housing')) {
+    return 'home_loan';
+  }
+  if (norm.includes('mortgage') || norm.includes('lap') || norm.includes('property')) {
+    return 'mortgage_loan';
+  }
+  if (norm.includes('busin') || norm.includes('commercial') || norm.includes('msme') || norm.includes('sme')) {
+    return 'business_loan';
+  }
+  if (norm.includes('person') || norm.includes('salary') || norm.includes('salaried')) {
+    return 'personal_salary_loan';
+  }
+
+  // Exact option value pass-through if already internal key
+  const validEnums = [
+    'personal_salary_loan',
+    'business_loan',
+    'doctor_loan',
+    'home_loan',
+    'mortgage_loan',
+    'education_loan_india',
+    'education_loan_global'
+  ];
+  if (validEnums.includes(norm)) {
+    return norm;
+  }
+
+  return '';
+}
+
+/**
+ * Safely parses loan amount into a numeric value as required by HubSpot's number field type.
+ */
+function parseLoanAmount(amount) {
+  if (typeof amount === 'number') {
+    return Number.isFinite(amount) ? amount : null;
+  }
+  if (!amount || typeof amount !== 'string') return null;
+  const cleaned = amount.replace(/[^\d.]/g, '');
+  if (!cleaned) return null;
+  const parsed = parseFloat(cleaned);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+/**
+ * Normalizes lead status to HubSpot internal uppercase enumeration.
+ * Initial lead status is strictly 'NEW'.
+ */
+function mapLeadStatus(status) {
+  if (!status || typeof status !== 'string') return 'NEW';
+  const norm = status.trim().toUpperCase();
+  const validStatuses = [
+    'NEW',
+    'OPEN',
+    'IN_PROGRESS',
+    'OPEN_DEAL',
+    'UNQUALIFIED',
+    'ATTEMPTED_TO_CONTACT',
+    'CONNECTED',
+    'BAD_TIMING'
+  ];
+  if (validStatuses.includes(norm)) {
+    return norm;
+  }
+  return 'NEW';
+}
+
 async function syncToHubSpot(meta) {
   try {
     const token = await getAccessToken();
     const nameParts = (meta.name || '').split(' ');
-    const body = {
-      properties: {
-        email         : meta.email    || '',
-        phone         : meta.phone    || '',
-        firstname     : nameParts[0]  || '',
-        lastname      : nameParts.slice(1).join(' ') || '',
-        city          : meta.city     || '',
-        loan_type__c  : meta.loanType || '',
-        loan_amount   : meta.amount   || '',
-        monthly_income: meta.monthlyIncomeRange || meta.monthlyIncome || '',
-        avani_lead_id : meta.leadId || meta.avaniLeadId || '',
-        source        : meta.source   || '',
-        hs_lead_status: meta.status || process.env.ADMIN_STATUS_DEFAULT || 'Pending'
-      }
+    const properties = {
+      email                      : meta.email || '',
+      phone                      : meta.phone || '',
+      firstname                  : nameParts[0] || '',
+      lastname                   : nameParts.slice(1).join(' ') || '',
+      city                       : meta.city || '',
+      loan_type                  : mapLoanTypeToHubSpot(meta.loanType || meta.loanProduct),
+      what_is_your_monthly_income: meta.monthlyIncomeRange || meta.monthlyIncome || '',
+      lead_id                    : meta.leadId || meta.avaniLeadId || '',
+      hs_lead_status             : mapLeadStatus(meta.status || 'NEW')
     };
 
-    await axios.post(
+    const numAmount = parseLoanAmount(meta.amount);
+    if (numAmount !== null) {
+      properties.loan_amount_required = numAmount;
+    }
+
+    const body = { properties };
+
+    const hubRes = await axios.post(
       'https://api.hubapi.com/crm/v3/objects/contacts',
       body,
       {
@@ -71,10 +165,17 @@ async function syncToHubSpot(meta) {
       }
     );
     console.log('[hubspot] Contact synced successfully.');
+    return hubRes.data;
   } catch (err) {
     // Non‑fatal – log and continue
     console.error('[hubspot] Sync error (non‑fatal):', err.response?.data || err.message);
+    return { error: true, data: err.response?.data || err.message };
   }
 }
 
-module.exports = { syncToHubSpot };
+module.exports = {
+  syncToHubSpot,
+  mapLoanTypeToHubSpot,
+  parseLoanAmount,
+  mapLeadStatus
+};
