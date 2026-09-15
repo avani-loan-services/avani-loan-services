@@ -24,11 +24,12 @@ const {
   syncWithMeta,
   publishToAiSensy
 } = require('../services/templatePublishingEngine.cjs');
-const { generateAllImageConcepts } = require('../services/imageAssetEngine.cjs');
+const { generateAllImageConcepts, generate100VisualConcepts } = require('../services/imageAssetEngine.cjs');
 const { generateAllVideoConcepts, generateProductVideoConcepts } = require('../services/videoAssetEngine.cjs');
 const { scoreTemplateQuality, findDuplicates } = require('../services/contentQualityScorer.cjs');
 const { generate30DayCalendar, convertToCSV, convertCalendarToCSV } = require('../services/contentCalendarEngine.cjs');
 const { PUBLISHING_STATES, transitionTemplateState } = require('../services/publishingStateMachine.cjs');
+
 
 // Tenant isolation middleware on all template endpoints
 router.use((req, res, next) => {
@@ -114,10 +115,13 @@ router.get('/stats', async (req, res) => {
 
 // ── 3. GET /api/templates/products ───────────────────────────────
 router.get('/products', (req, res) => {
+  const products = Object.values(PRODUCTS_CATALOG);
   res.json({
     success: true,
     businessId: BUSINESS_IDENTITY.businessId,
-    products: Object.values(PRODUCTS_CATALOG)
+    count: products.length,
+    total: products.length,
+    products
   });
 });
 
@@ -125,10 +129,10 @@ router.get('/products', (req, res) => {
 router.get('/images', (req, res) => {
   try {
     const { product, format } = req.query;
-    let concepts = generateAllImageConcepts();
+    let concepts = (!format || format === 'ALL') ? generate100VisualConcepts() : generateAllImageConcepts();
 
     if (product && product !== 'ALL') {
-      concepts = concepts.filter(c => c.product === product);
+      concepts = concepts.filter(c => (c.productId === product || c.product === product));
     }
     if (format && format !== 'ALL') {
       concepts = concepts.filter(c => c.formatKey === format);
@@ -137,6 +141,7 @@ router.get('/images', (req, res) => {
     res.json({
       success: true,
       businessId: BUSINESS_IDENTITY.businessId,
+      count: concepts.length,
       total: concepts.length,
       concepts
     });
@@ -153,17 +158,19 @@ router.get('/videos', (req, res) => {
     let videos = generateAllVideoConcepts(lang);
 
     if (product && product !== 'ALL') {
-      videos = videos.filter(v => v.product === product);
+      videos = videos.filter(v => (v.productId === product || v.product === product));
     }
     if (category && category !== 'ALL') {
-      videos = videos.filter(v => v.category === category);
+      videos = videos.filter(v => (v.category === category || v.categoryName === category));
     }
 
     res.json({
       success: true,
       businessId: BUSINESS_IDENTITY.businessId,
+      count: videos.length,
       total: videos.length,
-      videos
+      videos,
+      concepts: videos
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -173,12 +180,21 @@ router.get('/videos', (req, res) => {
 // ── 6. GET /api/templates/calendar (30-Day Product Content Calendar) ──
 router.get('/calendar', (req, res) => {
   try {
-    const { product } = req.query;
+    const { product, format } = req.query;
     const calendar = generate30DayCalendar(product || 'ALL');
+
+    if (format === 'csv') {
+      const csv = convertCalendarToCSV(calendar);
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="avani_content_calendar.csv"');
+      return res.send(csv);
+    }
+
     res.json({
       success: true,
       businessId: BUSINESS_IDENTITY.businessId,
       totalDays: 30,
+      count: calendar.length,
       entriesCount: calendar.length,
       calendar
     });
@@ -186,6 +202,7 @@ router.get('/calendar', (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 // ── 7. POST /api/templates/score (Quality & Compliance Scoring) ──
 router.post('/score', async (req, res) => {

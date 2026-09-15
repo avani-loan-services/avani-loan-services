@@ -1009,7 +1009,9 @@ function generateAllImageConcepts() {
     });
   });
 
+  return allConcepts;
 }
+
 
 /**
  * Generate 100 unique visual concepts (10 per product × 10 products),
