@@ -123,7 +123,7 @@ async function syncToGoogleSheetMaster(leadData) {
   try {
     const res = await axios.post(APPS_SCRIPT_URL, masterRecord, {
       headers: { 'Content-Type': 'application/json' },
-      timeout: 15000
+      timeout: 30000
     });
     console.log('[GoogleSheetMaster] Sync success:', res.status, masterRecord.leadId);
     return { success: true, record: masterRecord, response: res.data };

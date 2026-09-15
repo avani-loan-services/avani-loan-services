@@ -43,4 +43,27 @@ async function sendEnquiryEmail(enquiry) {
   await transporter.sendMail(mailOptions);
 }
 
-module.exports = { sendEnquiryEmail };
+async function sendEmail({ to, subject, html }) {
+  if (!process.env.SMTP_HOST || process.env.SMTP_HOST === 'placeholder') {
+    // Graceful no-op in test/serverless when SMTP is unconfigured
+    return { success: true, simulated: true };
+  }
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10) || 587,
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  return await transporter.sendMail({
+    from: `"Avani Loan Services" <${process.env.SMTP_USER || 'enquiry@avanifinserv.com'}>`,
+    to,
+    subject,
+    html,
+  });
+}
+
+module.exports = { sendEnquiryEmail, sendEmail };

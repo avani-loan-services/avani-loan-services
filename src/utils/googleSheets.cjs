@@ -7,6 +7,7 @@ const axios = require('axios');
 
 // Apps Script endpoint (confirmed 200 OK)
 const APPS_SCRIPT_URL =
+  process.env.GOOGLE_SHEET_APP_SCRIPT_URL ||
   'https://script.google.com/macros/s/AKfycbyoAmAabpO9PUDH-AXatZm5Td7pO9n5W00Eoh6TNIkPtjbQZiYrhAv27XgyMtJdBxchEg/exec';
 
 /**
@@ -28,7 +29,8 @@ async function appendViaAppsScript(row) {
   };
   try {
     const res = await axios.post(APPS_SCRIPT_URL, payload, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      timeout: 30000
     });
     console.log('[googleSheets] Apps Script response:', res.status, res.data);
   } catch (err) {
@@ -71,10 +73,19 @@ async function appendRowToGoogleSheet(row) {
 
   try {
     const { google } = require('googleapis');
-    const auth = new google.auth.GoogleAuth({
-      keyFile,
+    const authOptions = {
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
-    });
+    };
+    if (rawKeyFile.trim().startsWith('{')) {
+      try {
+        authOptions.credentials = JSON.parse(rawKeyFile);
+      } catch (e) {
+        authOptions.keyFile = keyFilePath;
+      }
+    } else {
+      authOptions.keyFile = keyFilePath;
+    }
+    const auth = new google.auth.GoogleAuth(authOptions);
     const client = await auth.getClient();
     const sheets = google.sheets({ version: 'v4', auth: client });
     const values = [[

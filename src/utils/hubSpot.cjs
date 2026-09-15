@@ -13,12 +13,14 @@ let tokenExpiresAt = 0;
 async function getAccessToken() {
   if (accessToken && Date.now() < tokenExpiresAt) return accessToken;
 
-  // Re‑read .env at runtime so token updates without restart
-  const envPath = path.resolve(__dirname, '../../.env');
-  if (fs.existsSync(envPath)) {
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const match = envContent.match(/HUBSPOT_REFRESH_TOKEN=(.+)/);
-    if (match && match[1]) process.env.HUBSPOT_REFRESH_TOKEN = match[1].trim();
+  // If no refresh token in process.env, try to read from .env if present
+  if (!process.env.HUBSPOT_REFRESH_TOKEN) {
+    const envPath = path.resolve(__dirname, '../../.env');
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      const match = envContent.match(/HUBSPOT_REFRESH_TOKEN=(.+)/);
+      if (match && match[1]) process.env.HUBSPOT_REFRESH_TOKEN = match[1].trim();
+    }
   }
 
   const refreshToken = process.env.HUBSPOT_REFRESH_TOKEN;
