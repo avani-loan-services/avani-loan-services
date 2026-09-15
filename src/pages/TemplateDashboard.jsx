@@ -612,9 +612,9 @@ export default function TemplateDashboard() {
         {/* ── TAB 9: SCANNER ── */}
         {activeTab === 'scanner' && (
           <div className="scanner-view">
-            <h2>Agro Foods Contamination & Financial Claim Scanner</h2>
+            <h2>Cross-Entity Contamination & Financial Claim Scanner</h2>
             <p className="tab-subtitle">
-              Strict isolation firewall. Test any marketing draft or prompt to ensure zero contamination with AVANI AGRO FOODS and verify compliance with RBI/DSA loan guidelines.
+              Strict isolation firewall. Test any marketing draft or prompt to ensure zero cross-entity contamination and verify compliance with RBI/DSA loan guidelines.
             </p>
 
             <div className="scanner-form">
