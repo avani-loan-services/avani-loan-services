@@ -10,7 +10,8 @@
     { "source": "/api/documents/(.*)", "destination": "/api/index.js" },
     { "source": "/api/meta/(.*)", "destination": "/api/index.js" },
     { "source": "/api/calculator-auth/(.*)", "destination": "/api/index.js" },
-    { "source": "/api/templates/(.*)", "destination": "/api/index.js" },
+    { "source": "/api/templates(.*)", "destination": "/api/index.js" },
+
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
