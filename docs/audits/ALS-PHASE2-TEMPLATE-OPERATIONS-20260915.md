@@ -1,18 +1,18 @@
 # AVANI LOAN SERVICES — PHASE 2 TEMPLATE OPERATIONS & AUDIT REPORT
 
-**Date:** September 15, 2026  
-**Auditor:** Antigravity Autonomous Agent (DeepMind Engineering)  
-**Tenant / Business Identity:** AVANI LOAN SERVICES (`avani-loan-services`)  
-**Founder / Owner:** Sachin Shinde  
-**Official Website:** [https://www.avanifinserv.com/](https://www.avanifinserv.com/)  
-**Official WhatsApp Business:** +91 91756 35165  
-**Official Email:** [enquiry@avanifinserv.com](mailto:enquiry@avanifinserv.com)  
-**Meta WABA ID:** `1062614709598311`  
-**Phone Number ID:** `1147494668457940`  
-**AiSensy Project ID:** `6a670f94d0c39f57eaa6799f`  
-**Production Vercel Project:** `avani-loan-services`  
-**Authoritative Git Repository:** `avani-loan-services/avani-loan-services` (Branch: `main`)  
-**Production URL:** [https://www.avanifinserv.com](https://www.avanifinserv.com)  
+**Date:** September 15, 2026
+**Auditor:** Antigravity Autonomous Agent (DeepMind Engineering)
+**Tenant / Business Identity:** AVANI LOAN SERVICES (`avani-loan-services`)
+**Founder / Owner:** Sachin Shinde
+**Official Website:** [https://www.avanifinserv.com/](https://www.avanifinserv.com/)
+**Official WhatsApp Business:** +91 91756 35165
+**Official Email:** [enquiry@avanifinserv.com](mailto:enquiry@avanifinserv.com)
+**Meta WABA ID:** `1062614709598311`
+**Phone Number ID:** `1147494668457940`
+**AiSensy Project ID:** `6a670f94d0c39f57eaa6799f`
+**Production Vercel Project:** `avani-loan-services`
+**Authoritative Git Repository:** `avani-loan-services/avani-loan-services` (Branch: `main`)
+**Production URL:** [https://www.avanifinserv.com](https://www.avanifinserv.com)
 
 ---
 
@@ -43,12 +43,12 @@ This forensic audit transitions AVANI LOAN SERVICES from a basic template engine
 All 10 loan products have dedicated, customized template libraries, visual image concepts, and video production storyboards:
 
 1. **Personal Loan (`personal_loan` / `PL`)** — Salaried Employees, FOIR Limits, Debt Consolidation
-2. **Business Loan (`business_loan` / `BL`)** — MSME Owners, Working Capital, GST/Turnover-Based Lending
+2. **[business loan](/services/business-loan) (`business_loan` / `BL`)** — MSME Owners, Working Capital, GST/Turnover-Based Lending
 3. **Doctor Loan (`doctor_loan` / `DL`)** — Medical Practitioners, Clinic Setup, Diagnostic Machinery
-4. **Home Loan (`home_loan` / `HL`)** — Homebuyers, PMAY Compliance, Balance Transfer
+4. **[home loan](/services/home-loan) (`home_loan` / `HL`)** — Homebuyers, PMAY Compliance, Balance Transfer
 5. **Mortgage Loan / LAP (`mortgage_loan` / `ML`)** — Property Owners, High-Ticket Liquidity, Debt Restructuring
-6. **Education Loan India (`education_loan_india` / `ELI`)** — Students & Parents, IIT/IIM/NEET Higher Studies
-7. **Education Loan Global Studies (`education_loan_global` / `ELG`)** — Overseas Aspirants (US, UK, Canada, Australia, Germany)
+6. **[education loan india](/services/education-loan) (`education_loan_india` / `ELI`)** — Students & Parents, IIT/IIM/NEET Higher Studies
+7. **[Education Loan](/services/education-loan) Global Studies (`education_loan_global` / `ELG`)** — Overseas Aspirants (US, UK, Canada, Australia, Germany)
 8. **School Funding (`school_funding` / `SF`)** — Private Educational Trusts, Campus Expansion, Infrastructure
 9. **College Funding (`college_funding` / `CF`)** — Higher Education Institutions, Labs, Accreditation Capex
 10. **CIBIL Improvement Consultation (`cibil_consultation` / `CIC`)** — Credit Repair Guidance, Dispute Advisory, DPD Rectification

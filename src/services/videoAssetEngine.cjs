@@ -294,6 +294,7 @@ module.exports = {
   VIDEO_CATEGORIES,
   generateProductVideoConcepts,
   generateAllVideoConcepts,
-  generateAllProductVideoConcepts: generateAllVideoConcepts
+  generateAllProductVideoConcepts: generateAllVideoConcepts,
+  generate300VideoConcepts: generateAllVideoConcepts
 };
 

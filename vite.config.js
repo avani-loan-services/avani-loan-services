@@ -18,6 +18,7 @@ export default defineConfig({
     }
   },
   build: {
+    assetsDir: 'static',
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {

@@ -29,6 +29,34 @@ const { generateAllVideoConcepts, generateProductVideoConcepts } = require('../s
 const { scoreTemplateQuality, findDuplicates } = require('../services/contentQualityScorer.cjs');
 const { generate30DayCalendar, convertToCSV, convertCalendarToCSV } = require('../services/contentCalendarEngine.cjs');
 const { PUBLISHING_STATES, transitionTemplateState } = require('../services/publishingStateMachine.cjs');
+const {
+  ASSET_STATUSES,
+  queryMediaAssets,
+  getMediaAssetById,
+  saveMediaAsset,
+  transitionAssetStatus,
+  countMediaAssets
+} = require('../models/MediaAsset.cjs');
+const {
+  generateImageAsset,
+  generateVideoAsset,
+  initializeAllMediaAssetConcepts,
+  validateImageQualityControl
+} = require('../services/mediaAssetPipeline.cjs');
+const {
+  saveCampaign,
+  getCampaignById,
+  queryCampaigns,
+  CAMPAIGN_STATUSES
+} = require('../models/Campaign.cjs');
+const { generateCampaignPack, adaptContentForChannels } = require('../services/campaignAutomationEngine.cjs');
+const {
+  enqueuePublishItem,
+  getPublishingQueue,
+  processPublishItem,
+  retryPublishItem,
+  QUEUE_STATUSES
+} = require('../services/publishingQueueService.cjs');
 
 
 // Tenant isolation middleware on all template endpoints
@@ -483,7 +511,162 @@ router.get('/export', async (req, res) => {
 });
 
 
-// ── 19. GET /api/templates/:id (Single Template) ────────────────
+// ── PHASE 3: MEDIA ASSETS, CAMPAIGNS & PUBLISHING QUEUE ─────────
+
+// ── 19. GET /api/templates/assets (Query Media Assets) ──────────
+router.get('/assets', async (req, res) => {
+  try {
+    let assets = await queryMediaAssets(req.query);
+    if (assets.length === 0) {
+      await initializeAllMediaAssetConcepts();
+      assets = await queryMediaAssets(req.query);
+    }
+
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      count: assets.length,
+      assets
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 20. GET /api/templates/assets/:assetId (Single Asset) ─────────
+router.get('/assets/:assetId', async (req, res) => {
+  try {
+    const asset = await getMediaAssetById(req.params.assetId);
+    if (!asset) {
+      return res.status(404).json({ success: false, error: 'Media asset not found' });
+    }
+    res.json({ success: true, asset });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 21. POST /api/templates/assets/generate ──────────────────────
+router.post('/assets/generate', async (req, res) => {
+  try {
+    const { type = 'IMAGE', conceptId, productId, format = '1:1', provider } = req.body || {};
+    let result;
+    if (type.toUpperCase() === 'VIDEO') {
+      result = await generateVideoAsset({ conceptId, productId, provider });
+    } else {
+      result = await generateImageAsset({ conceptId, productId, format, provider });
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 22. POST /api/templates/assets/approve ───────────────────────
+router.post('/assets/approve', async (req, res) => {
+  try {
+    const { assetId, actor = 'Sachin Shinde' } = req.body || {};
+    const asset = await getMediaAssetById(assetId);
+    if (!asset) {
+      return res.status(404).json({ success: false, error: 'Asset not found' });
+    }
+    const result = transitionAssetStatus(asset, ASSET_STATUSES.APPROVED_INTERNAL, { actor, reason: 'Approved by authorized operator' });
+    await saveMediaAsset(asset);
+    res.json({ success: true, asset, log: result.logEntry });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// ── 23. POST /api/templates/assets/reject ────────────────────────
+router.post('/assets/reject', async (req, res) => {
+  try {
+    const { assetId, actor = 'Sachin Shinde', reason = 'Quality review revision needed' } = req.body || {};
+    const asset = await getMediaAssetById(assetId);
+    if (!asset) {
+      return res.status(404).json({ success: false, error: 'Asset not found' });
+    }
+    const result = transitionAssetStatus(asset, ASSET_STATUSES.REJECTED_INTERNAL, { actor, reason });
+    await saveMediaAsset(asset);
+    res.json({ success: true, asset, log: result.logEntry });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// ── 24. GET /api/templates/campaigns (List Campaigns) ────────────
+router.get('/campaigns', async (req, res) => {
+  try {
+    const campaigns = await queryCampaigns(req.query);
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      count: campaigns.length,
+      campaigns
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 25. POST /api/templates/campaigns (Create Campaign) ──────────
+router.post('/campaigns', async (req, res) => {
+  try {
+    const saved = await saveCampaign(req.body);
+    res.json({ success: true, campaign: saved });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// ── 26. POST /api/templates/campaigns/pack (Generate Pack) ───────
+router.post('/campaigns/pack', async (req, res) => {
+  try {
+    const result = await generateCampaignPack(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 27. GET /api/templates/publishing-queue ──────────────────────
+router.get('/publishing-queue', (req, res) => {
+  try {
+    const queue = getPublishingQueue(req.query);
+    res.json({
+      success: true,
+      count: queue.length,
+      queue
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 28. POST /api/templates/publishing-queue/publish ─────────────
+router.post('/publishing-queue/publish', async (req, res) => {
+  try {
+    const { queueId, isMetaApproved } = req.body || {};
+    const result = await processPublishItem(queueId, { isMetaApproved });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// ── 29. POST /api/templates/publishing-queue/retry ───────────────
+router.post('/publishing-queue/retry', async (req, res) => {
+  try {
+    const { queueId, isMetaApproved } = req.body || {};
+    const result = await retryPublishItem(queueId, { isMetaApproved });
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+
+// ── 30. GET /api/templates/:id (Single Template) ────────────────
 router.get('/:id', async (req, res) => {
   try {
     const template = await getTemplateById(req.params.id);

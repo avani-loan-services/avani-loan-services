@@ -24,6 +24,8 @@ import FloatingAIAssistant from './components/FloatingAIAssistant';
 import DownloadApplication from './pages/DownloadApplication';
 import ProductApply from './pages/ProductApply';
 import TemplateDashboard from './pages/TemplateDashboard';
+import AssetLibrary from './pages/AssetLibrary';
+import CampaignBuilder from './pages/CampaignBuilder';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // ── Financial Calculator Suite (Isolated & Password-Protected Admin) ──
@@ -87,10 +89,15 @@ export default function App() {
               <Route path="/admin" element={<PasswordGate pageTitle="Executive Operations Dashboard"><AdminDashboard /></PasswordGate>} />
               <Route path="/admin-eligibility" element={<PasswordGate pageTitle="Eligibility Admin Panel"><AdminEligibility /></PasswordGate>} />
               <Route path="/catalog" element={<Catalog />} />
+              <Route path="/loan-products" element={<Catalog />} />
               <Route path="/apply" element={<ProductApply />} />
               <Route path="/apply/:productSlug" element={<ProductApply />} />
               <Route path="/templates" element={<TemplateDashboard />} />
               <Route path="/templates/:productId" element={<TemplateDashboard />} />
+              <Route path="/assets" element={<AssetLibrary />} />
+              <Route path="/asset-library" element={<AssetLibrary />} />
+              <Route path="/campaigns" element={<CampaignBuilder />} />
+              <Route path="/publishing-queue" element={<CampaignBuilder />} />
 
               {/* ── Financial Tools & Intelligence Suite (/financial-tools) ── */}
               <Route path="/financial-tools" element={<CalculatorDashboard />} />
