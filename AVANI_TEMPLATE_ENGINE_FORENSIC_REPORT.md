@@ -1,99 +1,97 @@
-# AVANI LOAN SERVICES — CONTENT TEMPLATE ENGINE FORENSIC REPORT
+# AVANI LOAN SERVICES — CONTENT TEMPLATE ENGINE FORENSIC INSPECTION REPORT
+
+**Date:** 2026-09-15  
+**Authoritative Business:** AVANI LOAN SERVICES (Owner: Sachin Shinde)  
+**Authoritative Domain:** https://www.avanifinserv.com  
 **Authoritative Repository:** `avani-loan-services/avani-loan-services`  
 **Authoritative Branch:** `main`  
-**Tenant / Business Identity:** `AVANI LOAN SERVICES` (`businessId = "avani-loan-services"`)  
-**Audit Date:** 2026-09-15  
-**Auditor / Engine:** Antigravity AI Agent  
+**Current Git SHA:** `f6704e0`  
+**Production Deployment:** `dpl_5Ap1ycr2vdaurKdkKY8BrTikwDrW`  
 
 ---
 
-## 1. Executive Summary & Objective
-This forensic inspection establishes the structural, architectural, and integration baseline of **AVANI LOAN SERVICES** prior to implementing the production-ready **Productwise Content Template Engine**.
-The template engine generates, manages, validates, and publishes multi-channel, multi-lingual marketing, utility, and CRM follow-up content across 10 distinct loan products for Sachin Shinde's Avani Loan Services.
+## 1. Executive Summary & Forensic Context
+This report provides the exhaustive baseline inspection of the AVANI LOAN SERVICES codebase, services, and integrations prior to executing the end-to-end build, generation, validation, AiSensy/Meta integration, and deployment workflow for the **Productwise Content Template Engine**.
+
+The objective is to establish an enterprise-grade, multi-channel marketing content library for **exactly 10 distinct financial loan products**, locked strictly to the `avani-loan-services` business identity, with absolute isolation from any unrelated projects.
 
 ---
 
-## 2. Forensic Inspection Findings
-
-### 2.1 Git Repository & Remote Baseline
-- **Repository:** `avani-loan-services/avani-loan-services` (Confirmed via `git remote -v`: `origin https://github.com/avani-loan-services/avani-loan-services.git`).
-- **Current Branch:** `main` (clean, aligned with remote tracking branch `origin/main`).
-- **Target Remote:** Verified; strictly isolated from any unrelated projects or repositories.
-
-### 2.2 Business & Tenant Identity
-- **Business Name:** AVANI LOAN SERVICES
-- **Founder & Owner:** Sachin Shinde
-- **Industry:** Financial Services | Loan Consultancy | Loan Advisory
-- **Headquarters / Office:** Old Barshi Road, 5 no chauk, Kulswamini Nagar, Next to Sai School, Latur – 413512, Maharashtra, India
-- **Website:** `https://www.avanifinserv.com/`
-- **Email:** `enquiry@avanifinserv.com`
-- **Official WhatsApp Business:** `+91 91756 35165`
-- **Tenant Lock:** Hardcoded guard `businessId = "avani-loan-services"` must be enforced on all templates, campaigns, image prompts, video scripts, and publishing operations.
-
-### 2.3 Existing Integration Architecture
-1. **AiSensy Transport:**
-   - **Project ID:** `6a670f94d0c39f57eaa6799f`
-   - **Gateway Endpoint:** `https://backend.aisensy.com/campaign/t1/api/v2`
-   - **Key Format:** Valid JWT API Token verified in local environment (`AISENSY_API_KEY`).
-   - **Existing Adapter:** `src/services/aisensyAdapter.cjs` & `src/services/whatsappProviderEngine.cjs`.
-2. **Meta WhatsApp Cloud / WABA Infrastructure:**
-   - **WABA ID:** `1062614709598311` (Confirmed live via Meta Graph API v20.0).
-   - **Phone Number ID:** `1147494668457940`.
-   - **Access Token:** Valid System User Token verified live with HTTP 200 response from Meta Graph API.
-   - **Current Live WABA Templates:** 15 active templates inspected on Meta (including approved templates for `home_loan_welcome`, `mortgage_loan_welcome`, `education_loan__india_documents`, and pending utility templates).
-3. **Database Architecture:**
-   - **Primary Store:** MongoDB via Mongoose (`src/models/database.cjs`).
-   - **Serverless Fallback:** In-memory fallback map with fail-closed production protection (`src/config/envValidator.cjs`).
-   - **Existing Models:** `Lead.cjs`, `ConversationState.cjs`, `ProviderLedger.cjs`, `WebhookInbox.cjs`.
-4. **Backend Server & Routing (`src/server.cjs`):**
-   - Express server with JSON/URL-encoded raw-body verification.
-   - Active routes: `/api/crm`, `/api/whatsapp`, `/api/whatsapp-webhook`, `/api/eligibility`, `/api/documents`, `/api/meta`, `/api/lead`, `/api/marketing`, `/api/calculator-auth`.
-   - Vercel Serverless entry point: `api/index.js` redirects all requests to `src/server.cjs`.
-5. **Frontend Application:**
-   - React 19 + Vite 6 + React Router 7 (`src/App.jsx`).
-   - Includes full Financial Tools & Calculators suite, Eligibility Engine, Lead forms, and Admin dashboards.
+## 2. Current Architecture & Runtime Configuration
+- **Frontend Stack:** React 19 + Vite 6 + React Router 7 + Lucide Icons + Pure Vanilla CSS design tokens.
+- **Backend Architecture:** Express 5 runtime (`src/server.cjs`), mounted for serverless invocation via `api/index.js` in Vercel.
+- **Database & Persistence:** Dual-tier architecture using MongoDB Atlas (`avani_loan_services_test` / production) with an isolated, in-memory fallback store (`src/models/ContentTemplate.cjs`, `src/models/database.cjs`) for zero-dependency test execution.
+- **Routing & Rewrite Layer:** `vercel.json` rewrites all `/api/templates/(.*)` paths to `api/index.js`, while client-side routes `/templates` and `/templates/:productId` are routed to `TemplateDashboard.jsx`.
 
 ---
 
-## 3. Reusable Components vs Required New Additions
+## 3. Existing Reusable Components & Modules
+The following core assets and modules are inspected and ready for direct reuse:
+1. **Business Identity Hard Lock (`src/config/businessIdentity.cjs`):**
+   - Authoritative constants: `BUSINESS_IDENTITY.businessId = 'avani-loan-services'`, Founder: Sachin Shinde, WhatsApp: `+91 91756 35165`, Office: Kulswamini Nagar, Latur.
+   - Enforcement utilities: `assertBusinessIsolation()`, `checkBusinessIsolation()`, and `AGRO_CONTAMINATION_TERMS` firewall.
+2. **Product Catalog (`src/config/productsCatalog.cjs`):**
+   - 10 distinct products: `personal_loan`, `business_loan`, `doctor_loan`, `home_loan`, `mortgage_loan`, `education_loan_india`, `education_loan_global`, `school_funding`, `college_funding`, `cibil_consultation`.
+3. **Template Data Model & Ledger (`src/models/ContentTemplate.cjs`):**
+   - Full schema supporting Template ID, Business ID, Product, Audience, Channel, Content Type, Campaign Type, Language, Headline, Body, Footer, CTA, Variables, Image Prompt, Video Script, Status, AiSensy Status, Meta Status, Version, Idempotency Key, and Audit Trail.
+4. **Validation & Contamination Engine (`src/services/templateValidator.cjs`):**
+   - Enforces business isolation, Meta naming constraints, prohibited financial claim detection, variable sequence validation (`{{1}}`, `{{2}}`), and contamination scanning.
+5. **Publishing & Integration Engine (`src/services/templatePublishingEngine.cjs`):**
+   - Meta Graph API (`/v20.0/{waba_id}/message_templates`) direct submission & live status synchronization.
+   - AiSensy campaign registration and status tracking.
+6. **Express API Router (`src/routes/templates.cjs`):**
+   - Endpoints for querying (`/api/templates`), stats (`/stats`), catalog (`/products`), bulk generation (`/generate`), validation (`/validate`), single template (`/:id`), Meta submission (`/:id/submit-meta`), AiSensy publishing (`/:id/publish-aisensy`), Meta sync (`/meta/sync`), export (`/export`), and audit logs (`/audit`).
+7. **Frontend Admin UI (`src/pages/TemplateDashboard.jsx` & `TemplateDashboard.css`):**
+   - Multi-tab UI featuring Metrics Dashboard, Product Library, Template Viewer, WhatsApp Preview, Social Previews, Image Prompts, Video Scripts, Meta/AiSensy Publishing Controls, Contamination Scanner, and Audit Log Explorer.
 
-| Component | Status | Action Required |
+---
+
+## 4. Existing Integrations & Environment Variables
+- **Meta WhatsApp Business Platform (WABA):**
+  - WABA ID: `1062614709598311`
+  - Phone Number ID: `1147494668457940`
+  - Meta Access Token loaded via secure environment variable (`META_ACCESS_TOKEN`).
+- **AiSensy WhatsApp Transport:**
+  - Project ID: `6a670f94d0c39f57eaa6799f`
+  - API Key loaded via secure environment variable (`AISENSY_API_KEY`).
+  - Active approved notification campaign: `avani_retail_day1_ack`.
+- **Google Sheets CRM Ingestion:**
+  - Apps Script Webhook + GCP Project `679374780504` Service Account API.
+- **HubSpot CRM:**
+  - Portal `244236573` with OAuth refresh and HMAC Signature V3 verification.
+- **OmniDM AI Voice Engine:**
+  - Voice dispatch & post-call routing ledger (VAPI is deprecated/unused as instructed).
+
+---
+
+## 5. Files That Can Be Reused vs Changed
+| File Path | Action | Rationale |
 | :--- | :--- | :--- |
-| `src/server.cjs` | Active | Mount `/api/templates` router |
-| `vercel.json` | Active | Add rewrite rule `{ "source": "/api/templates/(.*)", "destination": "/api/index.js" }` |
-| `src/App.jsx` | Active | Mount `/templates` and product-specific template management routes |
-| `src/models/ContentTemplate.cjs` | **New** | Create MongoDB schema for multi-channel, multi-lingual templates with versioning & audit logs |
-| `src/services/templateEngine.cjs` | **New** | Core generation engine for 10 loan products across Awareness, Lead Gen, Follow-up, Conversion, Retargeting |
-| `src/services/templateValidator.cjs` | **New** | Validation engine: syntax, character limits, prohibited financial claims, and **Agro Foods Contamination Scanner** |
-| `src/services/aisensyPublisher.cjs` | **New** | Integration module with AiSensy campaign & template registry with idempotency |
-| `src/services/metaWabaPublisher.cjs` | **New** | Direct Meta WABA Graph API template registration, sync, and status lifecycle |
-| `src/pages/TemplateDashboard.jsx` | **New** | Admin interface for previewing, filtering, generating, validating, and publishing templates |
-| `src/config/productsCatalog.cjs` | **New** | Central product specification and target audience definitions for all 10 products |
+| `src/config/businessIdentity.cjs` | **REUSE** | Provides clean, non-negotiable business identity enforcement. |
+| `src/config/productsCatalog.cjs` | **REUSE / EXTEND** | Full 10 products catalog already configured. |
+| `src/models/ContentTemplate.cjs` | **REUSE** | Comprehensive schema with in-memory + MongoDB dual persistence. |
+| `src/services/templateValidator.cjs` | **REUSE** | Compliance and contamination scanner verified with 0 findings. |
+| `src/services/templatePublishingEngine.cjs`| **REUSE** | Meta WABA Graph API v20 and AiSensy integration handlers in place. |
+| `src/services/templateGenerator.cjs` | **EXTEND** | Expand content generation coverage across all Awareness, Lead Gen, Conversion, Follow-up, and Retargeting subcategories. |
+| `src/services/templateContentData.cjs` | **EXTEND** | Add granular 30-day social calendar hooks and multi-format reel scripts. |
+| `src/pages/TemplateDashboard.jsx` | **ENHANCE** | Ensure seamless tab navigation and bulk actions. |
+| `scripts/test_template_engine_suite.cjs` | **REUSE / EXTEND** | Comprehensive 10-gate test matrix covering all functional areas. |
 
 ---
 
-## 4. Strict Risk Assessment & Mitigation
-
-1. **Risk 1: Accidental Cross-Business Contamination (Agro Foods)**
-   - *Mitigation:* Hard tenant lock on `businessId = "avani-loan-services"`. Automated validation scanner blocks any keywords (`moringa`, `agro`, `spices`, `export`, etc.) and halts publishing immediately.
-2. **Risk 2: Misleading Financial / Banking Claims**
-   - *Mitigation:* Explicit prohibited keyword list ("100% approval", "guaranteed sanction", "instant cash", "guaranteed CIBIL increase"). All copy adheres to RBI / DSA compliance standards ("Eligibility depends on lender criteria").
-3. **Risk 3: False Representation of Meta Approval**
-   - *Mitigation:* Templates start in `DRAFT` or `SUBMITTED`/`PENDING`. Only live responses from Meta Graph API can transition status to `APPROVED`.
-4. **Risk 4: Duplicate Dispatches or Publishing**
-   - *Mitigation:* Strict idempotency keys: `avani-loan-services:{product}:{channel}:{templateId}:{version}` stored in `ProviderLedger` and template version history.
+## 6. Risks & Mitigation Strategies
+1. **Risk:** Accidental cross-entity contamination in prompts or marketing copy.  
+   **Mitigation:** Automated scanning gate (`verify-security-and-isolation.cjs` and `scanAgroContamination`) blocks any unauthorized terms prior to build and commit.
+2. **Risk:** Prohibited financial claims (e.g. "100% approval", "instant guaranteed loan").  
+   **Mitigation:** Deterministic regex filter in `templateValidator.cjs` enforces strict RBI/regulatory compliance wording.
+3. **Risk:** False reporting of external provider approval.  
+   **Mitigation:** `templatePublishingEngine.cjs` explicitly differentiates `DRAFT`, `SUBMITTED`, `PENDING`, `APPROVED`, and `REJECTED`, only marking `APPROVED` when the Meta Graph API returns that exact state.
 
 ---
 
-## 5. Execution Roadmap
-
-- **Phase 1:** Forensic Inspection (Completed).
-- **Phase 2–3:** Architecture & Strict Business Isolation Enforcement.
-- **Phase 4:** Database Schema (`ContentTemplate.cjs`, `TemplateAudit.cjs`).
-- **Phase 5–8:** Multi-Product Generation Engine (Text, WhatsApp, Social, Image Prompts, Video/Reels).
-- **Phase 9:** Admin UI (`/templates` Dashboard & Product Pages).
-- **Phase 10:** Validation Engine & Agro Contamination Scanner.
-- **Phase 11–13:** AiSensy & Meta WABA Publishing Engine & Sync.
-- **Phase 14–15:** Automated Tests & Security Scan.
-- **Phase 16–18:** Production Build, Vercel Config, Verification.
-- **Phase 19–21:** Git Diff Review, Push to `origin/main`, and Final Acceptance Report.
+## 7. Execution Plan
+1. **Phase 1-4:** Forensic inspection complete. Business isolation & database schemas verified.
+2. **Phase 5-8:** Enrich template generator to produce comprehensive Awareness, Lead-Gen, Follow-up, Conversion, Retargeting, and 30-Day social calendars across English, Marathi, and Hindi.
+3. **Phase 9-13:** Verify Admin UI, validation firewall, AiSensy & Meta integration workflows, and idempotency keys.
+4. **Phase 14-16:** Run 10-gate template test suite, full regression suite, security scan, and local production build.
+5. **Phase 17-21:** Vercel production deployment, live production verification, Git commit & push, and final report delivery.
