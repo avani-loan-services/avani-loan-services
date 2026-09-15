@@ -28,7 +28,7 @@ AVANI LOAN SERVICES
 **Purpose:** Request basic details to evaluate eligibility.
 **Template Body:**
 Hello {{1}},
-To process your Personal Loan application accurately, we need a few basic details to check your eligibility. 
+To process your Personal Loan application accurately, we need a few basic details to check your eligibility.
 Please share:
 1. Monthly in-hand salary
 2. Current employment company
@@ -45,7 +45,7 @@ Reply directly to this message, and our team will evaluate the best loan offers 
 **Purpose:** Request KYC and financial documents.
 **Template Body:**
 Hello {{1}},
-Great news! Based on our initial assessment, you are eligible to proceed with your Personal Loan application. 
+Great news! Based on our initial assessment, you are eligible to proceed with your Personal Loan application.
 To move forward, please share clear copies of the following documents:
 - PAN Card
 - Aadhaar Card
@@ -66,14 +66,14 @@ You can upload them securely via our portal or send them directly here.
 ### 1. New Inquiry
 **Template Name:** `bl_new_inquiry`
 **Category:** Utility
-**Purpose:** Acknowledge business loan inquiry.
+**Purpose:** Acknowledge [business loan](/services/business-loan) inquiry.
 **Template Body:**
 Hello {{1}},
-Thank you for choosing AVANI LOAN SERVICES for your business expansion needs. We have received your Business Loan inquiry. Our specialist will contact you to discuss your business profile and funding requirements.
+Thank you for choosing AVANI LOAN SERVICES for your business expansion needs. We have received your [Business Loan](/services/business-loan) inquiry. Our specialist will contact you to discuss your business profile and funding requirements.
 **Variables:** {{1}} = Customer Name
 **Buttons:** [Quick Reply: Talk to Expert]
 **Meta Approval Probability:** High
-**Automation Trigger:** Lead created with `loanType == 'Business Loan'`
+**Automation Trigger:** Lead created with `loanType == '[business loan](/services/business-loan)'`
 
 ### 2. Financial Documents Request
 **Template Name:** `bl_financial_docs`
@@ -81,7 +81,7 @@ Thank you for choosing AVANI LOAN SERVICES for your business expansion needs. We
 **Purpose:** Request ITR and business proofs.
 **Template Body:**
 Hello {{1}},
-To secure the best Business Loan terms for your company, please provide the following documents:
+To secure the best [Business Loan](/services/business-loan) terms for your company, please provide the following documents:
 - Last 2 years ITR
 - GST Registration Certificate
 - Current Account Statement (6 months)
@@ -118,12 +118,12 @@ Would you like to schedule a brief consultation to explore your options?
 **Purpose:** Share current competitive rates to warm leads.
 **Template Body:**
 Hello {{1}},
-Planning to buy your dream home? AVANI LOAN SERVICES is currently facilitating Home Loans starting at competitive interest rates with leading banks. 
-Let us help you find the most suitable financing for your property. 
+Planning to buy your dream home? AVANI LOAN SERVICES is currently facilitating Home Loans starting at competitive interest rates with leading banks.
+Let us help you find the most suitable financing for your property.
 **Variables:** {{1}} = Customer Name
 **Buttons:** [URL: Visit Website] [Quick Reply: Contact Advisor]
 **Meta Approval Probability:** High (Ensure no 'guarantees' are made).
-**Automation Trigger:** Lead nurturing for 'Home Loan' inquiries over 14 days old.
+**Automation Trigger:** Lead nurturing for '[home loan](/services/home-loan)' inquiries over 14 days old.
 
 ---
 
@@ -165,7 +165,7 @@ Please submit the requested files at your earliest convenience to ensure timely 
 **Purpose:** Notify customer of loan sanction.
 **Template Body:**
 Congratulations {{1}}!
-We are pleased to inform you that your {{2}} application has been successfully sanctioned by the lending institution. 
+We are pleased to inform you that your {{2}} application has been successfully sanctioned by the lending institution.
 Our advisor, Sachin Shinde, will contact you shortly with the final sanction letter and disbursement steps.
 **Variables:** {{1}} = Customer Name, {{2}} = Loan Type
 **Buttons:** [Quick Reply: Thank You]

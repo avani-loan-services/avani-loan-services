@@ -1,12 +1,12 @@
 # Implementation Plan - Add Comprehensive Document Lists & Education Loans to Eligibility
 
-Add all detailed document lists to the respective loan profiles on the `/eligibility` page to match the documents page, and add [Education Loan](/services/education-loan) (India) and Education Loan (Global) with document upload provisions in auto mode.
+Add all detailed document lists to the respective loan profiles on the `/eligibility` page to match the documents page, and add [Education Loan](/services/education-loan) (India) and [Education Loan](/services/education-loan) (Global) with document upload provisions in auto mode.
 
 ## User Review Required
 
 > [!IMPORTANT]
 > - All document lists are being mapped from the official `Documents.jsx` component definition, meaning more specific/comprehensive document upload categories will be shown to the user on `/eligibility`.
-> - The Education Loan eligibility is calculated based on the Co-applicant's monthly net income and existing EMIs, as students typically do not have active incomes.
+> - The [Education Loan](/services/education-loan) eligibility is calculated based on the Co-applicant's monthly net income and existing EMIs, as students typically do not have active incomes.
 > - The two new tabs "Education (India)" and "Education (Global)" will be added to the tabs row.
 
 ## Proposed Changes

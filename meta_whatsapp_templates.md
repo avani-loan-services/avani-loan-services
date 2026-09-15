@@ -1,6 +1,6 @@
 # AVANI LOAN SERVICES - Meta WhatsApp Templates
 
-This document contains highly optimized, Meta-compliant broadcast templates for your 10 distinct loan funnels and your business introduction. 
+This document contains highly optimized, Meta-compliant broadcast templates for your 10 distinct loan funnels and your business introduction.
 
 Meta is strict about spam, so these templates are designed as **Utility/Marketing** messages that are professional, clear, and highly likely to be approved instantly.
 
@@ -24,9 +24,9 @@ Meta is strict about spam, so these templates are designed as **Utility/Marketin
 **Body:**
 Hello {{1}}! 👋
 
-Welcome to *AVANI LOAN SERVICES*, your trusted financial advisory firm based right here in Latur. 
+Welcome to *AVANI LOAN SERVICES*, your trusted financial advisory firm based right here in Latur.
 
-Founded by Sachin Shinde, our mission is to make borrowing simple, transparent, and completely stress-free. Whether you are a salaried professional, business owner, doctor, or student, we have a customized loan solution for you. 
+Founded by Sachin Shinde, our mission is to make borrowing simple, transparent, and completely stress-free. Whether you are a salaried professional, business owner, doctor, or student, we have a customized loan solution for you.
 
 We specialize in:
 ✅ Personal & Business Loans
@@ -53,7 +53,7 @@ Let us help you achieve your financial goals with expert guidance and fast proce
 **Body:**
 Hi {{1}}, looking for instant funds? 💸
 
-*AVANI LOAN SERVICES* offers quick and hassle-free Personal Loans tailored just for you! 
+*AVANI LOAN SERVICES* offers quick and hassle-free Personal Loans tailored just for you!
 
 Whether it's for a medical emergency, a dream vacation, or home renovation, we provide:
 ✅ High loan amounts with minimal documentation
@@ -77,7 +77,7 @@ Avani Loan Services | Latur
 **Body:**
 Hello {{1}}, is it time to scale your business? 📈
 
-Fuel your company's growth with a Business Loan from *AVANI LOAN SERVICES*. We specialize in funding MSMEs, SMEs, and ambitious business owners.
+Fuel your company's growth with a [business loan](/services/business-loan) from *AVANI LOAN SERVICES*. We specialize in funding MSMEs, SMEs, and ambitious business owners.
 
 Why choose us?
 ✅ Unsecured options available
@@ -90,7 +90,7 @@ Tap below to start your application and take your business to the next level!
 Avani Loan Services | Latur
 
 **Buttons (Quick Reply):**
-1. Text: I want a Business Loan
+1. Text: I want a [Business Loan](/services/business-loan)
 
 ---
 
@@ -101,7 +101,7 @@ Avani Loan Services | Latur
 **Body:**
 Dear Dr. {{1}}, upgrade your practice today! 🩺
 
-*AVANI LOAN SERVICES* offers exclusive Professional Loans specifically designed for Doctors and Medical Practitioners. 
+*AVANI LOAN SERVICES* offers exclusive Professional Loans specifically designed for Doctors and Medical Practitioners.
 
 Whether you need to upgrade medical equipment, expand your clinic, or manage working capital, we offer premium financial solutions tailored to your noble profession.
 
@@ -155,11 +155,11 @@ Tap below to begin your application and focus on what truly matters: Education.
 Avani Loan Services | Latur
 
 **Buttons (Quick Reply):**
-1. Text: Education Loan (India)
+1. Text: [Education Loan](/services/education-loan) (India)
 
 ---
 
-## 6. Education Loan (Global) Template
+## 6. [Education Loan](/services/education-loan) (Global) Template
 
 **Template Name:** `avani_education_global`
 **Header (Media):** Image (Airplane or international university)
@@ -187,7 +187,7 @@ Avani Loan Services | Latur
 **Body:**
 Hi {{1}}, ready to buy your dream home? 🏠
 
-*AVANI LOAN SERVICES* makes homeownership easy with our premium Home Loan advisory. 
+*AVANI LOAN SERVICES* makes homeownership easy with our premium [home loan](/services/home-loan) advisory.
 
 ✅ Competitive interest rates
 ✅ Maximum funding on property value
@@ -199,7 +199,7 @@ Whether you are buying a new flat, a resale property, or constructing a house, t
 Avani Loan Services | Latur
 
 **Buttons (Quick Reply):**
-1. Text: I want a Home Loan
+1. Text: I want a [Home Loan](/services/home-loan)
 
 ---
 
@@ -210,7 +210,7 @@ Avani Loan Services | Latur
 **Body:**
 Hello {{1}}, unlock the value of your property! 🏢
 
-Need high-value funding? Get a Loan Against Property (Mortgage Loan) through *AVANI LOAN SERVICES*. 
+Need high-value funding? Get a Loan Against Property (Mortgage Loan) through *AVANI LOAN SERVICES*.
 
 Leverage your residential or commercial property to secure funds for business expansion, medical emergencies, or debt consolidation at lower interest rates.
 
@@ -233,7 +233,7 @@ Hello {{1}}, elevate your educational institution! 🏫
 
 *AVANI LOAN SERVICES* offers specialized School Funding Loans for infrastructure development, campus expansion, and working capital.
 
-We understand the unique financial needs of educational trusts and societies. Let us help you build a better learning environment. 
+We understand the unique financial needs of educational trusts and societies. Let us help you build a better learning environment.
 
 Tap below to speak directly with our institutional funding expert.
 
@@ -254,7 +254,7 @@ Hi {{1}}, funding the future of higher education! 🏛️
 
 Running a modern college or university requires significant capital. *AVANI LOAN SERVICES* provides College Fund Loans for large-scale infrastructure, lab upgrades, and expansion projects.
 
-Partner with us to secure the financing your trust or society needs to thrive. 
+Partner with us to secure the financing your trust or society needs to thrive.
 
 Tap below to schedule a consultation with Sachin Shinde.
 

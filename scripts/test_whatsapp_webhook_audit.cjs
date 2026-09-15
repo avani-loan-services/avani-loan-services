@@ -96,6 +96,7 @@ async function testWhatsAppWebhook() {
   console.log('====================================================');
 
   if (!allPassed) process.exit(1);
+  process.exit(0);
 }
 
 testWhatsAppWebhook();

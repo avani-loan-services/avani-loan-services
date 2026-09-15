@@ -71,7 +71,7 @@ To generate revenue, do not just ask for "likes." Every post must lead to a conv
 * **Day 10 (Insta/FB Video):** Client Testimonial Video.
 * **Day 11 (Pinterest):** Infographic: "How Mortgage Loans Work in India".
 * **Day 12 (All Platforms):** 
-  * *Caption:* Confused about floating vs. fixed interest rates? Let our experts analyze your financial profile and recommend the best Home Loan for you. 🏠 WhatsApp us: +91 91756 35165
+  * *Caption:* Confused about floating vs. fixed interest rates? Let our experts analyze your financial profile and recommend the best [home loan](/services/home-loan) for you. 🏠 WhatsApp us: +91 91756 35165
 * **Day 13:** Behind the scenes at the Avani Loan Services office in Latur.
 * **Day 14:** Rest / Engage.
 

@@ -55,7 +55,8 @@ async function main() {
       }
     }
     if (changed) {
-      await fs.writeFile(file, parts.join(''), 'utf8');
+      const cleanContent = parts.join('').split('\n').map(l => l.trimEnd()).join('\n');
+      await fs.writeFile(file, cleanContent, 'utf8');
       console.log(`Updated links in ${file} (replacements: ${replacements})`);
     }
   }

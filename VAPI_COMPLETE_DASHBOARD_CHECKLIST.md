@@ -1,8 +1,8 @@
 # VAPI COMPLETE DASHBOARD CONFIGURATION CHECKLIST
 ## Avani Loan Services — FY 2026-27
 
-**Generated:** May 12, 2026  
-**Status:** Ready for Implementation  
+**Generated:** May 12, 2026
+**Status:** Ready for Implementation
 **All Credentials:** Configured in `backend/.env`
 
 ---
@@ -63,10 +63,10 @@ Keep responses concise, friendly, and focus on their needs. If they're not inter
 
 | Field | Value |
 |-------|-------|
-| **Name** | `Avani Business Loan Assistant` |
+| **Name** | `Avani [business loan](/services/business-loan) Assistant` |
 | **Model** | gpt-4 |
 | **Voice** | Google en-US-Neural2-A |
-| **First Message** | `Hi! I'm calling from Avani Loan Services about our Business Loan. Do you have 2 minutes?` |
+| **First Message** | `Hi! I'm calling from Avani Loan Services about our [Business Loan](/services/business-loan). Do you have 2 minutes?` |
 
 **System Prompt:**
 ```
@@ -117,7 +117,7 @@ Show understanding of doctor's financial needs and practice challenges.
 
 | Field | Value |
 |-------|-------|
-| **Name** | `Avani Home Loan Assistant` |
+| **Name** | `Avani [home loan](/services/home-loan) Assistant` |
 | **First Message** | `Hi! I'm calling from Avani Loan Services about home financing. Can I ask a few quick questions?` |
 
 **System Prompt:**
@@ -144,8 +144,8 @@ Ask about their financial situation and timeline.
 
 | Field | Value |
 |-------|-------|
-| **Name** | `Avani Education Loan Assistant` |
-| **First Message** | `Hello! I'm calling from Avani Loan Services about education loan support for India and abroad. Do you have a moment?` |
+| **Name** | `Avani [Education Loan](/services/education-loan) Assistant` |
+| **First Message** | `Hello! I'm calling from Avani Loan Services about [Education Loan](/services/education-loan) support for India and abroad. Do you have a moment?` |
 
 **System Prompt:**
 ```
@@ -249,7 +249,7 @@ ngrok http 5000
 
 ### Step 3.1: Verify Backend Endpoint
 
-**File:** `backend/routes/leads.js`  
+**File:** `backend/routes/leads.js`
 **Endpoint:** `POST /api/webhooks/vapi-callback`
 
 **Test with cURL:**
@@ -386,7 +386,7 @@ GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9J
 
 ### Step 6.2: Verify Sheet Structure
 
-**Sheet Name:** `Leads`  
+**Sheet Name:** `Leads`
 **Required Columns:**
 - A: Timestamp
 - B: Call ID
@@ -429,8 +429,8 @@ GOOGLE_SHEETS_WEBHOOK_URL=https://script.google.com/macros/s/AKfycbxcJsd9RTK2z9J
 - **Filter:** `status = ended`
 
 #### Module 2: Gmail Notification
-**To:** `your-email@gmail.com`  
-**Subject:** `New VAPI Call - {{callId}}`  
+**To:** `your-email@gmail.com`
+**Subject:** `New VAPI Call - {{callId}}`
 **Body:**
 ```
 Call ID: {{callId}}
@@ -439,7 +439,7 @@ Status: {{analysis.structuredData.qualification_status}}
 ```
 
 #### Module 3: Google Sheets
-**Action:** Add Row  
+**Action:** Add Row
 **Values:**
 - Timestamp: {{now}}
 - Call ID: {{callId}}
@@ -448,10 +448,10 @@ Status: {{analysis.structuredData.qualification_status}}
 - Qualification: {{analysis.structuredData.qualification_status}}
 
 #### Module 4: WhatsApp (Exotel)
-**Trigger:** `qualification_status = qualified`  
+**Trigger:** `qualification_status = qualified`
 **Message:**
 ```
-Hi {{customer_name}}! 
+Hi {{customer_name}}!
 
 Thank you for speaking with us today. We're excited about your loan application!
 
@@ -464,7 +464,7 @@ Questions? Call: +91 7249108474
 ```
 
 #### Module 5: HubSpot Contact
-**Action:** Create/Update Contact  
+**Action:** Create/Update Contact
 **Fields:**
 - Email: {{analysis.structuredData.email}}
 - First Name: {{analysis.structuredData.customer_name}}
@@ -746,6 +746,6 @@ ngrok http 5000
 
 ---
 
-**Document Status:** ✅ Ready for Implementation  
-**Last Updated:** May 12, 2026  
+**Document Status:** ✅ Ready for Implementation
+**Last Updated:** May 12, 2026
 **Next Action:** Start with Phase 1 (VAPI Assistant Creation)

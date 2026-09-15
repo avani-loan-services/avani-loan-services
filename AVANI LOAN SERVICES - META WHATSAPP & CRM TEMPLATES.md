@@ -1,6 +1,6 @@
 # AVANI LOAN SERVICES - META WHATSAPP & CRM TEMPLATES
 
-This document contains highly professional, conversion-focused, and Meta-compliant WhatsApp Business Templates and CRM Automation Workflows for AVANI LOAN SERVICES. 
+This document contains highly professional, conversion-focused, and Meta-compliant WhatsApp Business Templates and CRM Automation Workflows for AVANI LOAN SERVICES.
 
 > [!IMPORTANT]
 > **Meta Compliance Note:** All templates are drafted to comply with Meta's strict Financial Services policies. They avoid guarantees, misleading promises, and spammy language. Before submitting to the Meta WhatsApp Manager, ensure you replace the `{{1}}`, `{{2}}` variables with sample values.
@@ -13,9 +13,9 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `pl_new_lead_welcome`
 * **Category:** Marketing
 * **Purpose:** Acknowledge personal loan inquiry and initiate qualification.
-* **Template Body:** 
+* **Template Body:**
   Hello {{1}},
-  Thank you for choosing AVANI LOAN SERVICES. We received your Personal Loan inquiry. 
+  Thank you for choosing AVANI LOAN SERVICES. We received your Personal Loan inquiry.
   To help us check your eligibility quickly and provide the best options, please reply with 'YES' to answer 4 quick questions.
 * **Variables:** `{{1}}` = Customer Name
 * **Buttons:** `Quick Reply: YES, Continue` | `Quick Reply: Talk to Advisor`
@@ -27,9 +27,9 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `pl_document_request`
 * **Category:** Utility
 * **Purpose:** Request KYC and income documents.
-* **Template Body:** 
+* **Template Body:**
   Dear {{1}},
-  Great news! Based on your profile, you are eligible to proceed with your Personal Loan application. 
+  Great news! Based on your profile, you are eligible to proceed with your Personal Loan application.
   Please share clear photos/PDFs of the following:
   1. PAN & Aadhaar
   2. Last 3 months Salary Slips
@@ -48,22 +48,22 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `bl_eligibility_check`
 * **Category:** Marketing
 * **Purpose:** Qualify business owners.
-* **Template Body:** 
+* **Template Body:**
   Hello {{1}},
-  AVANI LOAN SERVICES helps businesses like yours scale with seamless funding solutions. 
-  To check your Business Loan eligibility, please let us know your Business Vintage (years in operation) by tapping an option below.
+  AVANI LOAN SERVICES helps businesses like yours scale with seamless funding solutions.
+  To check your [business loan](/services/business-loan) eligibility, please let us know your Business Vintage (years in operation) by tapping an option below.
 * **Variables:** `{{1}}` = Customer Name
 * **Buttons:** `Quick Reply: Less than 1 Year` | `Quick Reply: 1-3 Years` | `Quick Reply: 3+ Years`
 * **Meta Approval Probability:** High
-* **Automation Trigger:** Business Loan Lead received.
+* **Automation Trigger:** [Business Loan](/services/business-loan) Lead received.
 
 **2. Financial Documents Request**
 * **Template Name:** `bl_financial_docs`
 * **Category:** Utility
 * **Purpose:** Collect business financial records.
-* **Template Body:** 
+* **Template Body:**
   Dear {{1}},
-  To process your Business Loan application, our banking partners require your financial records.
+  To process your [business loan](/services/business-loan) application, our banking partners require your financial records.
   Please share your GST Certificate, Last 2 Years ITR (with CA stamp), and Last 12 Months Bank Statements.
   Reply to this message with the PDFs, or upload them here: {{2}}
 * **Variables:** `{{1}}` = Customer Name, `{{2}}` = Document Upload Link
@@ -77,7 +77,7 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `prof_special_scheme`
 * **Category:** Marketing
 * **Purpose:** Outreach for Doctors/CAs for special collateral-free schemes.
-* **Template Body:** 
+* **Template Body:**
   Hello {{1}},
   As a professional, you qualify for AVANI's exclusive Collateral-Free Professional Loans. Whether it is for clinic expansion, office setup, or equipment finance, we offer customized solutions.
   Tap below to check your customized limit.
@@ -90,13 +90,13 @@ This document contains highly professional, conversion-focused, and Meta-complia
 
 ## D. [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)
 
-**1. Home Loan Eligibility**
+**1. [home loan](/services/home-loan) Eligibility**
 * **Template Name:** `hl_eligibility_check`
 * **Category:** Marketing
-* **Purpose:** Start the home loan assessment.
-* **Template Body:** 
+* **Purpose:** Start the [Home Loan](/services/home-loan) assessment.
+* **Template Body:**
   Dear {{1}},
-  Buying your dream home is a major milestone. AVANI LOAN SERVICES is here to assist you with seamless Home Loan processing. 
+  Buying your dream home is a major milestone. AVANI LOAN SERVICES is here to assist you with seamless [home loan](/services/home-loan) processing.
   Are you looking to purchase a New Home, a Resale Property, or seeking Construction finance?
 * **Variables:** `{{1}}` = Customer Name
 * **Buttons:** `Quick Reply: New Home` | `Quick Reply: Resale` | `Quick Reply: Construction`
@@ -110,9 +110,9 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `ml_valuation_update`
 * **Category:** Utility
 * **Purpose:** Update the customer on property valuation status.
-* **Template Body:** 
+* **Template Body:**
   Hello {{1}},
-  This is an update from AVANI LOAN SERVICES. The technical valuation for your property has been successfully completed. 
+  This is an update from AVANI LOAN SERVICES. The technical valuation for your property has been successfully completed.
   Your file is now moving to the final underwriting stage. We will notify you once the sanction is ready.
 * **Variables:** `{{1}}` = Customer Name
 * **Buttons:** `URL: Track Status`
@@ -126,9 +126,9 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `edu_student_inquiry`
 * **Category:** Marketing
 * **Purpose:** Connect with students/parents for education funding.
-* **Template Body:** 
+* **Template Body:**
   Hello {{1}},
-  Invest in your future with an Education Loan through AVANI LOAN SERVICES. We provide funding assistance for studies in India and Abroad.
+  Invest in your future with an [Education Loan](/services/education-loan) through AVANI LOAN SERVICES. We provide funding assistance for studies in India and Abroad.
   Are you planning to study in India or Global?
 * **Variables:** `{{1}}` = Student/Parent Name
 * **Buttons:** `Quick Reply: Study in India` | `Quick Reply: Study Abroad`
@@ -142,9 +142,9 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `inst_funding_followup`
 * **Category:** Marketing
 * **Purpose:** B2B follow-up for educational institutions.
-* **Template Body:** 
+* **Template Body:**
   Dear {{1}},
-  AVANI LOAN SERVICES specializes in institutional funding for infrastructure and expansion. 
+  AVANI LOAN SERVICES specializes in institutional funding for infrastructure and expansion.
   Would you like to schedule a call with our Institutional Funding expert to discuss your campus development plans?
 * **Variables:** `{{1}}` = Director/Trustee Name
 * **Buttons:** `Quick Reply: Schedule Call` | `Quick Reply: Not Right Now`
@@ -158,7 +158,7 @@ This document contains highly professional, conversion-focused, and Meta-complia
 * **Template Name:** `cibil_consultation`
 * **Category:** Marketing
 * **Purpose:** Offer credit improvement services.
-* **Template Body:** 
+* **Template Body:**
   Hello {{1}},
   A healthy credit score is the key to fast loan approvals. AVANI LOAN SERVICES offers professional CIBIL Improvement Consultation.
   Tap below to receive a free preliminary Credit Score Analysis.
@@ -172,25 +172,25 @@ This document contains highly professional, conversion-focused, and Meta-complia
 **1. Lead Follow-up Day 3**
 * **Template Name:** `crm_followup_day3`
 * **Category:** Marketing
-* **Template Body:** 
+* **Template Body:**
   Hi {{1}}, this is Sachin from AVANI LOAN SERVICES. We noticed your loan application is pending. Do you need any assistance with the documentation? We are here to help!
 * **Buttons:** `Quick Reply: Need Help` | `Quick Reply: Will do it later`
 
 **2. Application Approved (Sanction)**
 * **Template Name:** `crm_application_approved`
 * **Category:** Utility
-* **Template Body:** 
-  Congratulations {{1}}! 
-  Your loan application has been officially SANCTIONED. Please check your registered email for the sanction letter. 
+* **Template Body:**
+  Congratulations {{1}}!
+  Your loan application has been officially SANCTIONED. Please check your registered email for the sanction letter.
   Reply to this message to proceed with the disbursement process.
 
 **3. Google Review Request**
 * **Template Name:** `crm_review_request`
 * **Category:** Marketing
-* **Template Body:** 
-  Dear {{1}}, 
-  We hope your loan disbursement was smooth! As a growing business, your feedback means the world to AVANI LOAN SERVICES. 
-  Could you take 30 seconds to rate us on Google? 
+* **Template Body:**
+  Dear {{1}},
+  We hope your loan disbursement was smooth! As a growing business, your feedback means the world to AVANI LOAN SERVICES.
+  Could you take 30 seconds to rate us on Google?
 * **Buttons:** `URL: Rate 5 Stars on Google`
 
 ---

@@ -1,6 +1,6 @@
 # AVANI LOAN SERVICES - MEDIA BROADCAST TEMPLATES
 
-This document maps the specific images and videos found in your local folders to high-converting, Meta-approved WhatsApp Broadcast Templates. 
+This document maps the specific images and videos found in your local folders to high-converting, Meta-approved WhatsApp Broadcast Templates.
 
 When you go to the **Meta WhatsApp Manager** -> **Message Templates** -> **Create Template**:
 1. Select Category: **Marketing**
@@ -34,10 +34,10 @@ Whether it's a medical emergency, a wedding, or a dream vacation, we've got you 
 ---
 
 ## 2. [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan) IMAGE BROADCAST
-**File to Upload:** `BUSINESS LOAN.png`
+**File to Upload:** `[business loan](/services/business-loan).png`
 **Template Name:** `media_business_loan_promo`
 
-**Header:** [Upload `BUSINESS LOAN.png` here]
+**Header:** [Upload `[Business Loan](/services/business-loan).png` here]
 
 **Body:**
 Fuel your business growth with AVANI LOAN SERVICES! 📈
@@ -107,20 +107,20 @@ Tap below to start your fast-track application.
 ---
 
 ## 5. [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan) IMAGE BROADCAST
-**File to Upload:** `HOME LOAN.png`
+**File to Upload:** `[home loan](/services/home-loan).png`
 **Template Name:** `media_home_loan_promo`
 
-**Header:** [Upload `HOME LOAN.png` here]
+**Header:** [Upload `[Home Loan](/services/home-loan).png` here]
 
 **Body:**
 Turn your dream home into reality! 🏡
 
-AVANI LOAN SERVICES offers competitive Home Loans with flexible repayment options. 
+AVANI LOAN SERVICES offers competitive Home Loans with flexible repayment options.
 🔑 New Home Purchase
 🔑 Resale Properties
 🔑 Plot & Construction
 
-Let our experts handle the paperwork while you plan your move. Check your home loan eligibility instantly.
+Let our experts handle the paperwork while you plan your move. Check your [home loan](/services/home-loan) eligibility instantly.
 
 **Footer:** AVANI LOAN SERVICES
 
@@ -151,10 +151,10 @@ Find out your property's borrowing power today.
 ---
 
 ## 7. [Education Loan](/services/education-loan) IMAGE BROADCAST
-**File to Upload:** `EDUCATION LOAN.png`
+**File to Upload:** `[Education Loan](/services/education-loan).png`
 **Template Name:** `media_education_loan_promo`
 
-**Header:** [Upload `EDUCATION LOAN.png` here]
+**Header:** [Upload `[Education Loan](/services/education-loan).png` here]
 
 **Body:**
 Invest in the best education, anywhere in the world! 🎓
@@ -183,7 +183,7 @@ Secure your future today.
 **Body:**
 Hi there! Check out this week's financial tip from Sachin Shinde at AVANI LOAN SERVICES. 🎥
 
-We regularly share insights on how to improve your CIBIL score, choose the right loan, and manage your finances better. Have questions about a specific loan? 
+We regularly share insights on how to improve your CIBIL score, choose the right loan, and manage your finances better. Have questions about a specific loan?
 
 **Footer:** AVANI LOAN SERVICES
 

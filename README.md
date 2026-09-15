@@ -29,7 +29,7 @@ Avani Loan Services is a premier financial advisory and loan consultancy firm de
 
 ### 4. Education & Institutional Funding
 - **[Education Loan](/services/education-loan) — India:** Comprehensive domestic higher education financing.
-- **Education Loan — Global Studies:** Secured and unsecured overseas education funding for US, UK, Canada, Europe, and Australia.
+- **[Education Loan](/services/education-loan) — Global Studies:** Secured and unsecured overseas education funding for US, UK, Canada, Europe, and Australia.
 - **School Funding (Secured & Unsecured):** Institutional development loans for private schools and trust setups.
 - **College & Higher Institution Funding (Secured & Unsecured):** Campus development, lab setup, and accreditation funding.
 

@@ -665,14 +665,14 @@ Verified directly in `src/services/loanQualificationEngine.cjs` (`LOAN_PRODUCTS`
 
 | # | Product Code | Canonical Name / Description | Schema Key | Verification Status |
 | :- | :--- | :--- | :--- | :--- |
-| 1 | `PERSONAL_LOAN` | Personal / Salary Loan | `QUALIFICATION_SCHEMAS.PERSONAL_LOAN` | `VERIFIED IN REPOSITORY` |
-| 2 | `BUSINESS_LOAN` | Business Loan (SME / Commercial) | `QUALIFICATION_SCHEMAS.BUSINESS_LOAN` | `VERIFIED IN REPOSITORY` |
+| 1 | `PERSONAL_LOAN` | Personal / [salary loan](/services/salary-loan) | `QUALIFICATION_SCHEMAS.PERSONAL_LOAN` | `VERIFIED IN REPOSITORY` |
+| 2 | `BUSINESS_LOAN` | [business loan](/services/business-loan) (SME / Commercial) | `QUALIFICATION_SCHEMAS.BUSINESS_LOAN` | `VERIFIED IN REPOSITORY` |
 | 3 | `DOCTOR_LOAN` | Doctor Professional Loan | `QUALIFICATION_SCHEMAS.DOCTOR_LOAN` | `VERIFIED IN REPOSITORY` |
 | 4 | `CA_LOAN` | Chartered Accountant / Professional Loan | `QUALIFICATION_SCHEMAS.CA_LOAN` | `VERIFIED IN REPOSITORY` |
-| 5 | `HOME_LOAN` | Home Loan & Housing Finance | `QUALIFICATION_SCHEMAS.HOME_LOAN` | `VERIFIED IN REPOSITORY` |
+| 5 | `HOME_LOAN` | [home loan](/services/home-loan) & Housing Finance | `QUALIFICATION_SCHEMAS.HOME_LOAN` | `VERIFIED IN REPOSITORY` |
 | 6 | `MORTGAGE_LOAN` | Mortgage Loan / Loan Against Property (LAP) | `QUALIFICATION_SCHEMAS.MORTGAGE_LOAN` | `VERIFIED IN REPOSITORY` |
-| 7 | `EDUCATION_LOAN_INDIA` | Education Loan — Domestic (India) | `QUALIFICATION_SCHEMAS.EDUCATION_LOAN_INDIA` | `VERIFIED IN REPOSITORY` |
-| 8 | `EDUCATION_LOAN_GLOBAL` | Education Loan — Global / Overseas | `QUALIFICATION_SCHEMAS.EDUCATION_LOAN_GLOBAL` | `VERIFIED IN REPOSITORY` |
+| 7 | `EDUCATION_LOAN_INDIA` | [Education Loan](/services/education-loan) — Domestic (India) | `QUALIFICATION_SCHEMAS.EDUCATION_LOAN_INDIA` | `VERIFIED IN REPOSITORY` |
+| 8 | `EDUCATION_LOAN_GLOBAL` | [Education Loan](/services/education-loan) — Global / Overseas | `QUALIFICATION_SCHEMAS.EDUCATION_LOAN_GLOBAL` | `VERIFIED IN REPOSITORY` |
 | 9 | `SCHOOL_FUNDING` | School Infrastructure & Institutional Funding | `QUALIFICATION_SCHEMAS.SCHOOL_FUNDING` | `VERIFIED IN REPOSITORY` |
 | 10 | `COLLEGE_FUNDING` | College & Higher Education Institutional Funding | `QUALIFICATION_SCHEMAS.COLLEGE_FUNDING` | `VERIFIED IN REPOSITORY` |
 | 11 | `CIBIL_CONSULTATION` | CIBIL Repair & Credit Score Consultation | `QUALIFICATION_SCHEMAS.CIBIL_CONSULTATION` | `VERIFIED IN REPOSITORY` |

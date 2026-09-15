@@ -102,21 +102,21 @@ dist/assets/index.js   284.56 kB │ gzip: 89.07 kB
 - Created `src/utils/whatsappHelper.js` with `generateWhatsAppDocumentLink(productName)`.
 - Generates prefilled, product-wise WhatsApp messages targeting Primary WABA number `919175635165`:
   - Personal / [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[Salary Loan](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)
-  - Business Loan
-  - Doctor / Professional Loan
-  - Home Loan
+  - [business loan](/services/business-loan)
+  - [Doctor / Professional Loan](/services/doctor-professional-loan)
+  - [home loan](/services/home-loan)
   - Mortgage Loan / LAP
-  - Education Loan (India)
-  - Education Loan (Study Abroad)
+  - [Education Loan](/services/education-loan) (India)
+  - [Education Loan](/services/education-loan) (Study Abroad)
   - School Funding
   - College Funding
   - CIBIL Improvement
-  - Chartered Accountant Loan
+  - [chartered accountant loan](/services/chartered-accountant-loan)
 
 ### 3. 🎓 Comprehensive Education Loan & Property Documentation Guides
 - **Education Loan (India)**: Structured categories for Student Documents, Parent/Co-applicant Documents, Institution Documents + disclaimers + `📲 Get India Education Loan Document List on WhatsApp`.
 - **Education Loan (Study Abroad)**: Highlighted USA, Canada, UK, Australia, Germany + Student KYC, Academic, University Admission (I-20/CAS/COE), Co-applicant Financials, International/Visa docs + disclaimers + `📲 Get Global Education Loan Document List on WhatsApp`.
-- **Home Loan & Mortgage Property Architecture**: Detailed geography breakdown (Rural Gram Panchayat 7/12 & Form 8/8A, Semi-Urban Municipal Council, Urban Municipal Corporation) and Property Type breakdown (Under-Construction, Resale, Vacant Plot/Land).
+- **[Home Loan](/services/home-loan) & Mortgage Property Architecture**: Detailed geography breakdown (Rural Gram Panchayat 7/12 & Form 8/8A, Semi-Urban Municipal Council, Urban Municipal Corporation) and Property Type breakdown (Under-Construction, Resale, Vacant Plot/Land).
 
 ---
 

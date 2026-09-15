@@ -23,7 +23,7 @@ This plan outlines the steps to add the two requested loan profiles ("[[[[[[[[[[
 - Adjust the eligibility calculator logic to handle their specific income types (usually ITR based like business or self-employed).
 
 #### [MODIFY] src/pages/Documents.jsx
-- Add "Chartered Accountant Loan" and "[Doctor / Professional Loan](/services/doctor-professional-loan)" to the `docs` array to display their required document checklists in the accordion.
+- Add "[chartered accountant loan](/services/chartered-accountant-loan)" and "[Doctor / Professional Loan](/services/doctor-professional-loan)" to the `docs` array to display their required document checklists in the accordion.
 
 #### [MODIFY] src/pages/Catalog.jsx
 - Add two new catalog cards (SCARD 6 and 7) for the new loan types.
