@@ -24,6 +24,11 @@ const {
   syncWithMeta,
   publishToAiSensy
 } = require('../services/templatePublishingEngine.cjs');
+const { generateAllImageConcepts } = require('../services/imageAssetEngine.cjs');
+const { generateAllVideoConcepts, generateProductVideoConcepts } = require('../services/videoAssetEngine.cjs');
+const { scoreTemplateQuality, findDuplicates } = require('../services/contentQualityScorer.cjs');
+const { generate30DayCalendar, convertToCSV, convertCalendarToCSV } = require('../services/contentCalendarEngine.cjs');
+const { PUBLISHING_STATES, transitionTemplateState } = require('../services/publishingStateMachine.cjs');
 
 // Tenant isolation middleware on all template endpoints
 router.use((req, res, next) => {
@@ -58,7 +63,7 @@ router.get('/', async (req, res) => {
 // ── 2. GET /api/templates/stats ──────────────────────────────────
 router.get('/stats', async (req, res) => {
   try {
-    const { items } = await queryTemplates({ limit: 1000 });
+    const { items } = await queryTemplates({ limit: 2000 });
     const stats = {
       businessId: BUSINESS_IDENTITY.businessId,
       totalTemplates: items.length,
@@ -68,12 +73,19 @@ router.get('/stats', async (req, res) => {
       byStatus: {
         DRAFT: 0,
         VALIDATED: 0,
-        SUBMITTED: 0,
-        PENDING: 0,
-        APPROVED: 0,
-        REJECTED: 0,
+        READY_FOR_SUBMISSION: 0,
+        SUBMITTED_TO_META: 0,
+        META_PENDING: 0,
+        META_APPROVED: 0,
+        META_REJECTED: 0,
+        READY_FOR_AISENSY: 0,
+        PUBLISHED_TO_AISENSY: 0,
+        FAILED: 0,
         ARCHIVED: 0
       },
+      imageConceptsCount: 100,
+      imageFormatsTotal: 400,
+      videoConceptsCount: 300,
       metaApproved: 0,
       aisensyActive: 0
     };
@@ -86,8 +98,12 @@ router.get('/stats', async (req, res) => {
       if (stats.byLanguage[t.language] !== undefined) stats.byLanguage[t.language]++;
       if (stats.byStatus[t.status] !== undefined) stats.byStatus[t.status]++;
 
-      if (t.metaStatus === 'APPROVED' || t.status === 'APPROVED') stats.metaApproved++;
-      if (t.aisensyStatus === 'ACTIVE') stats.aisensyActive++;
+      if (t.metaStatus === 'APPROVED' || t.status === 'META_APPROVED' || t.status === 'APPROVED') {
+        stats.metaApproved++;
+      }
+      if (t.aisensyStatus === 'ACTIVE' || t.status === 'PUBLISHED_TO_AISENSY') {
+        stats.aisensyActive++;
+      }
     });
 
     res.json({ success: true, stats });
@@ -105,7 +121,108 @@ router.get('/products', (req, res) => {
   });
 });
 
-// ── 4. GET /api/templates/audit ──────────────────────────────────
+// ── 4. GET /api/templates/images (100 Visual Concepts across 4 Formats) ──
+router.get('/images', (req, res) => {
+  try {
+    const { product, format } = req.query;
+    let concepts = generateAllImageConcepts();
+
+    if (product && product !== 'ALL') {
+      concepts = concepts.filter(c => c.product === product);
+    }
+    if (format && format !== 'ALL') {
+      concepts = concepts.filter(c => c.formatKey === format);
+    }
+
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      total: concepts.length,
+      concepts
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 5. GET /api/templates/videos (300 Video Concepts) ────────────
+router.get('/videos', (req, res) => {
+  try {
+    const { product, category, language } = req.query;
+    const lang = language || 'mr';
+    let videos = generateAllVideoConcepts(lang);
+
+    if (product && product !== 'ALL') {
+      videos = videos.filter(v => v.product === product);
+    }
+    if (category && category !== 'ALL') {
+      videos = videos.filter(v => v.category === category);
+    }
+
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      total: videos.length,
+      videos
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 6. GET /api/templates/calendar (30-Day Product Content Calendar) ──
+router.get('/calendar', (req, res) => {
+  try {
+    const { product } = req.query;
+    const calendar = generate30DayCalendar(product || 'ALL');
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      totalDays: 30,
+      entriesCount: calendar.length,
+      calendar
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 7. POST /api/templates/score (Quality & Compliance Scoring) ──
+router.post('/score', async (req, res) => {
+  try {
+    const templateData = req.body;
+    const { items: existing } = await queryTemplates({ limit: 500 });
+    const scoreReport = scoreTemplateQuality(templateData, existing);
+
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      scoreReport
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// ── 8. GET /api/templates/duplicates (Scan for duplicates) ───────
+router.get('/duplicates', async (req, res) => {
+  try {
+    const { items } = await queryTemplates({ limit: 2000 });
+    const duplicates = findDuplicates(items);
+
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      totalScanned: items.length,
+      duplicateCount: duplicates.length,
+      duplicates
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 9. GET /api/templates/audit ──────────────────────────────────
 router.get('/audit', (req, res) => {
   try {
     const logs = getAuditLogs(Number(req.query.limit) || 100);
@@ -115,7 +232,7 @@ router.get('/audit', (req, res) => {
   }
 });
 
-// ── 5. POST /api/templates/generate ──────────────────────────────
+// ── 10. POST /api/templates/generate ─────────────────────────────
 router.post('/generate', async (req, res) => {
   try {
     const { productId, languages } = req.body || {};
@@ -139,7 +256,8 @@ router.post('/generate', async (req, res) => {
     const generated = generateProductTemplates(productId, { languages });
     for (const t of generated) {
       t.validationReport = validateTemplate(t);
-      t.status = t.validationReport.isValid ? 'VALIDATED' : 'DRAFT';
+      t.qualityScore = scoreTemplateQuality(t).score;
+      t.status = t.validationReport.isValid ? PUBLISHING_STATES.VALIDATED : PUBLISHING_STATES.DRAFT;
       await saveTemplate(t);
     }
 
@@ -164,29 +282,32 @@ router.post('/generate', async (req, res) => {
   }
 });
 
-// ── 6. POST /api/templates/validate ──────────────────────────────
+// ── 11. POST /api/templates/validate ─────────────────────────────
 router.post('/validate', (req, res) => {
   try {
     const templateData = req.body;
     const report = validateTemplate(templateData);
     const agroScan = scanAgroContamination(templateData);
+    const quality = scoreTemplateQuality(templateData);
 
     res.json({
       success: true,
       validation: report,
-      agroContaminationScan: agroScan
+      agroContaminationScan: agroScan,
+      qualityScore: quality
     });
   } catch (err) {
     res.status(400).json({ success: false, error: err.message });
   }
 });
 
-// ── 7. POST /api/templates/save ──────────────────────────────────
+// ── 12. POST /api/templates/save ─────────────────────────────────
 router.post('/save', async (req, res) => {
   try {
     const templateData = req.body;
     const valReport = validateTemplate(templateData);
     templateData.validationReport = valReport;
+    templateData.qualityScore = scoreTemplateQuality(templateData).score;
 
     const saved = await saveTemplate(templateData);
     await recordTemplateAudit({
@@ -205,7 +326,7 @@ router.post('/save', async (req, res) => {
   }
 });
 
-// ── 8. POST /api/templates/:id/submit-meta ───────────────────────
+// ── 13. POST /api/templates/:id/submit-meta ──────────────────────
 router.post('/:id/submit-meta', async (req, res) => {
   try {
     const result = await submitToMetaWaba(req.params.id);
@@ -215,7 +336,44 @@ router.post('/:id/submit-meta', async (req, res) => {
   }
 });
 
-// ── 9. POST /api/templates/:id/publish-aisensy ───────────────────
+// ── 14. POST /api/templates/bulk-submit-meta ─────────────────────
+router.post('/bulk-submit-meta', async (req, res) => {
+  try {
+    const { templateIds, confirmed } = req.body || {};
+
+    if (!confirmed) {
+      return res.status(400).json({
+        success: false,
+        error: 'CONFIRMATION_REQUIRED',
+        message: 'Explicit human confirmation is required before bulk Meta WABA template submission. Set { confirmed: true }.'
+      });
+    }
+
+    if (!Array.isArray(templateIds) || templateIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_INPUT',
+        message: 'Provide an array of templateIds to submit.'
+      });
+    }
+
+    const results = [];
+    for (const id of templateIds) {
+      const subRes = await submitToMetaWaba(id);
+      results.push({ id, ...subRes });
+    }
+
+    res.json({
+      success: true,
+      totalSubmitted: results.length,
+      results
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 15. POST /api/templates/:id/publish-aisensy ──────────────────
 router.post('/:id/publish-aisensy', async (req, res) => {
   try {
     const result = await publishToAiSensy(req.params.id);
@@ -225,7 +383,35 @@ router.post('/:id/publish-aisensy', async (req, res) => {
   }
 });
 
-// ── 10. GET /api/templates/meta/sync ─────────────────────────────
+// ── 16. POST /api/templates/bulk-publish-aisensy ─────────────────
+router.post('/bulk-publish-aisensy', async (req, res) => {
+  try {
+    const { templateIds } = req.body || {};
+    if (!Array.isArray(templateIds) || templateIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_INPUT',
+        message: 'Provide an array of templateIds to link with AiSensy.'
+      });
+    }
+
+    const results = [];
+    for (const id of templateIds) {
+      const pubRes = await publishToAiSensy(id);
+      results.push({ id, ...pubRes });
+    }
+
+    res.json({
+      success: true,
+      totalProcessed: results.length,
+      results
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 17. GET /api/templates/meta/sync ────────────────────────────
 router.get('/meta/sync', async (req, res) => {
   try {
     const result = await syncWithMeta();
@@ -235,10 +421,22 @@ router.get('/meta/sync', async (req, res) => {
   }
 });
 
-// ── 11. GET /api/templates/export ────────────────────────────────
+// ── 18. GET /api/templates/export ───────────────────────────────
 router.get('/export', async (req, res) => {
   try {
-    const { items } = await queryTemplates({ limit: 5000 });
+    const { format = 'json', product } = req.query;
+    const query = { limit: 5000 };
+    if (product && product !== 'ALL') query.product = product;
+
+    const { items } = await queryTemplates(query);
+
+    if (format.toLowerCase() === 'csv' || format.toLowerCase() === 'excel') {
+      const csvData = convertToCSV(items);
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="avani-loan-services-templates.csv"');
+      return res.send(csvData);
+    }
+
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', 'attachment; filename="avani-loan-services-templates.json"');
     res.send(JSON.stringify(items, null, 2));
@@ -247,7 +445,7 @@ router.get('/export', async (req, res) => {
   }
 });
 
-// ── 12. GET /api/templates/:id (Single Template) ─────────────────
+// ── 19. GET /api/templates/:id (Single Template) ────────────────
 router.get('/:id', async (req, res) => {
   try {
     const template = await getTemplateById(req.params.id);

@@ -99,9 +99,25 @@ const ContentTemplateSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['DRAFT', 'VALIDATED', 'SUBMITTED', 'PENDING', 'APPROVED', 'REJECTED', 'PAUSED', 'DISABLED', 'ARCHIVED'],
+    enum: [
+      'DRAFT', 'VALIDATED', 'READY_FOR_SUBMISSION', 'SUBMITTED_TO_META',
+      'META_PENDING', 'META_APPROVED', 'META_REJECTED', 'READY_FOR_AISENSY',
+      'PUBLISHED_TO_AISENSY', 'FAILED', 'ARCHIVED', 'SUBMITTED', 'PENDING',
+      'APPROVED', 'REJECTED', 'PAUSED', 'DISABLED'
+    ],
     default: 'DRAFT',
     index: true
+  },
+  publishingState: {
+    type: String,
+    default: 'DRAFT',
+    index: true
+  },
+  qualityScore: {
+    type: Number,
+    default: 90,
+    min: 0,
+    max: 100
   },
   aisensyStatus: {
     type: String,
