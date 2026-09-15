@@ -1,0 +1,197 @@
+[
+  {
+    "name": "personal_loan_salary_update",
+    "status": "PENDING",
+    "id": "1072574895255644",
+    "category": "UTILITY",
+    "note": "Already registered on Meta"
+  },
+  {
+    "name": "business_loan_followup",
+    "status": "PENDING",
+    "id": "1772376197133404",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "education_loan_welcome",
+    "status": "PENDING",
+    "id": "3618662384968361",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "professional_loan_offer",
+    "status": "PENDING",
+    "id": "2900614780294114",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "home_loan_mortgage_intro",
+    "status": "PENDING",
+    "id": "1878028073559798",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "institutional_funding_alert",
+    "status": "FAILED",
+    "error": "Invalid parameter",
+    "note": "Submission error"
+  },
+  {
+    "name": "pl_new_lead_welcome",
+    "status": "PENDING",
+    "id": "1422220193205800",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "pl_eligibility_check",
+    "status": "PENDING",
+    "id": "1561924169069634",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "pl_document_request",
+    "status": "PENDING",
+    "id": "2884490138745426",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "bl_new_inquiry",
+    "status": "PENDING",
+    "id": "4416609051936070",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "bl_financial_docs",
+    "status": "PENDING",
+    "id": "1070481849018478",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "doc_loan_special",
+    "status": "PENDING",
+    "id": "1749780546331227",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "hl_rate_update",
+    "status": "PENDING",
+    "id": "28274246935567932",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "cibil_consultation_offer",
+    "status": "PENDING",
+    "id": "1101510665731655",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "crm_doc_pending_reminder",
+    "status": "PENDING",
+    "id": "2005236546820435",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "crm_application_approved",
+    "status": "PENDING",
+    "id": "1419959253415440",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "crm_feedback_request",
+    "status": "PENDING",
+    "id": "1061192250051942",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_welcome_message",
+    "status": "PENDING",
+    "id": "3291931680990572",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_doc_followup",
+    "status": "PENDING",
+    "id": "1594777892347665",
+    "category": "UTILITY",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_education_alert",
+    "status": "PENDING",
+    "id": "1421355710100660",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_business_intro",
+    "status": "PENDING",
+    "id": "1081823490909859",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_doctor_loan",
+    "status": "PENDING",
+    "id": "1421816779831117",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_ca_loan",
+    "status": "PENDING",
+    "id": "2208196336743043",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_school_funding",
+    "status": "PENDING",
+    "id": "1509168620974243",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "avani_college_funding",
+    "status": "PENDING",
+    "id": "1676511160858528",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "cibil_consultation",
+    "status": "PENDING",
+    "id": "1234951418806615",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "crm_followup_day3",
+    "status": "PENDING",
+    "id": "1456177426373680",
+    "category": "MARKETING",
+    "note": "Newly created"
+  },
+  {
+    "name": "crm_review_request",
+    "status": "PENDING",
+    "id": "1432744175419160",
+    "category": "MARKETING",
+    "note": "Newly created"
+  }
+]

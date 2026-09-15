@@ -68,6 +68,9 @@ app.use('/api/meta', metaWebhooks);
 const { router: calculatorAuthRouter } = require('./routes/calculatorAuth.cjs');
 app.use('/api/calculator-auth', calculatorAuthRouter);
 
+const templatesRouter = require('./routes/templates.cjs');
+app.use('/api/templates', templatesRouter);
+
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
