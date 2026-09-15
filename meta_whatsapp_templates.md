@@ -176,7 +176,7 @@ Tap below to start your journey!
 Avani Loan Services | Latur
 
 **Buttons (Quick Reply):**
-1. Text: Education Loan (Global)
+1. Text: [Education Loan](/services/education-loan) (Global)
 
 ---
 

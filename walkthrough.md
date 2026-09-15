@@ -113,8 +113,8 @@ dist/assets/index.js   284.56 kB │ gzip: 89.07 kB
   - CIBIL Improvement
   - [chartered accountant loan](/services/chartered-accountant-loan)
 
-### 3. 🎓 Comprehensive Education Loan & Property Documentation Guides
-- **Education Loan (India)**: Structured categories for Student Documents, Parent/Co-applicant Documents, Institution Documents + disclaimers + `📲 Get India Education Loan Document List on WhatsApp`.
+### 3. 🎓 Comprehensive [Education Loan](/services/education-loan) & Property Documentation Guides
+- **[Education Loan](/services/education-loan) (India)**: Structured categories for Student Documents, Parent/Co-applicant Documents, Institution Documents + disclaimers + `📲 Get India Education Loan Document List on WhatsApp`.
 - **Education Loan (Study Abroad)**: Highlighted USA, Canada, UK, Australia, Germany + Student KYC, Academic, University Admission (I-20/CAS/COE), Co-applicant Financials, International/Visa docs + disclaimers + `📲 Get Global Education Loan Document List on WhatsApp`.
 - **[Home Loan](/services/home-loan) & Mortgage Property Architecture**: Detailed geography breakdown (Rural Gram Panchayat 7/12 & Form 8/8A, Semi-Urban Municipal Council, Urban Municipal Corporation) and Property Type breakdown (Under-Construction, Resale, Vacant Plot/Land).
 

@@ -23,7 +23,7 @@ Add all detailed document lists to the respective loan profiles on the `/eligibi
   - Home / Mortgage
   - Education (India)
   - Education (Global)
-- Dynamically customize form labels and hints when an Education Loan tab is active (e.g. changing "Full Name" to "Student's Full Name", "Monthly Net Income" to "Co-applicant's Monthly Net Income", and "Age" to "Co-applicant's Age").
+- Dynamically customize form labels and hints when an [Education Loan](/services/education-loan) tab is active (e.g. changing "Full Name" to "Student's Full Name", "Monthly Net Income" to "Co-applicant's Monthly Net Income", and "Age" to "Co-applicant's Age").
 - Handle clean layout naming for the newly added tabs in the lead detail view and submission success messages.
 
 #### [MODIFY] [Eligibility.css](file:///c:/Users/ALPHA-1/Desktop/AVANI%20LOAN%20SERVICE%20FY%2026-27/src/pages/Eligibility.css)

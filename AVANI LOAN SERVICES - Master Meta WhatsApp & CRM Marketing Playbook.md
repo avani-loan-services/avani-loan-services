@@ -234,7 +234,7 @@ Target "Disbursed" clients after 30 days.
 *Template:* "Hello {{1}}, know someone looking for financial advisory? Refer them to AVANI LOAN SERVICES and help them secure their goals seamlessly!"
 
 ### 8. Cross-Selling Campaign
-Target Personal Loan clients after 6 months for Top-ups or Credit Cards. Target Business Loan clients for Mortgages or Equipment Finance.
+Target Personal Loan clients after 6 months for Top-ups or Credit Cards. Target [business loan](/services/business-loan) clients for Mortgages or Equipment Finance.
 
 ### 9. Monthly WhatsApp Marketing Calendar
 - **Week 1:** Educational Broadcast (e.g., "How to maintain a 750+ CIBIL").
