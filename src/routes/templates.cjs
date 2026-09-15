@@ -50,7 +50,15 @@ router.use((req, res, next) => {
 // ── 1. GET /api/templates (Query & Filter) ────────────────────────
 router.get('/', async (req, res) => {
   try {
-    const result = await queryTemplates(req.query);
+    let result = await queryTemplates(req.query);
+    if (!result.items || result.items.length === 0) {
+      const targetProduct = req.query.product && req.query.product !== 'ALL' ? req.query.product : 'personal_loan';
+      const generated = generateProductTemplates(targetProduct);
+      for (const t of generated) {
+        await saveTemplate(t);
+      }
+      result = await queryTemplates(req.query);
+    }
     res.json({
       success: true,
       businessId: BUSINESS_IDENTITY.businessId,
@@ -60,6 +68,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 // ── 2. GET /api/templates/stats ──────────────────────────────────
 router.get('/stats', async (req, res) => {
@@ -445,7 +454,14 @@ router.get('/export', async (req, res) => {
     const query = { limit: 5000 };
     if (product && product !== 'ALL') query.product = product;
 
-    const { items } = await queryTemplates(query);
+    let { items } = await queryTemplates(query);
+    if (!items || items.length === 0) {
+      items = [];
+      const targetProducts = product && product !== 'ALL' ? [product] : ALL_PRODUCT_KEYS;
+      for (const pKey of targetProducts) {
+        items.push(...generateProductTemplates(pKey));
+      }
+    }
 
     if (format.toLowerCase() === 'csv' || format.toLowerCase() === 'excel') {
       const csvData = convertToCSV(items);
@@ -456,11 +472,16 @@ router.get('/export', async (req, res) => {
 
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', 'attachment; filename="avani-loan-services-templates.json"');
-    res.send(JSON.stringify(items, null, 2));
+    res.json({
+      businessId: BUSINESS_IDENTITY.businessId,
+      total: items.length,
+      items
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 // ── 19. GET /api/templates/:id (Single Template) ────────────────
 router.get('/:id', async (req, res) => {
