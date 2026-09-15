@@ -48,6 +48,8 @@ SAFE-MIGRATION-BACKUP/
 *.xls
 *.doc
 *.docx
+*-report.txt
+resume-after-shutdown.txt
 
 
 # Keys, Tokens, and Credentials
