@@ -42,6 +42,7 @@ scratch/
 uploads/
 migration-forensics/
 SAFE-MIGRATION-BACKUP/
+public/media/videos/
 
 # Operational Exports & Document Quarantine
 *.xlsx

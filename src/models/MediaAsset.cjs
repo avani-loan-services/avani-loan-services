@@ -3,6 +3,8 @@
 // AVANI LOAN SERVICES — Media Asset Data Model & Status Machine
 // ─────────────────────────────────────────────────────────────────
 
+const fs = require('fs');
+const path = require('path');
 const mongoose = require('mongoose');
 const { BUSINESS_IDENTITY, assertBusinessIsolation } = require('../config/businessIdentity.cjs');
 
@@ -10,12 +12,34 @@ const { BUSINESS_IDENTITY, assertBusinessIsolation } = require('../config/busine
 const inMemoryMediaAssets = new Map();
 const inMemoryAssetAuditLogs = [];
 
-// 11-State Media Asset Status Machine
+const REGISTRY_PATH = path.join(__dirname, '../data/mediaAssetRegistry.json');
+function loadPersistedMediaAssets() {
+  try {
+    if (fs.existsSync(REGISTRY_PATH)) {
+      const data = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf-8'));
+      if (Array.isArray(data)) {
+        for (const asset of data) {
+          if (asset && (asset.id || asset.assetId) && !inMemoryMediaAssets.has(asset.id || asset.assetId)) {
+            inMemoryMediaAssets.set(asset.id || asset.assetId, asset);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    // Graceful fallback
+  }
+}
+
+loadPersistedMediaAssets();
+
+// 11-State Media Asset Status Machine (Extended with Ingestion States)
 const ASSET_STATUSES = Object.freeze({
   CONCEPT: 'CONCEPT',
   READY_FOR_RENDERING: 'READY_FOR_RENDERING',
   GENERATING: 'GENERATING',
   GENERATED: 'GENERATED',
+  IMPORTED: 'IMPORTED',
+  REVIEW_REQUIRED: 'REVIEW_REQUIRED',
   QUALITY_REVIEW: 'QUALITY_REVIEW',
   APPROVED_INTERNAL: 'APPROVED_INTERNAL',
   REJECTED_INTERNAL: 'REJECTED_INTERNAL',
@@ -45,6 +69,20 @@ const ASSET_TRANSITIONS = {
   ],
   [ASSET_STATUSES.GENERATED]: [
     ASSET_STATUSES.QUALITY_REVIEW,
+    ASSET_STATUSES.FAILED
+  ],
+  [ASSET_STATUSES.IMPORTED]: [
+    ASSET_STATUSES.REVIEW_REQUIRED,
+    ASSET_STATUSES.QUALITY_REVIEW,
+    ASSET_STATUSES.APPROVED_INTERNAL,
+    ASSET_STATUSES.REJECTED_INTERNAL,
+    ASSET_STATUSES.ARCHIVED,
+    ASSET_STATUSES.FAILED
+  ],
+  [ASSET_STATUSES.REVIEW_REQUIRED]: [
+    ASSET_STATUSES.APPROVED_INTERNAL,
+    ASSET_STATUSES.REJECTED_INTERNAL,
+    ASSET_STATUSES.ARCHIVED,
     ASSET_STATUSES.FAILED
   ],
   [ASSET_STATUSES.QUALITY_REVIEW]: [
@@ -303,7 +341,11 @@ function normalizeMediaAsset(assetData) {
     version: assetData.version || 1,
     checksum: assetData.checksum || '',
     campaignId: assetData.campaignId || null,
-    templateId: assetData.templateId || null
+    templateId: assetData.templateId || null,
+    sourcePath: assetData.sourcePath || null,
+    originalFilename: assetData.originalFilename || null,
+    fileSize: typeof assetData.fileSize === 'number' ? assetData.fileSize : null,
+    mimeType: assetData.mimeType || null
   };
 }
 

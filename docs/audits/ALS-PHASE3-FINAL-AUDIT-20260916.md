@@ -1,20 +1,20 @@
 # AVANI LOAN SERVICES — PHASE 3 FINAL EXECUTION & FORENSIC PRODUCTION GATE REPORT
 
-**Date:** September 16, 2026  
-**Auditor:** Antigravity Autonomous Agent (Google DeepMind Team)  
-**Authoritative Business:** AVANI LOAN SERVICES  
-**Tenant ID:** `avani-loan-services`  
-**Founder / Principal:** Sachin Shinde  
-**Official Website:** [https://www.avanifinserv.com/](https://www.avanifinserv.com/)  
-**Official Email:** [enquiry@avanifinserv.com](mailto:enquiry@avanifinserv.com)  
-**Official WhatsApp Business:** `+91 91756 35165` (Normalized: `919175635165`)  
-**Meta WABA ID:** `1062614709598311`  
-**Meta Phone Number ID:** `1147494668457940`  
-**AiSensy Project ID:** `6a670f94d0c39f57eaa6799f`  
-**GitHub Repository:** `avani-loan-services/avani-loan-services` (Branch: `main`)  
-**Production Vercel Project:** `avani-loan-services`  
-**Production Deployment ID:** `dpl_77RcFof87t8NmT3CNDbjk4xMuvxj`  
-**Live Production URL:** [https://www.avanifinserv.com](https://www.avanifinserv.com)  
+**Date:** September 16, 2026
+**Auditor:** Antigravity Autonomous Agent (Google DeepMind Team)
+**Authoritative Business:** AVANI LOAN SERVICES
+**Tenant ID:** `avani-loan-services`
+**Founder / Principal:** Sachin Shinde
+**Official Website:** [https://www.avanifinserv.com/](https://www.avanifinserv.com/)
+**Official Email:** [enquiry@avanifinserv.com](mailto:enquiry@avanifinserv.com)
+**Official WhatsApp Business:** `+91 91756 35165` (Normalized: `919175635165`)
+**Meta WABA ID:** `1062614709598311`
+**Meta Phone Number ID:** `1147494668457940`
+**AiSensy Project ID:** `6a670f94d0c39f57eaa6799f`
+**GitHub Repository:** `avani-loan-services/avani-loan-services` (Branch: `main`)
+**Production Vercel Project:** `avani-loan-services`
+**Production Deployment ID:** `dpl_77RcFof87t8NmT3CNDbjk4xMuvxj`
+**Live Production URL:** [https://www.avanifinserv.com](https://www.avanifinserv.com)
 
 ---
 
@@ -60,25 +60,25 @@ An intentional and documented distinction is maintained between the Phase 2 inte
 
 ### 4.1 Phase 2 Template Engine (10 Products)
 1. Personal Loan (`personal_loan`)
-2. Business Loan (`business_loan`)
+2. [business loan](/services/business-loan) (`business_loan`)
 3. Doctor Loan (`doctor_loan`)
-4. Home Loan (`home_loan`)
+4. [home loan](/services/home-loan) (`home_loan`)
 5. Mortgage Loan / LAP (`mortgage_loan`)
-6. Education Loan — India (`education_loan_india`)
-7. Education Loan — Global Studies (`education_loan_global`)
+6. [Education Loan](/services/education-loan) — India (`education_loan_india`)
+7. [Education Loan](/services/education-loan) — Global Studies (`education_loan_global`)
 8. School Funding (`school_funding`)
 9. College Funding (`college_funding`)
 10. CIBIL Improvement Consultation (`cibil_consultation`)
 
 ### 4.2 Phase 3 Customer-Facing Catalog (11 Products)
 The production customer catalog at `/loan-products` and `/catalog` exposes all 11 AVANI LOAN SERVICES financial products:
-1. **Personal Loan / Salary Loan**
-2. **Business Loan**
+1. **Personal Loan / [salary loan](/services/salary-loan)**
+2. **[Business Loan](/services/business-loan)**
 3. **Doctor Loan**
-4. **Home Loan**
+4. **[Home Loan](/services/home-loan)**
 5. **Mortgage Loan / Loan Against Property**
-6. **Education Loan — India**
-7. **Education Loan — Global Studies**
+6. **[Education Loan](/services/education-loan) — India**
+7. **[Education Loan](/services/education-loan) — Global Studies**
 8. **School Funding**
 9. **College Funding**
 10. **CA Professional Loan** (Explicitly extended for Chartered Accountants)

@@ -139,6 +139,28 @@ async function runSmokeTests() {
     assert(false, `GET /api/templates/publishing-queue failed: ${err.message}`);
   }
 
+  // Providers Status Diagnostic
+  try {
+    const res = await fetchUrl('/api/templates/providers/status');
+    assert(res.statusCode === 200, 'GET /api/templates/providers/status returned HTTP 200');
+    const json = JSON.parse(res.body);
+    assert(json.success === true, 'Provider status returned success: true');
+    assert(Boolean(json.providers), 'Provider status contains providers object');
+  } catch (err) {
+    assert(false, `GET /api/templates/providers/status failed: ${err.message}`);
+  }
+
+  // Analytics
+  try {
+    const res = await fetchUrl('/api/templates/analytics');
+    assert(res.statusCode === 200, 'GET /api/templates/analytics returned HTTP 200');
+    const json = JSON.parse(res.body);
+    assert(json.success === true, 'Analytics returned success: true');
+    assert(typeof json.analytics.LEADS === 'number', 'Analytics contains numeric LEADS count');
+  } catch (err) {
+    assert(false, `GET /api/templates/analytics failed: ${err.message}`);
+  }
+
   // Tenant Security & Firewall check
   try {
     const res = await fetchUrl('/api/templates/validate', {

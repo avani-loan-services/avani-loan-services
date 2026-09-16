@@ -546,6 +546,49 @@ router.get('/assets/:assetId', async (req, res) => {
   }
 });
 
+// ── 20b. GET /api/templates/assets/:assetId/stream (Video Stream) ──
+router.get('/assets/:assetId/stream', async (req, res) => {
+  try {
+    const asset = await getMediaAssetById(req.params.assetId);
+    if (!asset) {
+      return res.status(404).json({ success: false, error: 'Asset not found' });
+    }
+    const targetPath = asset.sourcePath || asset.storageKey;
+    if (!targetPath || !fs.existsSync(targetPath)) {
+      return res.status(404).json({ success: false, error: 'Physical media file not found on disk' });
+    }
+
+    const stat = fs.statSync(targetPath);
+    const fileSize = stat.size;
+    const range = req.headers.range;
+
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunksize = (end - start) + 1;
+      const file = fs.createReadStream(targetPath, { start, end });
+      const head = {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': asset.mimeType || 'video/mp4'
+      };
+      res.writeHead(206, head);
+      file.pipe(res);
+    } else {
+      const head = {
+        'Content-Length': fileSize,
+        'Content-Type': asset.mimeType || 'video/mp4'
+      };
+      res.writeHead(200, head);
+      fs.createReadStream(targetPath).pipe(res);
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── 21. POST /api/templates/assets/generate ──────────────────────
 router.post('/assets/generate', async (req, res) => {
   try {
@@ -666,7 +709,68 @@ router.post('/publishing-queue/retry', async (req, res) => {
 });
 
 
-// ── 30. GET /api/templates/:id (Single Template) ────────────────
+// ── 30. GET /api/templates/providers/status (Provider Status Diagnostic) ────
+router.get('/providers/status', (req, res) => {
+  try {
+    const providers = {
+      OPENAI_IMAGE: process.env.OPENAI_API_KEY ? 'CONFIGURED' : 'NOT_CONFIGURED',
+      OPENAI_VIDEO: (process.env.OPENAI_API_KEY && process.env.OPENAI_VIDEO_MODEL) ? 'CONFIGURED' : 'NOT_CONFIGURED',
+      STABILITY_IMAGE: process.env.STABILITY_API_KEY ? 'CONFIGURED' : 'NOT_CONFIGURED',
+      RUNWAY_VIDEO: process.env.RUNWAY_API_KEY ? 'CONFIGURED' : 'NOT_CONFIGURED',
+      PIKA_VIDEO: process.env.PIKA_API_KEY ? 'CONFIGURED' : 'NOT_CONFIGURED'
+    };
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      providers
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 31. GET /api/templates/analytics (Lead Tracking & Ground-Truth Analytics) ─
+router.get('/analytics', async (req, res) => {
+  try {
+    let leadsCount = 0;
+    let qualifiedLeadsCount = 0;
+    try {
+      const { LeadModel } = require('../models/leadModel.cjs');
+      if (LeadModel && mongoose.connection.readyState === 1) {
+        leadsCount = await LeadModel.countDocuments();
+        qualifiedLeadsCount = await LeadModel.countDocuments({ status: 'QUALIFIED' });
+      }
+    } catch (e) {}
+
+    const campaigns = await queryCampaigns();
+    const assets = await queryMediaAssets();
+    const physicalAssets = assets.filter(a => a.status === 'IMPORTED' || a.storageProvider === 'LOCAL_PHYSICAL');
+
+    res.json({
+      success: true,
+      businessId: BUSINESS_IDENTITY.businessId,
+      analytics: {
+        IMPRESSIONS: 0,
+        CLICKS: 0,
+        WHATSAPP_CLICKS: 0,
+        FORM_SUBMISSIONS: leadsCount,
+        LEADS: leadsCount,
+        QUALIFIED_LEADS: qualifiedLeadsCount,
+        DOCUMENT_SUBMISSIONS: 0,
+        APPLICATIONS: 0,
+        APPROVALS: 0,
+        DISBURSEMENTS: 0,
+        CAMPAIGNS_COUNT: campaigns.length,
+        TOTAL_ASSETS: assets.length,
+        PHYSICAL_ASSETS: physicalAssets.length
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── 32. GET /api/templates/:id (Single Template - Parameterized Route at End) ─
 router.get('/:id', async (req, res) => {
   try {
     const template = await getTemplateById(req.params.id);
