@@ -3,6 +3,8 @@
 // Express Router for AVANI LOAN SERVICES Content Template Engine
 // ─────────────────────────────────────────────────────────────────
 
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const router = express.Router();
 const { BUSINESS_IDENTITY, assertBusinessIsolation } = require('../config/businessIdentity.cjs');
