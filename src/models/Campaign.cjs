@@ -3,6 +3,8 @@
 // AVANI LOAN SERVICES — Campaign Data Model & Ledger
 // ─────────────────────────────────────────────────────────────────
 
+const fs = require('fs');
+const path = require('path');
 const mongoose = require('mongoose');
 const { BUSINESS_IDENTITY, assertBusinessIsolation } = require('../config/businessIdentity.cjs');
 
@@ -11,11 +13,25 @@ const inMemoryCampaigns = new Map();
 
 const CAMPAIGN_STATUSES = Object.freeze({
   DRAFT: 'DRAFT',
+  READY_TO_PUBLISH: 'READY_TO_PUBLISH',
   ACTIVE: 'ACTIVE',
   PAUSED: 'PAUSED',
   COMPLETED: 'COMPLETED',
   ARCHIVED: 'ARCHIVED'
 });
+
+// Load persistent seed campaigns if registry exists
+try {
+  const registryPath = path.join(__dirname, '../data/campaignRegistry.json');
+  if (fs.existsSync(registryPath)) {
+    const raw = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+    if (Array.isArray(raw)) {
+      raw.forEach(c => inMemoryCampaigns.set(c.campaignId, c));
+    }
+  }
+} catch (e) {
+  // Silent fallback
+}
 
 const CampaignSchema = new mongoose.Schema({
   campaignId: {

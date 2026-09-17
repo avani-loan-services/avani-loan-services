@@ -105,9 +105,29 @@ function getInMemoryStore() {
   return inMemoryDb;
 }
 
+/**
+ * Accurately report database health according to Gate B specification:
+ * When healthy: status=CONNECTED, connected=true, readyState=1, persistence=DURABLE, fallback=INACTIVE
+ * When unavailable: status=BLOCKED, connected=false, readyState!=1, persistence=NOT_DURABLE, fallback=ACTIVE
+ */
+function getDatabaseHealth() {
+  const readyState = mongoose.connection ? mongoose.connection.readyState : 0;
+  const connected = readyState === 1;
+  return {
+    status: connected ? 'CONNECTED' : 'BLOCKED',
+    provider: 'MongoDB Atlas',
+    tier: 'FREE_TIER',
+    connected,
+    readyState,
+    persistence: connected ? 'DURABLE' : 'NOT_DURABLE',
+    fallback: connected ? 'INACTIVE' : 'ACTIVE'
+  };
+}
+
 module.exports = {
   connectDB,
   disconnectDB,
   getInMemoryStore,
-  isConnected
+  isConnected,
+  getDatabaseHealth
 };

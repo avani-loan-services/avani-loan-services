@@ -6,7 +6,7 @@ const cors     = require('cors');
 const app      = express();
 
 const { validateEnvironmentIsolation } = require('./config/envValidator.cjs');
-const { connectDB } = require('./models/database.cjs');
+const { connectDB, getDatabaseHealth } = require('./models/database.cjs');
 
 validateEnvironmentIsolation();
 connectDB().catch(err => console.warn('[Database] Initial connection warning:', err.message));
@@ -34,6 +34,17 @@ app.use((err, req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, '../dist')));
+
+// Database Health Check Endpoint conforming to Gate B specification
+app.get('/api/health', (req, res) => {
+  const dbHealth = getDatabaseHealth();
+  res.status(200).json({
+    status: dbHealth.connected ? 'OK' : 'DEGRADED',
+    service: 'AVANI LOAN SERVICES — AVANI AI CRM',
+    timestamp: new Date().toISOString(),
+    database: dbHealth
+  });
+});
 
 const { router: whatsappWebhookRouter } = require('./routes/whatsappWebhookController.cjs');
 app.use('/api/whatsapp-webhook', whatsappWebhookRouter);

@@ -15,9 +15,9 @@ import cibilBanner from '../assets/avani_cibil_banner.png';
 import './Blog.css';
 
 const posts = [
-  { id: 11, image: educationImg, category: 'School Funding', title: 'School Infrastructure & EdTech Loans in Maharashtra 2026', date: 'April 02, 2026', readTime: '7 min read', hasVideo: true, videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: 'Complete guide for private school trusts and directors to secure low-interest loans for Smart Classrooms, school buses, building expansion, and teacher salary reserves.' },
-  { id: 12, image: educationImg, category: 'College Funding', title: 'College & University Higher Education Funding Guide', date: 'March 28, 2026', readTime: '9 min read', hasVideo: true, videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: 'How degree colleges, engineering institutes, and medical colleges in Latur & Maharashtra can access institutional expansion credit, plus 100% fee funding for students.' },
-  { id: 1, image: cibilBanner, category: 'CIBIL Repair', title: 'CIBIL Score Kaise Badhayein – 7 Proven Tips in 2026', date: 'March 20, 2026', readTime: '6 min read', hasVideo: true, videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: 'Your CIBIL score is the key to getting any loan in India. Here are 7 expert credit correction strategies to boost your CIBIL score from 600 to 750+ within 12 months.' },
+  { id: 11, image: educationImg, category: 'School Funding', title: 'School Infrastructure & EdTech Loans in Maharashtra 2026', date: 'April 02, 2026', readTime: '7 min read', hasVideo: false, desc: 'Complete guide for private school trusts and directors to secure low-interest loans for Smart Classrooms, school buses, building expansion, and teacher salary reserves.' },
+  { id: 12, image: educationImg, category: 'College Funding', title: 'College & University Higher Education Funding Guide', date: 'March 28, 2026', readTime: '9 min read', hasVideo: false, desc: 'How degree colleges, engineering institutes, and medical colleges in Latur & Maharashtra can access institutional expansion credit, plus 100% fee funding for students.' },
+  { id: 1, image: cibilBanner, category: 'CIBIL Repair', title: 'CIBIL Score Kaise Badhayein – 7 Proven Tips in 2026', date: 'March 20, 2026', readTime: '6 min read', hasVideo: false, desc: 'Your CIBIL score is the key to getting any loan in India. Here are 7 expert credit correction strategies to boost your CIBIL score from 600 to 750+ within 12 months.' },
   { id: 2, image: homeImg, title: 'Complete Guide to Home Loans in Maharashtra 2026', category: 'Home Loan', date: 'March 10, 2026', readTime: '8 min read', hasVideo: false, desc: 'Everything you need to know about home loans in Maharashtra — eligibility, documents, EMI calculation, PMAY interest subsidy, and how to get rates starting from 7.3%.' },
   { id: 3, image: educationImg, title: 'How to Fund MBBS Abroad: Education Loans Explained', category: 'Education Loan', date: 'Feb 28, 2026', readTime: '7 min read', hasVideo: false, desc: 'Planning to study medicine abroad? Our complete guide covers education loans for MBBS in Russia, Philippines, Georgia, UK, USA and more.' },
   { id: 4, image: businessImg, title: 'Business Loan vs Working Capital Loan – What\'s Right for You?', category: 'Business Loan', date: 'Feb 15, 2026', readTime: '5 min read', hasVideo: false, desc: 'Confused between a business term loan and working capital facility? This guide explains both with real examples from Maharashtra businesses.' },
@@ -45,8 +45,8 @@ export default function Blog() {
               <div className="page-header-address">Old Barshi Road, 5 no Chauk, next to Sai School, KulswaminiNagar, Latur-413531, Maharashtra, India</div>
             </div>
           </div>
-          <h1>Loan Tips, School Funding & Financial Video Guides</h1>
-          <p>Expert articles and video walkthroughs to help you secure fast loan approvals in Maharashtra</p>
+          <h1>Loan Advisory, School Funding & Financial Guides</h1>
+          <p>Expert articles and financial walkthroughs to help you secure fast loan approvals in Maharashtra</p>
         </div>
       </section>
 

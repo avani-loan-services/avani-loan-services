@@ -26,9 +26,28 @@ const WebhookInboxSchema = new mongoose.Schema({
 const MongoWebhookInbox = mongoose.models.WebhookInbox || mongoose.model('WebhookInbox', WebhookInboxSchema);
 
 /**
+ * Sanitize webhook payload to prevent unbounded storage usage in Free Tier
+ */
+function sanitizeWebhookPayload(payload) {
+  if (!payload || typeof payload !== 'object') return payload;
+  try {
+    const copy = JSON.parse(JSON.stringify(payload));
+    for (const key of Object.keys(copy)) {
+      if (typeof copy[key] === 'string' && copy[key].length > 4096) {
+        copy[key] = copy[key].slice(0, 4096) + '...[TRUNCATED_FOR_FREE_TIER_SAFETY]';
+      }
+    }
+    return copy;
+  } catch (e) {
+    return { summary: 'Sanitized non-serializable payload' };
+  }
+}
+
+/**
  * Record webhook event atomically with duplicate prevention
  */
 async function registerWebhookEvent(eventId, source, payload) {
+  const safePayload = sanitizeWebhookPayload(payload);
   if (isConnected()) {
     try {
       const existing = await MongoWebhookInbox.findOne({ eventId });
@@ -39,7 +58,7 @@ async function registerWebhookEvent(eventId, source, payload) {
       const newEvent = new MongoWebhookInbox({
         eventId,
         source,
-        payload,
+        payload: safePayload,
         status: 'RECEIVED',
         attemptCount: 0,
         createdAt: new Date(),

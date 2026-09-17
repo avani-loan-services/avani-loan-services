@@ -386,14 +386,16 @@
     "storageKey": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS\\avani-loan-services\\public\\media\\images\\ALS_IMG_BF30DB19_BUSINESS_CARD-MARATHI.webp",
     "publicUrl": "/media/images/ALS_IMG_BF30DB19_BUSINESS_CARD-MARATHI.webp",
     "thumbnailUrl": "/media/thumbnails/thumb_ALS_IMG_BF30DB19_BUSINESS_CARD-MARATHI.webp",
-    "status": "IMPORTED",
+    "status": "APPROVED_INTERNAL",
     "qualityScore": 95,
     "version": 1,
     "checksum": "bf30db199c788ad09090a6c139d152352427f4d1e723d81cbf571ca40dcb9319",
     "sourcePath": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\AVANI LOAN SERVICES\\IMAGE\\BUSINESS CARD-MARATHI.png",
     "originalFilename": "BUSINESS CARD-MARATHI.png",
     "fileSize": 1595807,
-    "mimeType": "image/png"
+    "mimeType": "image/png",
+    "approver": "Sachin Shinde",
+    "approvedAt": "2026-09-16T05:03:02.672Z"
   },
   {
     "id": "ALS_IMG_ACCDF183",
@@ -419,14 +421,16 @@
     "storageKey": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS\\avani-loan-services\\public\\media\\images\\ALS_IMG_ACCDF183_BUSINESS_CARD.webp",
     "publicUrl": "/media/images/ALS_IMG_ACCDF183_BUSINESS_CARD.webp",
     "thumbnailUrl": "/media/thumbnails/thumb_ALS_IMG_ACCDF183_BUSINESS_CARD.webp",
-    "status": "IMPORTED",
+    "status": "APPROVED_INTERNAL",
     "qualityScore": 95,
     "version": 1,
     "checksum": "accdf1834136494c8cde6f3e52d27549928dd315b544638962d2529f4f96778f",
     "sourcePath": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\AVANI LOAN SERVICES\\IMAGE\\BUSINESS CARD.png",
     "originalFilename": "BUSINESS CARD.png",
     "fileSize": 1689647,
-    "mimeType": "image/png"
+    "mimeType": "image/png",
+    "approver": "Sachin Shinde",
+    "approvedAt": "2026-09-16T05:03:02.694Z"
   },
   {
     "id": "ALS_IMG_51E9B697",
@@ -452,14 +456,16 @@
     "storageKey": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS\\avani-loan-services\\public\\media\\images\\ALS_IMG_51E9B697_BUSINESS_LOAN.webp",
     "publicUrl": "/media/images/ALS_IMG_51E9B697_BUSINESS_LOAN.webp",
     "thumbnailUrl": "/media/thumbnails/thumb_ALS_IMG_51E9B697_BUSINESS_LOAN.webp",
-    "status": "IMPORTED",
+    "status": "APPROVED_INTERNAL",
     "qualityScore": 95,
     "version": 1,
     "checksum": "51e9b6976286ae79fecbe2258a2ebe0bf294008259c517fc613f2d7ba0d63fb6",
     "sourcePath": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\AVANI LOAN SERVICES\\IMAGE\\BUSINESS LOAN.png",
     "originalFilename": "BUSINESS LOAN.png",
     "fileSize": 1857632,
-    "mimeType": "image/png"
+    "mimeType": "image/png",
+    "approver": "Sachin Shinde",
+    "approvedAt": "2026-09-16T05:03:02.694Z"
   },
   {
     "id": "ALS_IMG_866F068A",
@@ -485,14 +491,16 @@
     "storageKey": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS\\avani-loan-services\\public\\media\\images\\ALS_IMG_866F068A_Business_loans_for_MSMEs_2K_202608271727.webp",
     "publicUrl": "/media/images/ALS_IMG_866F068A_Business_loans_for_MSMEs_2K_202608271727.webp",
     "thumbnailUrl": "/media/thumbnails/thumb_ALS_IMG_866F068A_Business_loans_for_MSMEs_2K_202608271727.webp",
-    "status": "IMPORTED",
+    "status": "APPROVED_INTERNAL",
     "qualityScore": 95,
     "version": 1,
     "checksum": "866f068aa6c35d475beabc66f894219aa6fcf3425b8591093cba0dc698423a10",
     "sourcePath": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\AVANI LOAN SERVICES\\IMAGE\\Business_loans_for_MSMEs_2K_202608271727.jpeg",
     "originalFilename": "Business_loans_for_MSMEs_2K_202608271727.jpeg",
     "fileSize": 602962,
-    "mimeType": "image/jpeg"
+    "mimeType": "image/jpeg",
+    "approver": "Sachin Shinde",
+    "approvedAt": "2026-09-16T05:03:02.694Z"
   },
   {
     "id": "ALS_IMG_17FD98A6",

@@ -140,11 +140,20 @@ async function main() {
     await fs.writeFile(path.join(mrDir, 'index.html'), mrHtml, 'utf8');
   }
 
-  // Generate sitemap.xml including the services index and individual pages
+  // Generate sitemap.xml including the services index, core pages, and individual pages
   const lastmod = new Date().toISOString().slice(0, 10);
   const sitemapItems = [];
   sitemapItems.push({ loc: `${base}/`, lastmod, changefreq: 'weekly', priority: '1.0' });
+  sitemapItems.push({ loc: `${base}/about`, lastmod, changefreq: 'monthly', priority: '0.8' });
+  sitemapItems.push({ loc: `${base}/loans`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/catalog`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/apply`, lastmod, changefreq: 'weekly', priority: '0.9' });
   sitemapItems.push({ loc: `${base}/services`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/financial-tools`, lastmod, changefreq: 'weekly', priority: '0.8' });
+  sitemapItems.push({ loc: `${base}/blog`, lastmod, changefreq: 'weekly', priority: '0.8' });
+  sitemapItems.push({ loc: `${base}/contact`, lastmod, changefreq: 'monthly', priority: '0.7' });
+  sitemapItems.push({ loc: `${base}/download-application`, lastmod, changefreq: 'monthly', priority: '0.7' });
+  sitemapItems.push({ loc: `${base}/privacy`, lastmod, changefreq: 'yearly', priority: '0.5' });
   for (const s of services) {
     sitemapItems.push({ loc: `${base}/services/${s.slug}`, lastmod, changefreq: 'weekly', priority: '0.8' });
     sitemapItems.push({ loc: `${base}/mr/services/${s.slug}`, lastmod, changefreq: 'weekly', priority: '0.8' });
