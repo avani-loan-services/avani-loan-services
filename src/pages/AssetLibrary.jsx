@@ -69,30 +69,57 @@ const PRODUCT_MEDIA_DATA = [
     }
   },
   {
-    id: 'education-loan',
-    name: 'Education Loan — India & Overseas',
+    id: 'education-loan-india',
+    name: 'Education Loan — India',
     slug: 'education-loan',
-    category: 'Higher Studies Project Financing',
-    tagline: '100% Comprehensive Funding for Global Aspirations',
-    description: 'Full-spectrum tuition fee, hostel accommodation, airfare, and living expense coverage for premier universities across India, USA, UK, Canada, Germany, Australia, and Singapore with extended moratorium options.',
+    category: 'Higher Studies — India',
+    tagline: 'Comprehensive Domestic Higher Education Financing',
+    description: 'Dedicated funding for students admitted to top Indian universities — IIT, NIT, AIIMS, IIM, and recognized colleges. Covers tuition fees, hostel accommodation, academic equipment, and living costs with repayment moratorium.',
     tenure: 'Up to 15 Years',
-    ticketSize: 'Up to ₹1.5 Crores',
+    ticketSize: 'Up to ₹75 Lakhs',
     images: [
       {
         src: '/media/thumbnails/thumb_ALS_IMG_38888E21_EDUCATION_LOAN.webp',
-        alt: 'Avani Loan Services Domestic and International Education Loan',
-        caption: 'Higher Education Degree Financing Matrix'
+        alt: 'Avani Loan Services Domestic Education Loan India',
+        caption: 'Domestic Higher Education Degree Financing'
       },
       {
-        src: '/media/thumbnails/thumb_ALS_IMG_02097073_Student_silhouette_airplane_taki_2K_202608301649.webp',
-        alt: 'Global University Higher Studies Funding',
-        caption: 'Global University Pre-Visa Sanctions'
+        src: '/media/thumbnails/thumb_ALS_IMG_6A7D9BC7_Student_with_confident_smile_2K_202608301649.webp',
+        alt: 'Student Education Loan India Eligibility and Documents',
+        caption: 'Campus Admission & Enrollment Sanction Support'
       }
     ],
     video: {
       src: '/media/videos/als_el_education_guide.mp4',
       poster: '/media/thumbnails/thumb_ALS_IMG_38888E21_EDUCATION_LOAN.webp',
-      title: 'Domestic & Global Studies Education Loan Architecture'
+      title: 'Domestic Education Loan Architecture & Moratorium Benefits'
+    }
+  },
+  {
+    id: 'education-loan-global',
+    name: 'Education Loan — Global Studies',
+    slug: 'education-loan',
+    category: 'Higher Studies — Global',
+    tagline: 'Visa-Compliant Overseas Student Loan for World-Class Universities',
+    description: 'Structured overseas student funding for USA, UK, Canada, Germany, Australia, and Ireland. Includes visa-compliant sanction letters, foreign currency disbursement, GIC/blocked account support, and comprehensive living cost coverage.',
+    tenure: 'Up to 15 Years',
+    ticketSize: 'Up to ₹1.5 Crores',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_02097073_Student_silhouette_airplane_taki_2K_202608301649.webp',
+        alt: 'Avani Loan Services Global Studies Overseas Education Loan',
+        caption: 'International University Visa-Compliant Sanctions'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_9E898808_Loan_services_marketing_banner_2K_202608301657.webp',
+        alt: 'Overseas Student Pre-Departure Loan Coverage',
+        caption: 'Airfare, Hostel & Foreign Living Expense Funding'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_el_education_guide.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_02097073_Student_silhouette_airplane_taki_2K_202608301649.webp',
+      title: 'Global Studies Loan — Visa Letters, GIC & IELTS Pre-Approval'
     }
   },
   {
@@ -202,13 +229,97 @@ const PRODUCT_MEDIA_DATA = [
       poster: '/media/thumbnails/thumb_ALS_IMG_7346F014_DOCTOR_LOAN.webp',
       title: 'Doctor Loan Sanctions & Healthcare Asset Leasing'
     }
+  },
+  {
+    id: 'school-funding',
+    name: 'School Funding & Infrastructure Finance',
+    slug: 'school-funding',
+    category: 'Institutional Education Finance',
+    tagline: 'Structured Institutional Credit for K-12 School Infrastructure Growth',
+    description: 'Specialized institutional credit for private schools, educational trusts, and societies for campus expansion, smart classroom deployment, school bus fleet renewal, and laboratory modernization across Maharashtra.',
+    tenure: 'Up to 10 Years',
+    ticketSize: 'Up to ₹5 Crores',
+    linkTo: '/school-funding',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_84FEB6C8_Avani_Loan_Services_storyboard_grid_202608271723.webp',
+        alt: 'Avani Loan Services School Funding Infrastructure Finance',
+        caption: 'K-12 School Infrastructure Development Credit'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_4E6BB28F_Avani_Loan_Services_marketing_ba_202608301656_1_.webp',
+        alt: 'School Campus Smart Classroom and Lab Financing',
+        caption: 'Digital Smart Classroom & Tech Lab Setup Funding'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_funding_school_plan.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_84FEB6C8_Avani_Loan_Services_storyboard_grid_202608271723.webp',
+      title: 'School Infrastructure Loan Planning & Institutional Eligibility'
+    }
+  },
+  {
+    id: 'college-funding',
+    name: 'College Funding & Campus Project Finance',
+    slug: 'college-funding',
+    category: 'Institutional Education Finance',
+    tagline: 'High-Value Project Finance for Degree Colleges & University Campuses',
+    description: 'High-value structured project financing for degree colleges, engineering and medical campuses, polytechnic institutes, and student hostels. Aligned with NAAC, NBA, and AICTE accreditation financial requirements.',
+    tenure: 'Up to 15 Years',
+    ticketSize: 'Up to ₹20 Crores',
+    linkTo: '/college-funding',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_C6C615CF_Gemini_Generated_Image_j5wduoj5wduoj5wd.webp',
+        alt: 'Avani Loan Services College Campus Project Finance',
+        caption: 'Degree College Campus Development Financing'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_70708DB0_Avani_Loan_Services_marketing_ba_202608301656.webp',
+        alt: 'University Hostel and Lab Equipment Finance',
+        caption: 'NAAC & AICTE Accreditation Infrastructure Funding'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_funding_school_plan.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_C6C615CF_Gemini_Generated_Image_j5wduoj5wduoj5wd.webp',
+      title: 'College & Campus Project Finance Structure & Timeline'
+    }
+  },
+  {
+    id: 'cibil-consultation',
+    name: 'CIBIL Improvement Consultation',
+    slug: 'cibil-check',
+    category: 'Credit Health Advisory',
+    tagline: 'Professional Credit Report Forensics & Score Roadmap Advisory',
+    description: 'Comprehensive credit bureau analysis — CIBIL, Experian, CRIF, and Equifax — to identify reporting discrepancies, optimize credit utilization ratios, resolve outdated defaults, and build a stronger financial profile before loan applications.',
+    tenure: 'Advisory Service',
+    ticketSize: 'Consultation-Based',
+    linkTo: '/cibil-check',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_80902F07_Why_banks_reject_loans_2K_202608301656.webp',
+        alt: 'Avani Loan Services CIBIL Credit Score Improvement Consultation',
+        caption: 'Credit Bureau Forensics & Dispute Resolution'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_9E898808_Loan_services_marketing_banner_2K_202608301657.webp',
+        alt: 'Credit Health Roadmap and CIBIL Score Improvement Advisory',
+        caption: 'Structured Credit Utilization & Score Rebuilding Plan'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_pl_corporate_promo.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_80902F07_Why_banks_reject_loans_2K_202608301656.webp',
+      title: 'CIBIL Report Analysis & Credit Health Improvement Pathway'
+    }
   }
 ];
 
 export default function AssetLibrary() {
   useSEO({
     title: 'Marketing Media & Product Asset Library — AVANI LOAN SERVICES',
-    description: 'Explore authentic, product-specific marketing media, loan explainer reels, and official visual resources across our 7 core financial solutions.'
+    description: 'Explore authentic, product-specific marketing media, loan explainer reels, and official visual resources across our 11 financial solutions — including Salary Loan, Business Loan, Education Loan (India & Global), Home Loan, Mortgage LAP, Doctor Loan, CA Loan, School Funding, College Funding, and CIBIL Improvement Consultation.'
   });
 
   const [activeCategory, setActiveCategory] = useState('ALL');
@@ -247,7 +358,7 @@ export default function AssetLibrary() {
                 className={`product-pill ${activeCategory === 'ALL' ? 'active' : ''}`}
                 onClick={() => setActiveCategory('ALL')}
               >
-                All Products (7)
+                All Products (11)
               </button>
               {PRODUCT_MEDIA_DATA.map(p => (
                 <button
@@ -350,7 +461,7 @@ export default function AssetLibrary() {
                 {/* Card Action CTAs */}
                 <div className="product-card-actions">
                   <div className="actions-left">
-                    <Link to={`/services/${prod.slug}`} className="btn-action-primary">
+                    <Link to={prod.linkTo || `/services/${prod.slug}`} className="btn-action-primary">
                       <span>View Detailed Product Information</span>
                       <ArrowRight size={16} />
                     </Link>
