@@ -21,7 +21,7 @@ export default function Navbar() {
     { name: t('documents'), path: '/documents' },
     { name: t('calculators'), path: '/calculators' },
     { name: t('blog'), path: '/blog' },
-    { name: 'Loan Products', path: '/loan-products' },
+    { name: 'Catalog', path: '/catalog' },
     { name: t('contact'), path: '/contact' }
   ];
 
@@ -73,7 +73,7 @@ export default function Navbar() {
             ))}
 
           </ul>
-          <Link to="/catalog" className="btn btn-primary nav-cta">CATALOG</Link>
+          <Link to="/apply" className="btn btn-primary nav-cta">APPLY NOW</Link>
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -108,8 +108,8 @@ export default function Navbar() {
                 </li>
               ))}
               <li>
-                <Link to="/catalog" className="btn btn-primary mobile-cta" onClick={() => setIsOpen(false)}>
-                  CATALOG
+                <Link to="/apply" className="btn btn-primary mobile-cta" onClick={() => setIsOpen(false)}>
+                  APPLY NOW
                 </Link>
               </li>
             </ul>

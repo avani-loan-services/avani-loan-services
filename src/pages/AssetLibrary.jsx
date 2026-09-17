@@ -1,390 +1,383 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import useSEO from '../hooks/useSEO';
 import {
   Image as ImageIcon,
   Video as VideoIcon,
-  Search,
-  Sparkles,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Copy,
-  Check,
-  RefreshCw,
-  Play
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  PhoneCall,
+  ExternalLink,
+  Filter
 } from 'lucide-react';
 import './AssetLibrary.css';
 
+const PRODUCT_MEDIA_DATA = [
+  {
+    id: 'salary-loan',
+    name: 'Salary Loan / Personal Loan',
+    slug: 'salary-loan',
+    category: 'Unsecured Personal Credit',
+    tagline: 'Fast-Track Financial Freedom for Salaried Employees',
+    description: 'Instant collateral-free funding for medical emergencies, wedding expenses, home renovation, or debt consolidation for corporate, IT, and government employees across Maharashtra.',
+    tenure: '12 to 60 Months',
+    ticketSize: 'Up to ₹25 Lakhs',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_F38B5C44_PERSONAL_LOAN.webp',
+        alt: 'Avani Loan Services Personal and Salary Loan Solutions',
+        caption: 'Corporate Salaried Loan Sanction Matrix'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_09E093E0_Man_wearing_white_shirt_vest_202608301652.webp',
+        alt: 'Salaried Professional Loan Financial Advisory Consultation',
+        caption: 'One-on-One Salaried Credit Advisory'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_pl_corporate_promo.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_F38B5C44_PERSONAL_LOAN.webp',
+      title: 'Salary Loan Overview & 48-Hour Processing Process'
+    }
+  },
+  {
+    id: 'business-loan',
+    name: 'Business Loan & MSME Growth Capital',
+    slug: 'business-loan',
+    category: 'Commercial Business Finance',
+    tagline: 'Uncollateralized Working Capital for Thriving Enterprises',
+    description: 'Fuel business scaling, purchase commercial inventory, expand factory facilities, or manage cash flow cycles with customized business credit lines for proprietors, partnerships, and private limited firms.',
+    tenure: '12 to 48 Months',
+    ticketSize: 'Up to ₹50 Lakhs',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_51E9B697_BUSINESS_LOAN.webp',
+        alt: 'Avani Loan Services Business Loan and MSME Growth Capital',
+        caption: 'Commercial Business Capital Architecture'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_866F068A_Business_loans_for_MSMEs_2K_202608271727.webp',
+        alt: 'MSME Machinery and Business Expansion Support',
+        caption: 'Machinery & Working Capital Financing'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_bl_shop_owner_guide.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_51E9B697_BUSINESS_LOAN.webp',
+      title: 'MSME Business Loan Eligibility & Documentation Guide'
+    }
+  },
+  {
+    id: 'education-loan',
+    name: 'Education Loan — India & Overseas',
+    slug: 'education-loan',
+    category: 'Higher Studies Project Financing',
+    tagline: '100% Comprehensive Funding for Global Aspirations',
+    description: 'Full-spectrum tuition fee, hostel accommodation, airfare, and living expense coverage for premier universities across India, USA, UK, Canada, Germany, Australia, and Singapore with extended moratorium options.',
+    tenure: 'Up to 15 Years',
+    ticketSize: 'Up to ₹1.5 Crores',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_38888E21_EDUCATION_LOAN.webp',
+        alt: 'Avani Loan Services Domestic and International Education Loan',
+        caption: 'Higher Education Degree Financing Matrix'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_02097073_Student_silhouette_airplane_taki_2K_202608301649.webp',
+        alt: 'Global University Higher Studies Funding',
+        caption: 'Global University Pre-Visa Sanctions'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_el_education_guide.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_38888E21_EDUCATION_LOAN.webp',
+      title: 'Domestic & Global Studies Education Loan Architecture'
+    }
+  },
+  {
+    id: 'home-loan',
+    name: 'Home Loan & Housing Finance',
+    slug: 'home-loan',
+    category: 'Residential Real Estate Credit',
+    tagline: 'Secure Your Dream Home with Prime Banking Rates',
+    description: 'Long-term housing loans for ready-possession residential flats, under-construction apartments, independent house purchases, and plot acquisition + home construction with maximum tax benefits under Section 24 and 80C.',
+    tenure: 'Up to 30 Years',
+    ticketSize: 'Up to ₹5 Crores',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_D8F7EE85_HOME_LOAN.webp',
+        alt: 'Avani Loan Services Residential Home Loan Housing Finance',
+        caption: 'Residential Property Purchase Sanctions'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_FC2FD6C0_Modern_office_with_copy_space_202608301656.webp',
+        alt: 'Home Buying Financial Guidance and Sanctions',
+        caption: 'Legal Verification & Property Valuation Assistance'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_hl_mortgage_explained.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_D8F7EE85_HOME_LOAN.webp',
+      title: 'Home Loan Approval Roadmap & Documentation Essentials'
+    }
+  },
+  {
+    id: 'mortgage-lap',
+    name: 'Mortgage Loan Against Property (LAP)',
+    slug: 'mortgage-lap',
+    category: 'Secured High-Value Credit',
+    tagline: 'Unlock Hidden Liquidity in Residential & Commercial Real Estate',
+    description: 'Substantial long-tenure credit secured by your freehold residential, commercial, or industrial property. Ideal for large-scale enterprise expansion, debt consolidation, or institutional capital investments.',
+    tenure: 'Up to 15 Years',
+    ticketSize: 'Up to ₹10 Crores',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_70B41AD4_MORTGAGE_LAON.webp',
+        alt: 'Avani Loan Services Mortgage Loan Against Property LAP',
+        caption: 'High-Value Secured Real Estate Credit'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_8938E41C_Why_banks_reject_loans_banner_202608301657.webp',
+        alt: 'Secured Commercial and Residential Mortgage Capital',
+        caption: 'Overcoming Lender Bottlenecks with Clear Titling'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_hl_mortgage_explained.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_70B41AD4_MORTGAGE_LAON.webp',
+      title: 'Mortgage LAP Loan Structuring & Valuation Process'
+    }
+  },
+  {
+    id: 'chartered-accountant-loan',
+    name: 'Chartered Accountant Professional Loan',
+    slug: 'chartered-accountant-loan',
+    category: 'ICAI Certified Credit Facility',
+    tagline: 'Dedicated Working Capital & Practice Expansion Credit for CAs',
+    description: 'Exclusive collateral-free credit lines and professional term loans designed for practicing Chartered Accountants and audit firms to upgrade office infrastructure, hire associates, or manage seasonal audit liquidity.',
+    tenure: '12 to 60 Months',
+    ticketSize: 'Up to ₹50 Lakhs',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_17FD98A6_CHARTERED_ACCOUNT_LOAN_1to1.webp',
+        alt: 'Avani Loan Services Chartered Accountant Professional Credit',
+        caption: 'Chartered Accountant Practice Credit Matrix'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_AD00D117_CHARTERED_ACCOUNT_LOAN.webp',
+        alt: 'ICAI CA Practice Setup and Expansion Financing',
+        caption: 'Office Setup & Technology Upgradation Capital'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_pl_corporate_promo.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_17FD98A6_CHARTERED_ACCOUNT_LOAN_1to1.webp',
+      title: 'Professional Credit Line Structuring for Practicing CAs'
+    }
+  },
+  {
+    id: 'doctor-professional-loan',
+    name: 'Doctor & Healthcare Professional Loan',
+    slug: 'doctor-professional-loan',
+    category: 'Medical Practitioner Credit Line',
+    tagline: 'Advanced Medical Clinic & Diagnostic Equipment Financing',
+    description: 'Customized healthcare credit for MBBS, MD, BDS, MDS, and AYUSH doctors to establish private clinics, procure advanced medical machinery, expand hospital wards, or refinance high-cost equipment leases.',
+    tenure: '12 to 84 Months',
+    ticketSize: 'Up to ₹75 Lakhs',
+    images: [
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_7346F014_DOCTOR_LOAN.webp',
+        alt: 'Avani Loan Services Doctor Medical Practitioner Loan',
+        caption: 'Medical Practitioner Practice Expansion Loan'
+      },
+      {
+        src: '/media/thumbnails/thumb_ALS_IMG_55604E4E_Doctor_Loan_9to16.webp',
+        alt: 'Hospital and Healthcare Diagnostic Equipment Finance',
+        caption: 'Advanced Diagnostic Equipment Financing'
+      }
+    ],
+    video: {
+      src: '/media/videos/als_dl_doctor_expand.mp4',
+      poster: '/media/thumbnails/thumb_ALS_IMG_7346F014_DOCTOR_LOAN.webp',
+      title: 'Doctor Loan Sanctions & Healthcare Asset Leasing'
+    }
+  }
+];
+
 export default function AssetLibrary() {
   useSEO({
-    title: 'Media Asset Library — AVANI LOAN SERVICES',
-    description: 'Centralized media repository featuring authentic marketing images, video reels, and product compliance classification.'
+    title: 'Marketing Media & Product Asset Library — AVANI LOAN SERVICES',
+    description: 'Explore authentic, product-specific marketing media, loan explainer reels, and official visual resources across our 7 core financial solutions.'
   });
 
-  const [assets, setAssets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedAsset, setSelectedAsset] = useState(null);
-  const [previewModal, setPreviewModal] = useState(false);
-  const [copiedId, setCopiedId] = useState(null);
-  const [actionLoading, setActionLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('ALL');
 
-  // Filters
-  const [filterType, setFilterType] = useState('ALL');
-  const [filterProduct, setFilterProduct] = useState('ALL');
-  const [filterStatus, setFilterStatus] = useState('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const fetchAssets = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/templates/assets');
-      const data = await res.json();
-      if (data.success && Array.isArray(data.assets)) {
-        setAssets(data.assets);
-      }
-    } catch (err) {
-      console.error('Failed to fetch media assets:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAssets();
-  }, []);
-
-  const handleApprove = async (assetId) => {
-    setActionLoading(true);
-    try {
-      const res = await fetch('/api/templates/assets/approve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assetId, actor: 'Sachin Shinde' })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setAssets(prev => prev.map(a => (a.id === assetId ? data.asset : a)));
-        if (selectedAsset && selectedAsset.id === assetId) {
-          setSelectedAsset(data.asset);
-        }
-      }
-    } catch (err) {
-      console.error('Approval failed:', err);
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleReject = async (assetId) => {
-    const reason = prompt('Reason for revision:') || 'Needs creative revision';
-    setActionLoading(true);
-    try {
-      const res = await fetch('/api/templates/assets/reject', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assetId, actor: 'Sachin Shinde', reason })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setAssets(prev => prev.map(a => (a.id === assetId ? data.asset : a)));
-        if (selectedAsset && selectedAsset.id === assetId) {
-          setSelectedAsset(data.asset);
-        }
-      }
-    } catch (err) {
-      console.error('Rejection failed:', err);
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleCopy = (text, id) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const filteredAssets = assets.filter(a => {
-    if (filterType !== 'ALL' && a.type !== filterType) return false;
-
-    if (filterProduct !== 'ALL') {
-      if (filterProduct === 'education') {
-        if (a.product !== 'education_loan_india' && a.product !== 'education_loan_global') return false;
-      } else if (a.product !== filterProduct) {
-        return false;
-      }
-    }
-
-    if (filterStatus !== 'ALL' && a.status !== filterStatus) return false;
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      const match = (a.title && a.title.toLowerCase().includes(q)) ||
-                    (a.headline && a.headline.toLowerCase().includes(q)) ||
-                    (a.prompt && a.prompt.toLowerCase().includes(q)) ||
-                    (a.product && a.product.toLowerCase().includes(q));
-      if (!match) return false;
-    }
-    return true;
-  });
+  const filteredProducts = activeCategory === 'ALL'
+    ? PRODUCT_MEDIA_DATA
+    : PRODUCT_MEDIA_DATA.filter(p => p.id === activeCategory);
 
   return (
-    <div className="asset-library-container">
-      <header className="library-header">
-        <div className="header-left">
-          <h1>Media Asset Library</h1>
-          <p className="header-sub">
-            Curated brand visual assets, marketing creatives, and educational video reels for Avani Loan Services.
+    <div className="product-assets-page">
+      {/* Hero Header */}
+      <section className="assets-hero-banner">
+        <div className="container">
+          <div className="assets-badge">
+            <ShieldCheck size={16} />
+            <span>OFFICIAL MARKETING MEDIA REPOSITORY</span>
+          </div>
+          <h1 className="assets-hero-title">AVANI LOAN SERVICES Marketing Assets</h1>
+          <p className="assets-hero-subtitle">
+            Explore curated, product-specific marketing media, loan explainer videos, and visual loan resources verified by Avani Loan Services for borrowers across Maharashtra.
           </p>
         </div>
-        <div className="header-actions">
-          <button type="button" className="btn-refresh" onClick={fetchAssets} disabled={loading}>
-            <RefreshCw size={16} className={loading ? 'spin' : ''} /> Refresh
-          </button>
-        </div>
-      </header>
+      </section>
 
-      {/* Filter Toolbar */}
-      <div className="library-toolbar">
-        <div className="search-box">
-          <Search size={18} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Search assets, products, concepts..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        <div className="filter-group">
-          <select value={filterType} onChange={e => setFilterType(e.target.value)} aria-label="Filter Media Type">
-            <option value="ALL">ALL MEDIA TYPES</option>
-            <option value="IMAGE">IMAGES</option>
-            <option value="VIDEO">VIDEOS</option>
-          </select>
-
-          <select value={filterProduct} onChange={e => setFilterProduct(e.target.value)} aria-label="Filter Loan Category">
-            <option value="ALL">ALL CATEGORIES</option>
-            <option value="personal_loan">PERSONAL LOAN</option>
-            <option value="business_loan">BUSINESS LOAN</option>
-            <option value="doctor_loan">DOCTOR LOAN</option>
-            <option value="home_loan">HOME LOAN</option>
-            <option value="mortgage_loan">MORTGAGE / LAP</option>
-            <option value="education">EDUCATION LOAN</option>
-            <option value="school_funding">SCHOOL FUNDING</option>
-            <option value="college_funding">COLLEGE FUNDING</option>
-            <option value="ca_loan">CA PROFESSIONAL</option>
-            <option value="cibil_consultation">CIBIL / CREDIT</option>
-          </select>
-
-          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} aria-label="Filter Approval Status">
-            <option value="ALL">ALL STATUSES</option>
-            <option value="APPROVED_INTERNAL">APPROVED</option>
-            <option value="IMPORTED">IMPORTED</option>
-            <option value="REVIEW_REQUIRED">REVIEW REQUIRED</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Asset Grid */}
-      {loading ? (
-        <div className="library-loading">
-          <div className="spinner"></div>
-          <p>Loading media asset library...</p>
-        </div>
-      ) : filteredAssets.length === 0 ? (
-        <div className="empty-state">
-          <p>No media assets matched the selected filters.</p>
-        </div>
-      ) : (
-        <div className="assets-grid">
-          {filteredAssets.map(asset => {
-            const isImage = asset.type === 'IMAGE';
-            const isApproved = asset.status === 'APPROVED_INTERNAL';
-            const mediaUrl = asset.publicUrl || asset.thumbnailUrl;
-
-            return (
-              <div key={asset.id} className="asset-card">
-                {/* Media Preview Window */}
-                <div className="asset-media-preview" style={{ background: '#0f172a', borderRadius: '8px 8px 0 0', overflow: 'hidden', position: 'relative', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {isImage ? (
-                    <img
-                      src={mediaUrl}
-                      alt={asset.title}
-                      loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/assets/avani_cibil_banner.png';
-                      }}
-                    />
-                  ) : (
-                    <video
-                      src={asset.publicUrl}
-                      poster={asset.thumbnailUrl || '/assets/avani_cibil_banner.png'}
-                      controls
-                      preload="none"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  )}
-
-                  <span className={`asset-type-badge ${isImage ? 'badge-img' : 'badge-vid'}`} style={{ position: 'absolute', top: '10px', left: '10px' }}>
-                    {isImage ? <ImageIcon size={14} /> : <VideoIcon size={14} />}
-                    {isImage ? 'IMAGE' : 'VIDEO'}
-                  </span>
-                </div>
-
-                <div className="asset-card-body" style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <span className="meta-tag" style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700' }}>
-                      {asset.product ? asset.product.replace(/_/g, ' ') : 'General Brand'}
-                    </span>
-                    <span className="meta-score" style={{ fontSize: '0.8rem' }}>
-                      <Sparkles size={12} /> {asset.qualityScore}/100
-                    </span>
-                  </div>
-
-                  <h3 className="asset-title" style={{ fontSize: '1rem', fontWeight: '700', margin: '0 0 6px 0', color: '#0f274a', lineHeight: '1.3' }}>
-                    {asset.title}
-                  </h3>
-
-                  {asset.caption && (
-                    <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 12px 0', lineHeight: '1.4' }}>
-                      {asset.caption.length > 90 ? `${asset.caption.slice(0, 90)}...` : asset.caption}
-                    </p>
-                  )}
-                </div>
-
-                <div className="asset-card-actions" style={{ padding: '0 16px 16px 16px' }}>
-                  <button
-                    type="button"
-                    className="btn-preview"
-                    onClick={() => {
-                      setSelectedAsset(asset);
-                      setPreviewModal(true);
-                    }}
-                  >
-                    <Eye size={15} /> Details
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn-copy"
-                    onClick={() => handleCopy(asset.publicUrl || asset.prompt, asset.id)}
-                    title="Copy URL"
-                  >
-                    {copiedId === asset.id ? <Check size={15} /> : <Copy size={15} />}
-                  </button>
-
-                  {!isApproved ? (
-                    <button
-                      type="button"
-                      className="btn-approve"
-                      onClick={() => handleApprove(asset.id)}
-                      disabled={actionLoading}
-                      title="Approve internally"
-                    >
-                      <CheckCircle size={15} /> Approve
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="btn-reject"
-                      onClick={() => handleReject(asset.id)}
-                      disabled={actionLoading}
-                      title="Request revision"
-                    >
-                      <XCircle size={15} /> Revise
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Detail & Preview Modal */}
-      {previewModal && selectedAsset && (
-        <div className="asset-modal-overlay" onClick={() => setPreviewModal(false)}>
-          <div className="asset-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px' }}>
-            <div className="modal-header">
-              <h2>{selectedAsset.title}</h2>
-              <button type="button" className="btn-close-modal" onClick={() => setPreviewModal(false)}>✕</button>
+      {/* Category Navigation Pills */}
+      <div className="assets-nav-sticky">
+        <div className="container">
+          <div className="assets-filter-wrapper">
+            <div className="filter-label">
+              <Filter size={15} />
+              <span>Filter By Product:</span>
             </div>
-
-            <div className="modal-body">
-              {/* Media Player In Modal */}
-              <div style={{ background: '#0f172a', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', textAlign: 'center' }}>
-                {selectedAsset.type === 'IMAGE' ? (
-                  <img
-                    src={selectedAsset.publicUrl || selectedAsset.thumbnailUrl}
-                    alt={selectedAsset.title}
-                    style={{ maxWidth: '100%', maxHeight: '360px', objectFit: 'contain' }}
-                  />
-                ) : (
-                  <video
-                    src={selectedAsset.publicUrl}
-                    poster={selectedAsset.thumbnailUrl || '/assets/avani_cibil_banner.png'}
-                    controls
-                    autoPlay={false}
-                    style={{ width: '100%', maxHeight: '360px' }}
-                  />
-                )}
-              </div>
-
-              <div className="modal-meta-grid">
-                <div><strong>Asset ID:</strong> <code>{selectedAsset.id}</code></div>
-                <div><strong>Product:</strong> {selectedAsset.product ? selectedAsset.product.replace(/_/g, ' ') : 'General'}</div>
-                <div><strong>Format:</strong> {selectedAsset.format} ({selectedAsset.width}x{selectedAsset.height})</div>
-                <div><strong>Channel:</strong> {selectedAsset.channel || 'WEBSITE'}</div>
-                <div><strong>Language:</strong> {selectedAsset.language || 'en'}</div>
-                <div><strong>Status:</strong> {selectedAsset.status}</div>
-                <div><strong>Quality Score:</strong> {selectedAsset.qualityScore}/100</div>
-                <div><strong>Mime:</strong> {selectedAsset.mimeType || 'media'}</div>
-              </div>
-
-              {selectedAsset.caption && (
-                <div className="modal-section" style={{ marginTop: '16px' }}>
-                  <h4>Description & Narrative</h4>
-                  <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5' }}>
-                    {selectedAsset.caption}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="modal-footer">
+            <div className="filter-pills-list">
               <button
                 type="button"
-                className="btn-modal-action btn-copy-full"
-                onClick={() => handleCopy(selectedAsset.publicUrl, 'modal')}
+                className={`product-pill ${activeCategory === 'ALL' ? 'active' : ''}`}
+                onClick={() => setActiveCategory('ALL')}
               >
-                <Copy size={16} /> {copiedId === 'modal' ? 'Copied URL!' : 'Copy Media Link'}
+                All Products (7)
               </button>
-              {selectedAsset.status !== 'APPROVED_INTERNAL' ? (
+              {PRODUCT_MEDIA_DATA.map(p => (
                 <button
                   type="button"
-                  className="btn-modal-action btn-approve"
-                  onClick={() => handleApprove(selectedAsset.id)}
-                  disabled={actionLoading}
+                  key={p.id}
+                  className={`product-pill ${activeCategory === p.id ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(p.id)}
                 >
-                  <CheckCircle size={16} /> Approve Asset
+                  {p.name.split('/')[0].split('&')[0].trim()}
                 </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn-modal-action btn-reject"
-                  onClick={() => handleReject(selectedAsset.id)}
-                  disabled={actionLoading}
-                >
-                  <XCircle size={16} /> Request Revision
-                </button>
-              )}
+              ))}
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Product-Wise Media Showcase */}
+      <section className="assets-showcase-section">
+        <div className="container">
+          <div className="product-media-cards-stack">
+            {filteredProducts.map((prod, idx) => (
+              <article key={prod.id} className="product-media-card" id={`product-${prod.id}`}>
+                {/* Product Header */}
+                <div className="product-card-header">
+                  <div className="header-meta">
+                    <span className="product-number-tag">SOLUTION 0{idx + 1}</span>
+                    <span className="product-category-tag">{prod.category}</span>
+                  </div>
+                  <h2 className="product-title">{prod.name}</h2>
+                  <p className="product-tagline">{prod.tagline}</p>
+                  <p className="product-desc">{prod.description}</p>
+                  <div className="product-stats-chips">
+                    <span className="stat-chip">
+                      <strong>Tenure:</strong> {prod.tenure}
+                    </span>
+                    <span className="stat-chip">
+                      <strong>Ticket Size:</strong> {prod.ticketSize}
+                    </span>
+                    <span className="stat-chip highlight">
+                      <CheckCircle2 size={14} /> Zero Client Commission
+                    </span>
+                  </div>
+                </div>
+
+                {/* Media Showcase Grid */}
+                <div className="product-media-grid">
+                  {/* Curated Images Column (Max 1-2) */}
+                  <div className="media-column images-column">
+                    <div className="column-title">
+                      <ImageIcon size={18} />
+                      <span>Verified Visual Creative Assets (Max 2)</span>
+                    </div>
+                    <div className="images-pair-grid">
+                      {prod.images.map((img, i) => (
+                        <div key={i} className="asset-media-frame image-frame">
+                          <img
+                            src={img.src}
+                            alt={img.alt}
+                            loading="lazy"
+                            className="media-visual-img"
+                          />
+                          <div className="media-caption-bar">
+                            <span className="caption-text">{img.caption}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Curated Video Column (Max 1) */}
+                  <div className="media-column video-column">
+                    <div className="column-title">
+                      <VideoIcon size={18} />
+                      <span>Product Video Reel & Explainer (Max 1)</span>
+                    </div>
+                    {prod.video ? (
+                      <div className="asset-media-frame video-frame">
+                        <video
+                          controls
+                          preload="metadata"
+                          poster={prod.video.poster}
+                          className="media-visual-video"
+                        >
+                          <source src={prod.video.src} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                        <div className="media-caption-bar video-bar">
+                          <span className="caption-text">{prod.video.title}</span>
+                          <span className="video-badge">HD MP4</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="no-video-placeholder">
+                        <p>High-definition video explainer in production.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Card Action CTAs */}
+                <div className="product-card-actions">
+                  <div className="actions-left">
+                    <Link to={`/services/${prod.slug}`} className="btn-action-primary">
+                      <span>View Detailed Product Information</span>
+                      <ArrowRight size={16} />
+                    </Link>
+                    <Link to={`/apply/${prod.slug}`} className="btn-action-apply">
+                      <span>Apply Now</span>
+                    </Link>
+                    <Link to="/documents" className="btn-action-docs">
+                      <span>Required Documents</span>
+                    </Link>
+                  </div>
+                  <div className="actions-right">
+                    <a
+                      href={`https://wa.me/919175635165?text=Hello%20AVANI%20LOAN%20SERVICES,%20I%20am%20interested%20in%20${encodeURIComponent(prod.name)}.%20Please%20guide%20me.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-action-whatsapp"
+                    >
+                      <PhoneCall size={15} />
+                      <span>Consult Sachin Shinde (+91 91756 35165)</span>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
