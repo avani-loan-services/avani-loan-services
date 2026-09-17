@@ -1,242 +1,357 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import useSEO from '../hooks/useSEO';
-import { useState } from 'react';
-import { ShieldCheck, Mail, Phone, User, FileText, Download, CheckCircle, ArrowRight, Lock, AlertTriangle, RefreshCw, MessageCircle, ExternalLink } from 'lucide-react';
-import { generateWhatsAppDocumentLink, PHONE_NUMBER, DISPLAY_PHONE } from '../utils/whatsappHelper';
+import {
+  ShieldCheck,
+  FileText,
+  Download,
+  CheckCircle,
+  AlertTriangle,
+  ArrowRight,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  TrendingUp,
+  CreditCard,
+  Briefcase
+} from 'lucide-react';
 import { syncLeadData } from '../lib/syncLeads';
 import brandLogo from '../assets/avani-brand-logo.png';
 import './CibilCheck.css';
 
 export default function CibilCheck() {
   useSEO({
-    title: 'Free CIBIL Score Check - Avani Loan Services',
-    description: 'Check your estimated CIBIL credit score for free with instant report preview and document checklist.',
-    keywords: 'CIBIL check, credit score India, free loan eligibility, Avani Finserv Latur'
+    title: 'Credit Profile Analysis & CIBIL Advisory — AVANI LOAN SERVICES',
+    description: 'Professional credit profile analysis, bureau dispute guidance, and debt restructuring roadmap from Avani Loan Services.',
+    keywords: 'Credit profile analysis, CIBIL advisory, credit repair, loan eligibility Latur, debt restructuring Avani Finserv'
   });
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
     lastName: '',
     mobile: '',
     email: '',
     pan: '',
-    income: '50000',
-    age: '30'
+    city: 'Latur',
+    age: '30',
+    monthlyIncome: '50000',
+    scoreTier: '748_777', // Default known tier
+    primaryChallenge: 'BEST_RATES',
+    consent: true
   });
 
-  const [error, setError] = useState('');
-  const [estimatedScore, setEstimatedScore] = useState(0);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const maskPan = (pan) => {
+    if (!pan) return 'XXXXX0000X';
+    const clean = pan.trim().toUpperCase();
+    if (clean.length < 10) return clean;
+    return `XXXXX${clean.slice(5)}`;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     const panStr = (formData.pan || '').trim().toUpperCase();
-    const panRegex = /[A-Z]{5}[0-9]{4}[A-Z]{1}/;
+    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
     if (!panRegex.test(panStr)) {
-      setError('Please enter a valid 10-character PAN number (e.g. ABCDE1234F).');
+      setError('Please enter a valid 10-character Indian PAN (e.g., ABCDE1234F).');
       return;
     }
 
-    calculateResult();
-  };
-
-  const getPanSeed = (pan) => {
-    if (!pan) return 0;
-    let hash = 0;
-    const s = String(pan).toUpperCase();
-    for (let i = 0; i < s.length; i++) {
-      hash = ((hash << 5) - hash) + s.charCodeAt(i);
-      hash |= 0;
+    if (!formData.mobile || formData.mobile.trim().length !== 10) {
+      setError('Please enter a valid 10-digit mobile number.');
+      return;
     }
-    return Math.abs(hash);
-  };
 
-  const calculateResult = async () => {
+    if (!formData.consent) {
+      setError('Please provide authorization consent to proceed with the profile analysis.');
+      return;
+    }
+
     setLoading(true);
-    
-    const panStr = (formData.pan || '').trim().toUpperCase();
-    const seed = getPanSeed(panStr);
-    const baseScore = 680;
-    const incomeNum = parseInt(formData.income) || 50000;
-    const ageNum = parseInt(formData.age) || 30;
 
-    const incomeFactor = Math.min(80, (incomeNum / 1000) * 0.8);
-    const ageFactor = Math.min(40, (ageNum / 2.5));
-    const panVariation = (seed % 101) - 50;
-    
-    const finalScore = Math.min(900, Math.max(300, Math.floor(baseScore + incomeFactor + ageFactor + panVariation)));
-    setEstimatedScore(finalScore);
+    const refNumber = `ALS-CPA-${Math.floor(100000 + Math.random() * 900000)}`;
+    const maskedPan = maskPan(panStr);
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim() || 'Valued Client';
 
-    const fullName = `${formData.name || ''} ${formData.lastName || ''}`.trim() || 'Valued Customer';
+    // Map score tier to advisory parameters
+    let tierTitle = 'Good Credit Standing';
+    let tierRange = '748 - 777';
+    let riskLevel = 'Low - Standard Eligibility';
+    let recommendation = 'Eligible for prime banking rates. Maintain credit card utilization below 30%.';
 
+    if (formData.scoreTier === '778_900') {
+      tierTitle = 'Excellent Credit Standing';
+      tierRange = '778 - 900';
+      riskLevel = 'Minimal Risk — Prime Pre-Approvals';
+      recommendation = 'Qualifies for lowest bank interest rates, expedited processing, and maximum loan amounts.';
+    } else if (formData.scoreTier === '700_747') {
+      tierTitle = 'Satisfactory / Moderate';
+      tierRange = '700 - 747';
+      riskLevel = 'Moderate Risk';
+      recommendation = 'Eligible for standard NBFC & bank loans. Avoid multiple hard enquiries over the next 90 days.';
+    } else if (formData.scoreTier === '650_699') {
+      tierTitle = 'Challenged Profile';
+      tierRange = '650 - 699';
+      riskLevel = 'Elevated Risk — Selective Lenders';
+      recommendation = 'Target specialized NBFCs and prioritize settling overdue balances to lift score above 750.';
+    } else if (formData.scoreTier === 'BELOW_650') {
+      tierTitle = 'High Risk / Distressed';
+      tierRange = 'Below 650';
+      riskLevel = 'High Risk — Structured Repair Required';
+      recommendation = 'Requires structured bureau dispute resolution, debt settlement, or secured collateral financing.';
+    } else if (formData.scoreTier === 'NTC') {
+      tierTitle = 'New to Credit (NTC)';
+      tierRange = 'No Bureau History';
+      riskLevel = 'Unrated / Fresh Profile';
+      recommendation = 'Start with small secured facilities or salary-linked loans to build an initial 750+ score.';
+    }
+
+    const result = {
+      refNumber,
+      fullName,
+      maskedPan,
+      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+      tierTitle,
+      tierRange,
+      riskLevel,
+      recommendation
+    };
+
+    // Durable Sync to CRM with synthetic safety (never unmasked PAN)
     try {
       await syncLeadData({
         name: fullName,
-        phone: formData.mobile || '',
-        email: formData.email || '',
-        loanType: 'CIBIL_Report',
-        amount: finalScore,
-        details: `PAN: ${panStr}, Income: ${formData.income}`,
-        source: 'CIBIL_Checker'
+        phone: formData.mobile,
+        email: formData.email,
+        loanType: 'Credit_Profile_Analysis',
+        amount: parseInt(formData.monthlyIncome, 10) || 50000,
+        city: formData.city,
+        details: `CPA Ref: ${refNumber}, Masked PAN: ${maskedPan}, Tier: ${tierRange}, Challenge: ${formData.primaryChallenge}`,
+        source: 'Credit_Profile_Analyzer'
       });
     } catch (err) {
-      console.warn('[CibilCheck] syncLeadData non-fatal:', err.message);
+      console.warn('[CibilCheck] syncLeadData non-fatal warning:', err.message);
     }
 
-    setStep(2);
+    setAnalysisResult(result);
     setLoading(false);
+    setStep(2);
   };
 
   const downloadReport = async () => {
+    if (!analysisResult) return;
     try {
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
-      const fullName = (`${formData.name || ''} ${formData.lastName || ''}`.trim() || 'Valued Customer').toUpperCase();
-      const reportControlNumber = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      const pageHeight = doc.internal.pageSize.getHeight();
 
-      const sectionHeader = (title, y) => {
-        doc.setFillColor(240, 244, 248);
-        doc.rect(15, y, pageWidth - 30, 8, 'F');
-        doc.setTextColor(10, 79, 139);
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        doc.text(title, 20, y + 5.5);
-      };
+      // Palette
+      const primaryNavy = [15, 39, 74];
+      const accentGold = [217, 119, 6];
+      const slateDark = [30, 41, 59];
+      const lightBg = [248, 250, 252];
 
-      // Header
-      doc.setFillColor(10, 79, 139);
-      doc.rect(0, 0, pageWidth, 45, 'F');
+      let y = 14;
+
+      // Section 1: Top Brand Banner (AVANI LOAN SERVICES)
+      doc.setFillColor(...primaryNavy);
+      doc.rect(0, 0, pageWidth, 28, 'F');
+
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(22);
-      doc.text('TransUnion CIBIL', 15, 20);
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('AVANI LOAN SERVICES', 14, 12);
+
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Authoritative Financial Advisory & Credit Architecture', 14, 18);
+      doc.text('KulswaminiNagar, Latur - 413531, Maharashtra | enquiry@avanifinserv.com', 14, 23);
+
+      // Section 2: Document Title (Credit Profile Analysis)
+      y = 36;
+      doc.setTextColor(...primaryNavy);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text('CREDIT PROFILE ANALYSIS', 14, y);
+
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...accentGold);
+      doc.text('[ CONFIDENTIAL ADVISORY DOCUMENT — NOT AN OFFICIAL BUREAU PULL ]', 14, y + 5);
+
+      // Section 3 & 4: Reference & Date
+      doc.setTextColor(...slateDark);
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Customer Reference: ${analysisResult.refNumber}`, pageWidth - 80, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Report Date: ${analysisResult.date} ${analysisResult.time}`, pageWidth - 80, y + 5);
+
+      y += 14;
+
+      // Section 5: Customer Information
+      doc.setFillColor(...lightBg);
+      doc.rect(14, y, pageWidth - 28, 22, 'F');
+      doc.setDrawColor(226, 232, 240);
+      doc.rect(14, y, pageWidth - 28, 22, 'D');
+
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryNavy);
+      doc.text('5. CUSTOMER INFORMATION', 18, y + 6);
+
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...slateDark);
+      doc.text(`Client Name: ${analysisResult.fullName}`, 18, y + 12);
+      doc.text(`Mobile: +91-${formData.mobile}`, 18, y + 17);
+
+      doc.text(`Masked PAN: ${analysisResult.maskedPan}`, 110, y + 12);
+      doc.text(`City: ${formData.city || 'Maharashtra'} | Age: ${formData.age}`, 110, y + 17);
+
+      y += 28;
+
+      // Section 6: Credit Summary
       doc.setFontSize(9);
-      doc.text('A TransUnion Company', 15, 26);
-      
-      doc.setFontSize(11);
-      doc.text('CREDIT INFORMATION REPORT', pageWidth - 80, 20);
-      doc.setFontSize(8);
-      doc.text(`REPORT CONTROL NUMBER: ${reportControlNumber}`, pageWidth - 80, 26);
-      doc.text(`DATE: ${new Date().toLocaleDateString()}`, pageWidth - 80, 31);
-      doc.text(`TIME: ${new Date().toLocaleTimeString()}`, pageWidth - 80, 36);
-
-      // Score Meter Box
-      doc.setFillColor(255, 255, 255);
-      doc.roundedRect(15, 55, pageWidth - 30, 60, 2, 2, 'F');
-      doc.setDrawColor(240, 240, 240);
-      doc.roundedRect(15, 55, pageWidth - 30, 60, 2, 2, 'D');
-      
-      doc.setTextColor(50, 50, 50);
-      doc.setFontSize(10);
-      doc.text('Your CIBIL Score', 35, 68);
-      
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.5);
-      doc.line(30, 95, 80, 95);
-      
-      doc.setTextColor(33, 33, 33);
-      doc.setFontSize(32);
       doc.setFont('helvetica', 'bold');
-      doc.text(estimatedScore.toString(), 42, 90);
+      doc.setTextColor(...primaryNavy);
+      doc.text('6. CREDIT SUMMARY & BUREAU PROFILE TIER', 14, y);
+
+      y += 5;
+      doc.setFillColor(241, 245, 249);
+      doc.rect(14, y, pageWidth - 28, 16, 'F');
+
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...slateDark);
+      doc.text(`Standing: ${analysisResult.tierTitle} (${analysisResult.tierRange})`, 18, y + 6);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Risk Assessment: ${analysisResult.riskLevel}`, 18, y + 11);
+
+      y += 22;
+
+      // Section 7 & 8: Account Summary & Account History
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryNavy);
+      doc.text('7. ACCOUNT SUMMARY & 8. ACCOUNT HISTORY', 14, y);
+
+      y += 5;
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.text(`As of ${new Date().toLocaleDateString()}`, 40, 100);
+      doc.setTextColor(...slateDark);
+      doc.text('• Healthy Portfolio Ratio: Recommended 60% Secured Debt (Home/Auto) to 40% Unsecured Debt (Personal/Cards).', 14, y);
+      doc.text('• Account Age & Longevity: Keep oldest credit card accounts open to demonstrate a seasoned repayment track record.', 14, y + 4.5);
 
-      // Where You Stand Bars in PDF
-      doc.setFontSize(11);
+      y += 13;
+
+      // Section 9 & 10: Payment History & Credit Enquiries
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('Where You Stand', 110, 68);
-      
-      const bars = [
-        { range: '778-900', perc: '17%', color: [16, 124, 16] },
-        { range: '765-777', perc: '20%', color: [144, 238, 144] },
-        { range: '748-764', perc: '21%', color: [255, 215, 0] },
-        { range: '723-747', perc: '22%', color: [255, 165, 0] },
-        { range: '300-722', perc: '20%', color: [255, 69, 0] }
-      ];
+      doc.setTextColor(...primaryNavy);
+      doc.text('9. PAYMENT HISTORY & 10. CREDIT ENQUIRIES', 14, y);
 
-      bars.forEach((bar, i) => {
-        const y = 75 + (i * 7);
-        doc.setFillColor(bar.color[0], bar.color[1], bar.color[2]);
-        doc.rect(110, y, 70, 5, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(6);
-        doc.text(bar.range, 112, y + 3.5);
-        doc.text(bar.perc, 175, y + 3.5);
-        
-        const isMatch = (i === 0 && estimatedScore >= 778) ||
-                        (i === 1 && estimatedScore >= 765 && estimatedScore < 778) ||
-                        (i === 2 && estimatedScore >= 748 && estimatedScore < 765) ||
-                        (i === 3 && estimatedScore >= 723 && estimatedScore < 748) ||
-                        (i === 4 && estimatedScore < 723);
-        
-        if (isMatch) {
-          doc.setFillColor(255, 255, 255);
-          doc.rect(172, y, 12, 5, 'F');
-          doc.setDrawColor(50, 50, 50);
-          doc.rect(172, y, 12, 5, 'D');
-          doc.setTextColor(33, 33, 33);
-          doc.text(estimatedScore.toString(), 174, y + 3.5);
-        }
-      });
-
-      sectionHeader('PERSONAL INFORMATION', 115);
-      doc.setTextColor(33, 33, 33);
+      y += 5;
       doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.text('NAME:', 20, 132);
-      doc.text('DATE OF BIRTH:', 20, 138);
-      doc.text('GENDER:', 20, 144);
-      
       doc.setFont('helvetica', 'normal');
-      doc.text(fullName, 60, 132);
-      doc.text(`12/05/${1996 - ((parseInt(formData.age) || 30) - 30)}`, 60, 138);
-      doc.text('MALE', 60, 144);
+      doc.setTextColor(...slateDark);
+      doc.text('• Repayment Track Record: 100% on-time payments across EMIs and Credit Cards is mandatory for prime rates.', 14, y);
+      doc.text('• Inquiry Discipline: Limit hard bureau inquiries to 1 or 2 per quarter. Excessive pulls trigger rejection cascades.', 14, y + 4.5);
 
+      y += 13;
+
+      // Section 11 & 12: Outstanding Obligations & Attention Areas
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('PAN:', 110, 132);
-      doc.text('EMPLOYMENT:', 110, 138);
+      doc.setTextColor(...primaryNavy);
+      doc.text('11. OUTSTANDING OBLIGATIONS & 12. ATTENTION AREAS', 14, y);
+
+      y += 5;
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.text((formData.pan || '').toUpperCase(), 140, 132);
-      doc.text('SALARIED', 140, 138);
+      doc.setTextColor(...slateDark);
+      doc.text('• Fixed Obligation to Income Ratio (FOIR): Keep aggregate monthly EMIs under 45% of gross verifiable income.', 14, y);
+      doc.text('• Critical Flagged Items: Zero tolerance for written-off, settled, or 90+ DPD accounts in the last 24 months.', 14, y + 4.5);
 
-      sectionHeader('CONTACT INFORMATION', 155);
+      y += 13;
+
+      // Section 13: Avani Analysis
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryNavy);
+      doc.text('13. AVANI EXPERT ANALYSIS & STRATEGIC RECOMMENDATIONS', 14, y);
+
+      y += 5;
+      doc.setFillColor(254, 243, 199);
+      doc.rect(14, y, pageWidth - 28, 18, 'F');
+      doc.setDrawColor(245, 158, 11);
+      doc.rect(14, y, pageWidth - 28, 18, 'D');
+
       doc.setFontSize(8);
-      doc.text('ADDRESS:', 20, 172);
-      doc.text('MAHARASHTRA, INDIA', 60, 172);
-      doc.text('TELEPHONE:', 20, 178);
-      doc.text(formData.mobile || '', 60, 178);
-      doc.text('EMAIL:', 20, 184);
-      doc.text(formData.email || '', 60, 184);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(146, 64, 14);
+      doc.text(doc.splitTextToSize(analysisResult.recommendation, pageWidth - 36), 18, y + 5.5);
 
-      const finalY = 210;
+      y += 24;
+
+      // Section 14: General Improvement Observations
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryNavy);
+      doc.text('14. GENERAL IMPROVEMENT OBSERVATIONS (60 - 90 DAY ROADMAP)', 14, y);
+
+      y += 5;
       doc.setFontSize(8);
-      doc.setTextColor(100, 100, 100);
-      doc.text('This is an estimated Credit Analysis report based on self-reported and analyzed data.', 15, finalY);
-      doc.text('For a full official report, please visit the official CIBIL website.', 15, finalY + 5);
-      doc.text('Avani Loan Services - ALS Report: ALS-' + reportControlNumber, 15, finalY + 15);
-      doc.text('Premium Credit Analysis Tool', pageWidth - 55, finalY + 15);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...slateDark);
+      doc.text('1. Cap credit card spending below 30% of authorized limits before statement generation date.', 14, y);
+      doc.text('2. Resolve any clerical errors or wrong phone/address tags directly with lenders or via bureau disputes.', 14, y + 4.5);
+      doc.text('3. Restructure multiple expensive high-interest personal loans into a single consolidated lower-cost facility.', 14, y + 9);
+      doc.text('4. In case of disputed charges, obtain official No Objection Certificates (NOC) and update bureau records.', 14, y + 13.5);
 
-      doc.save(`${fullName.replace(/\s+/g, '_')}_Cibil_Summary.pdf`);
+      y += 22;
+
+      // Section 15: Mandatory Legal Disclaimer
+      doc.setFillColor(...lightBg);
+      doc.rect(14, y, pageWidth - 28, 22, 'F');
+      doc.setDrawColor(203, 213, 225);
+      doc.rect(14, y, pageWidth - 28, 22, 'D');
+
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryNavy);
+      doc.text('15. STATUTORY DISCLAIMER & INDEPENDENT ADVISORY NOTICE', 18, y + 5);
+
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      const disclaimerText = 'This document is an analysis/summary based on information supplied through an authorized source. It is not an official TransUnion CIBIL report unless generated directly by an authorized TransUnion CIBIL service. Avani Loan Services provides credit consultation, loan syndication, and financial advisory services. Avani Loan Services does not manipulate bureau algorithms or make deceptive credit improvement guarantees.';
+      doc.text(doc.splitTextToSize(disclaimerText, pageWidth - 36), 18, y + 10);
+
+      // Save PDF
+      doc.save(`${analysisResult.fullName.replace(/\s+/g, '_')}_Credit_Profile_Analysis.pdf`);
     } catch (err) {
       console.error('[CibilCheck] Download error:', err);
       alert('Unable to generate PDF report at this time. Please try again.');
     }
-  };
-
-  const getScoreLabel = (score) => {
-    if (score >= 778) return { label: 'Excellent', class: 'excellent', description: 'Outstanding credit behavior and history.' };
-    if (score >= 765) return { label: 'Good', class: 'good', description: 'Healthy credit profile with timely payments.' };
-    if (score >= 748) return { label: 'Satisfactory', class: 'satisfactory', description: 'Moderate credit health with room for improvement.' };
-    if (score >= 723) return { label: 'Fair', class: 'fair', description: 'Acceptable but could benefit from lower utilization.' };
-    return { label: 'Poor', class: 'poor', description: 'Needs significant improvement to access best rates.' };
   };
 
   return (
@@ -246,63 +361,182 @@ export default function CibilCheck() {
           <div className="page-header-top">
             <img src={brandLogo} alt="Avani Loan Services" className="page-header-logo" />
             <div>
-              <span className="badge">Avani Credit Insights</span>
-              <div className="page-header-address">Old Barshi Road, 5 no Chauk, next to Sai School, KulswaminiNagar, Latur-413531, Maharashtra, India</div>
+              <span className="badge">Avani Credit Architecture</span>
+              <div className="page-header-address">
+                Old Barshi Road, 5 no Chauk, next to Sai School, KulswaminiNagar, Latur-413531, Maharashtra
+              </div>
             </div>
           </div>
-          <h1>Free CIBIL Score Check</h1>
-          <p>Get an instant estimation of your credit health and download your summary report.</p>
+          <h1>Credit Profile Analysis & Advisory</h1>
+          <p>
+            Understand how leading banks and NBFCs evaluate your creditworthiness with zero fabricated scores.
+          </p>
         </div>
       </section>
 
       <section className="section">
         <div className="container cibil-container">
-          
+
           <div className="cibil-form-card">
             {step === 1 && !loading && (
               <div className="animate-fade-in">
                 <div className="step-header">
-                  <h3>Check Your CIBIL Score</h3>
-                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '5px', fontWeight: '500' }}>
-                    *Disclaimer: Cibil score calculation is for estimation and reference purposes only.
+                  <h3>Credit Assessment Intake</h3>
+                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '6px', fontWeight: '500' }}>
+                    Transparent advisory based on your self-reported profile or official report metrics.
                   </p>
+                </div>
+
+                <div style={{ background: '#f8fafc', borderLeft: '4px solid #034EA2', padding: '12px 16px', borderRadius: '6px', marginBottom: '24px', fontSize: '0.86rem', color: '#334155' }}>
+                  <strong>Authoritative Advisory Notice:</strong> Avani Loan Services evaluates your credit metrics to formulate customized loan approval strategies. We never fabricate bureau records or make false score claims.
                 </div>
 
                 <form onSubmit={handleSubmit}>
                   <div className="modern-form-grid">
                     <div className="floating-group">
-                      <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="modern-input" required placeholder=" " />
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        required
+                        placeholder=" "
+                      />
                       <label className="floating-label">First Name</label>
                     </div>
+
                     <div className="floating-group">
-                      <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} className="modern-input" required placeholder=" " />
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        required
+                        placeholder=" "
+                      />
                       <label className="floating-label">Last Name</label>
                     </div>
+
                     <div className="floating-group">
-                      <input type="tel" name="mobile" value={formData.mobile} onChange={handleInputChange} className="modern-input" required placeholder=" " maxLength="10" />
-                      <label className="floating-label">Mobile Number</label>
+                      <input
+                        type="tel"
+                        name="mobile"
+                        value={formData.mobile}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        required
+                        placeholder=" "
+                        maxLength="10"
+                      />
+                      <label className="floating-label">10-Digit Mobile Number</label>
                     </div>
+
                     <div className="floating-group">
-                      <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="modern-input" required placeholder=" " />
-                      <label className="floating-label">Email ID</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        required
+                        placeholder=" "
+                      />
+                      <label className="floating-label">Email Address</label>
                     </div>
-                    <div className="floating-group" style={{ gridColumn: 'span 2' }}>
-                      <input type="text" name="pan" value={formData.pan} onChange={handleInputChange} className="modern-input" required placeholder=" " maxLength="10" style={{ textTransform: 'uppercase' }} />
+
+                    <div className="floating-group">
+                      <input
+                        type="text"
+                        name="pan"
+                        value={formData.pan}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        required
+                        placeholder=" "
+                        maxLength="10"
+                        style={{ textTransform: 'uppercase' }}
+                      />
                       <label className="floating-label">Permanent Account Number (PAN)</label>
+                      <small style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '4px', display: 'block' }}>
+                        Masked Preview: {maskPan(formData.pan)}
+                      </small>
+                    </div>
+
+                    <div className="floating-group">
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        required
+                        placeholder=" "
+                      />
+                      <label className="floating-label">City / District</label>
+                    </div>
+
+                    <div className="floating-group">
+                      <select
+                        name="scoreTier"
+                        value={formData.scoreTier}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        style={{ paddingTop: '20px' }}
+                      >
+                        <option value="778_900">778 - 900 (Excellent - Prime Bank Tier)</option>
+                        <option value="748_777">748 - 777 (Good - Standard Approval Tier)</option>
+                        <option value="700_747">700 - 747 (Moderate - Needs Optimization)</option>
+                        <option value="650_699">650 - 699 (Challenged - Advisory Required)</option>
+                        <option value="BELOW_650">Below 650 (High Risk / Past Overdues)</option>
+                        <option value="NTC">New To Credit (No Bureau History)</option>
+                      </select>
+                      <label className="floating-label">Estimated Bureau Standing / Known Score</label>
+                    </div>
+
+                    <div className="floating-group">
+                      <select
+                        name="primaryChallenge"
+                        value={formData.primaryChallenge}
+                        onChange={handleInputChange}
+                        className="modern-input"
+                        style={{ paddingTop: '20px' }}
+                      >
+                        <option value="BEST_RATES">Seeking Best Interest Rates for Large Loan</option>
+                        <option value="CARD_UTILIZATION">High Credit Card Balances / High Utilization</option>
+                        <option value="PAST_DELAYS">Past Late Payments or Settlement Record</option>
+                        <option value="MULTIPLE_INQUIRIES">Recent Loan Rejections / Too Many Inquiries</option>
+                        <option value="BUREAU_DISPUTE">Incorrect Information / Inaccurate Bureau Details</option>
+                        <option value="GENERAL_AUDIT">General Credit Health Audit</option>
+                      </select>
+                      <label className="floating-label">Primary Financial Goal / Bottleneck</label>
                     </div>
                   </div>
 
-                  <div style={{ margin: '20px 0', fontSize: '12px', color: '#64748b', lineHeight: '1.5' }}>
+                  <div style={{ margin: '20px 0', fontSize: '0.85rem', color: '#475569', lineHeight: '1.5' }}>
                     <label style={{ display: 'flex', gap: '10px', cursor: 'pointer' }}>
-                      <input type="checkbox" required defaultChecked style={{ marginTop: '3px' }} />
-                      <span>I hereby appoint Avani Loan Services as my authorized representative to receive my credit information from CIBIL/Experian/Equifax/CRIF.</span>
+                      <input
+                        type="checkbox"
+                        name="consent"
+                        checked={formData.consent}
+                        onChange={handleInputChange}
+                        style={{ marginTop: '3px' }}
+                      />
+                      <span>
+                        I hereby authorize Avani Loan Services to analyze my self-reported credit parameters to provide credit advisory, debt-to-income assessment, and loan consultation. I acknowledge that this is an independent advisory document and not an official TransUnion CIBIL pull.
+                      </span>
                     </label>
                   </div>
 
-                  {error && <div className="error-message" style={{ color: '#e53e3e', marginBottom: '20px', fontWeight: '600' }}>{error}</div>}
+                  {error && (
+                    <div className="error-message" style={{ color: '#dc2626', marginBottom: '20px', fontWeight: '600' }}>
+                      {error}
+                    </div>
+                  )}
 
                   <button type="submit" className="btn-modern-submit">
-                    Get Free CIBIL Report
+                    Generate Credit Profile Analysis
                   </button>
                 </form>
               </div>
@@ -311,100 +545,150 @@ export default function CibilCheck() {
             {loading && (
               <div className="loading-overlay">
                 <div className="spinner"></div>
-                <h3>Fetching your CIBIL score...</h3>
-                <p>Analyzing your credit history and generating report.</p>
+                <h3>Formulating Credit Architecture...</h3>
+                <p>Synthesizing debt-to-income models, bureau guidelines, and lender eligibility criteria.</p>
               </div>
             )}
 
-            {step === 2 && !loading && (
+            {step === 2 && analysisResult && !loading && (
               <div className="animate-fade-in">
-                <div className="cibil-results-split">
-                  <div className="gauge-side">
-                    <div className="gauge-wrap-modern">
-                      <div className="gauge-modern"></div>
-                      <div className="gauge-needle-modern" style={{ transform: `rotate(${(estimatedScore - 300) * 180 / 600 - 90}deg)` }}></div>
-                      <div className="score-center">
-                        <span className="score-number">{estimatedScore}</span>
-                        <p className="score-date">As of {new Date().toLocaleDateString()}</p>
+                <div style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '20px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+                    <div>
+                      <span className="badge" style={{ background: '#034EA2', color: '#ffffff' }}>
+                        ANALYSIS READY
+                      </span>
+                      <h2 style={{ color: '#0f274a', margin: '8px 0 4px 0', fontSize: '1.6rem' }}>
+                        {analysisResult.fullName}
+                      </h2>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                        Ref: <strong>{analysisResult.refNumber}</strong> | Masked PAN: <strong>{analysisResult.maskedPan}</strong> | City: <strong>{formData.city}</strong>
                       </div>
                     </div>
-                    <h2 style={{ textAlign: 'center', marginTop: '20px', color: '#034EA2' }}>
-                      {getScoreLabel(estimatedScore).label}
-                    </h2>
-                  </div>
-
-                  <div className="where-you-stand">
-                    <h4>Where You Stand</h4>
-                    <div className="stand-bars">
-                      <div className={`stand-bar excellent ${getScoreLabel(estimatedScore).class === 'excellent' ? 'active' : ''}`}>
-                        <span>Excellent</span>
-                        <span>778 - 900</span>
-                      </div>
-                      <div className={`stand-bar good ${getScoreLabel(estimatedScore).class === 'good' ? 'active' : ''}`}>
-                        <span>Good</span>
-                        <span>765 - 777</span>
-                      </div>
-                      <div className={`stand-bar satisfactory ${getScoreLabel(estimatedScore).class === 'satisfactory' ? 'active' : ''}`}>
-                        <span>Satisfactory</span>
-                        <span>748 - 764</span>
-                      </div>
-                      <div className={`stand-bar fair ${getScoreLabel(estimatedScore).class === 'fair' ? 'active' : ''}`}>
-                        <span>Fair</span>
-                        <span>723 - 747</span>
-                      </div>
-                      <div className={`stand-bar poor ${getScoreLabel(estimatedScore).class === 'poor' ? 'active' : ''}`}>
-                        <span>Poor</span>
-                        <span>300 - 722</span>
-                      </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>Generated On</div>
+                      <div style={{ fontWeight: '700', color: '#0f274a' }}>{analysisResult.date}</div>
                     </div>
-                    <p style={{ marginTop: '20px', fontSize: '0.85rem', color: '#64748b' }}>
-                      {getScoreLabel(estimatedScore).description}
-                    </p>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
-                  <button onClick={downloadReport} className="download-report-btn">
-                    <Download size={20} style={{ marginRight: '8px' }} />
-                    Download Full CIBIL Report (PDF)
-                  </button>
-                  <a 
-                    href="https://b2c.creditsamadhaan.com/?refer_code=FY665935" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="download-report-btn" 
-                    style={{ background: '#0052CC', color: 'white', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                {/* Score & Health Card */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '28px' }}>
+                  <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', fontWeight: '700' }}>
+                      Standing & Tier
+                    </div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#034EA2', margin: '6px 0' }}>
+                      {analysisResult.tierTitle}
+                    </div>
+                    <div style={{ fontSize: '0.9rem', color: '#334155' }}>
+                      Score Range: <strong>{analysisResult.tierRange}</strong>
+                    </div>
+                  </div>
+
+                  <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', fontWeight: '700' }}>
+                      Risk Assessment
+                    </div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#0f274a', margin: '6px 0' }}>
+                      {analysisResult.riskLevel}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                      Target: Optimal Bank Sanction Matrix
+                    </div>
+                  </div>
+                </div>
+
+                {/* Strategic Pillars */}
+                <div style={{ marginBottom: '28px' }}>
+                  <h4 style={{ color: '#0f274a', marginBottom: '14px', fontSize: '1.1rem' }}>
+                    Critical Evaluation Pillars
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+                    <div style={{ padding: '16px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                      <div style={{ fontWeight: '700', color: '#034EA2', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                        <CheckCircle size={16} color="#059669" /> Repayment Discipline
+                      </div>
+                      <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>
+                        Timely EMI servicing without single 30+ DPD default builds 35% of total score weighting.
+                      </p>
+                    </div>
+
+                    <div style={{ padding: '16px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                      <div style={{ fontWeight: '700', color: '#034EA2', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                        <CheckCircle size={16} color="#059669" /> Credit Card Utilization
+                      </div>
+                      <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>
+                        Keep monthly card statements below 30% of aggregate limit to maintain peak ratings.
+                      </p>
+                    </div>
+
+                    <div style={{ padding: '16px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                      <div style={{ fontWeight: '700', color: '#034EA2', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                        <CheckCircle size={16} color="#059669" /> Credit Mix Ratio
+                      </div>
+                      <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>
+                        Maintain a balanced blend of secured loans (Home/LAP) and unsecured facilities.
+                      </p>
+                    </div>
+
+                    <div style={{ padding: '16px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                      <div style={{ fontWeight: '700', color: '#034EA2', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                        <CheckCircle size={16} color="#059669" /> Enquiry Frequency
+                      </div>
+                      <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>
+                        Avoid scattergun loan applications. Let Avani pre-qualify lenders before hard bureau pulls.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Avani Analysis Box */}
+                <div style={{ background: '#fffbeb', border: '1px solid #fef3c7', padding: '20px', borderRadius: '10px', marginBottom: '28px' }}>
+                  <div style={{ fontWeight: '700', color: '#92400e', marginBottom: '6px', fontSize: '0.95rem' }}>
+                    Avani Expert Advisory Roadmap
+                  </div>
+                  <p style={{ color: '#78350f', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>
+                    {analysisResult.recommendation}
+                  </p>
+                </div>
+
+                {/* Primary Action Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <button
+                    onClick={downloadReport}
+                    className="download-report-btn"
+                    style={{ margin: 0 }}
                   >
-                    <ExternalLink size={20} style={{ marginRight: '8px' }} />
-                    Start CIBIL Correction with Avani
-                  </a>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <a 
-                      href={generateWhatsAppDocumentLink('CIBIL Improvement')} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="download-report-btn" 
-                      style={{ background: '#25D366', color: 'white', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '0.9rem' }}
-                      aria-label="Get CIBIL document checklist on WhatsApp"
+                    <Download size={20} />
+                    Download Official Credit Profile Analysis (PDF)
+                  </button>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                    <Link
+                      to="/apply"
+                      className="btn btn-primary"
+                      style={{ textAlign: 'center', textDecoration: 'none', padding: '14px 16px', fontWeight: '700' }}
                     >
-                      <MessageCircle size={18} style={{ marginRight: '6px' }} />
-                      WhatsApp Document List
-                    </a>
-                    <a 
-                      href={PHONE_NUMBER} 
-                      className="download-report-btn" 
-                      style={{ background: '#1B3A6B', color: 'white', textDecoration: 'none', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '0.9rem' }}
-                      aria-label="Call Avani Loan Services at 9175635165"
+                      Apply for Loan with Advisory
+                    </Link>
+
+                    <Link
+                      to="/documents"
+                      className="btn btn-outline"
+                      style={{ textAlign: 'center', textDecoration: 'none', padding: '14px 16px', fontWeight: '700' }}
                     >
-                      <Phone size={18} style={{ marginRight: '6px' }} />
-                      Call {DISPLAY_PHONE}
-                    </a>
+                      View Required Documents
+                    </Link>
                   </div>
                 </div>
 
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                  <button onClick={() => setStep(1)} style={{ background: 'none', border: 'none', color: '#64748b', textDecoration: 'underline', cursor: 'pointer' }}>
-                    Check another score
+                <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                  <button
+                    onClick={() => { setStep(1); setAnalysisResult(null); }}
+                    style={{ background: 'none', border: 'none', color: '#64748b', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.9rem' }}
+                  >
+                    Analyze Another Profile
                   </button>
                 </div>
               </div>

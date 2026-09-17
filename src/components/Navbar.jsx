@@ -14,8 +14,8 @@ export default function Navbar() {
     { name: t('home'), path: '/' },
     { name: t('about'), path: '/about' },
     { name: t('loans'), path: '/loans' },
-    { name: 'School Funding', path: '/loans#school-funding' },
-    { name: 'College Funding', path: '/loans#college-funding' },
+    { name: 'School Funding', path: '/school-funding' },
+    { name: 'College Funding', path: '/college-funding' },
     { name: t('eligibility'), path: '/eligibility' },
     { name: t('cibil_check'), path: '/cibil-check' },
     { name: t('documents'), path: '/documents' },
@@ -73,7 +73,7 @@ export default function Navbar() {
             ))}
 
           </ul>
-          <Link to="/contact" className="btn btn-primary nav-cta">{t('apply_now')}</Link>
+          <Link to="/catalog" className="btn btn-primary nav-cta">CATALOG</Link>
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -108,8 +108,8 @@ export default function Navbar() {
                 </li>
               ))}
               <li>
-                <Link to="/contact" className="btn btn-primary mobile-cta" onClick={() => setIsOpen(false)}>
-                  {t('apply_now')}
+                <Link to="/catalog" className="btn btn-primary mobile-cta" onClick={() => setIsOpen(false)}>
+                  CATALOG
                 </Link>
               </li>
             </ul>

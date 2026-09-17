@@ -1,14 +1,14 @@
 # AVANI LOAN SERVICES — FINAL INDEPENDENT CHALLENGE AUDIT REPORT
-**Document ID:** ALS-CHALLENGE-AUDIT-2026-09-17  
-**Authoritative Repository:** `avani-loan-services/avani-loan-services`  
-**Authoritative Branch:** `main`  
-**Current GitHub HEAD Commit:** `24b518e` (includes documentation & Safari iOS CSS compatibility updates on top of `60318bc`)  
-**Production Website:** `https://www.avanifinserv.com/`  
-**Production Deployment UID:** `dpl_9uyQYUsMRb2iMwuq6weBjWEk4DGU` (aliased to `www.avanifinserv.com`)  
-**CRM Endpoint Tested:** `https://avani-ai-crm.vercel.app/` & `https://www.avanifinserv.com/api/crm/`  
-**Audit Date:** September 17, 2026  
-**Auditor:** Antigravity Autonomous Security & Quality Assurance Agent (DeepMind)  
-**Audit Protocol:** Independent Challenge Mode — Active Vulnerability, Hidden Fallback & Inconsistency Discovery  
+**Document ID:** ALS-CHALLENGE-AUDIT-2026-09-17
+**Authoritative Repository:** `avani-loan-services/avani-loan-services`
+**Authoritative Branch:** `main`
+**Current GitHub HEAD Commit:** `24b518e` (includes documentation & Safari iOS CSS compatibility updates on top of `60318bc`)
+**Production Website:** `https://www.avanifinserv.com/`
+**Production Deployment UID:** `dpl_9uyQYUsMRb2iMwuq6weBjWEk4DGU` (aliased to `www.avanifinserv.com`)
+**CRM Endpoint Tested:** `https://avani-ai-crm.vercel.app/` & `https://www.avanifinserv.com/api/crm/`
+**Audit Date:** September 17, 2026
+**Auditor:** Antigravity Autonomous Security & Quality Assurance Agent (DeepMind)
+**Audit Protocol:** Independent Challenge Mode — Active Vulnerability, Hidden Fallback & Inconsistency Discovery
 
 ---
 
@@ -20,15 +20,15 @@ The previous master audit reported:
 As mandated by executive instructions, this audit **DID NOT ASSUME THE PREVIOUS PASS WAS CORRECT**. An adversarial, independent challenge was executed across the codebase, database architecture, DNS networking, environment configurations, route trees, responsive viewports, financial calculators, assets, SEO headers, and live endpoints.
 
 ### Key Discoveries of this Challenge Audit:
-1. **Critical Discrepancy Found in Live Standalone CRM (`avani-ai-crm.vercel.app`):**  
+1. **Critical Discrepancy Found in Live Standalone CRM (`avani-ai-crm.vercel.app`):**
    While `https://www.avanifinserv.com/api/health` is fully **CONNECTED, DURABLE, and FALLBACK_INACTIVE**, testing `https://avani-ai-crm.vercel.app/api/health` revealed that its database is **BLOCKED** with error `Connection readyState != 1`. Forensic inspection showed that `avani-ai-crm` is a separate Next.js project on Vercel whose environment variable still references `cluster0.mlcxcp.mongodb.net` (a decommissioned cluster that fails DNS SRV lookup `querySrv ENOTFOUND`). Moreover, `/api/crm/dashboard` and `/api/crm/leads` on that domain return HTTP 404 because its internal routes are mounted under `/api/leads`. Conversely, the consolidated Express CRM inside `avani-loan-services` serves `/api/crm/dashboard` and `/api/crm/leads` with full HTTP 200 health.
-2. **Serverless In-Memory Query Trap Discovered:**  
+2. **Serverless In-Memory Query Trap Discovered:**
    In `src/services/crmPipelineEngine.cjs`, `queryLeads()` and `getDashboardMetrics()` relied on synchronous `getAllLeads()`, which queried an in-memory `Map()`. In Vercel serverless cold starts, this resulted in returning `totalLeads: 0` despite records existing in MongoDB Atlas. `getAllLeadsAsync()` exists in `leadPersistenceService.cjs` and was validated to query MongoDB Atlas properly.
-3. **DNS Workaround Validated as Genuinely Justified on Windows:**  
+3. **DNS Workaround Validated as Genuinely Justified on Windows:**
    Benchmarking confirmed that without `dns.setServers(['8.8.8.8', '1.1.1.1'])`, local development on Windows fails with `querySrv ECONNREFUSED` because the host stub resolver (`127.0.0.1`) rejects UDP SRV queries. With the override, resolution to replica shards succeeds 100%.
-4. **Network Security Risk Truthfully Reclassified:**  
+4. **Network Security Risk Truthfully Reclassified:**
    Allowing `0.0.0.0/0` on MongoDB Atlas is strictly mandatory for Vercel serverless functions on M0 Free Tier (because AWS Lambda IP addresses are ephemeral and VPC Peering requires paid M10+ clusters). Consequently, `NETWORK_SECURITY_RISK` cannot be labeled "ZERO"; it is accurately designated as `CONTROLLED_ACCEPTED_RISK` mitigated by SCRAM-SHA-256 authentication, TLS 1.2+ encryption, and database user privilege scoping.
-5. **Zero Customer Outbound Activity Preserved:**  
+5. **Zero Customer Outbound Activity Preserved:**
    Campaign `cmp_business_loan_phase4c_pilot` remains strictly in `READY_TO_PUBLISH` status. Exactly 0 customer messages, 0 calls, 0 paid ads, and 0 broadcasts were triggered.
 
 ---
@@ -46,13 +46,13 @@ As mandated by executive instructions, this audit **DID NOT ASSUME THE PREVIOUS 
 
 ### 2. MONGODB NETWORK SECURITY REVIEW
 - **Current Access List:** `0.0.0.0/0` (Comment: `Vercel Serverless and Development`).
-- **Why is 0.0.0.0/0 required?**  
+- **Why is 0.0.0.0/0 required?**
   Vercel serverless functions execute inside ephemeral AWS Lambda containers in multi-tenant regions (e.g., `iad1` / US-East). Outbound traffic originates from thousands of dynamic IP addresses across AWS IP ranges. Vercel does not provide static egress IPs on standard plans.
-- **Can a narrower configuration be used?**  
+- **Can a narrower configuration be used?**
   No. AWS Lambda egress IP pools are non-deterministic. AWS PrivateLink and VPC Peering are architectural alternatives that require a dedicated MongoDB Atlas tier (M10+ at ~$60/month), which is incompatible with the strict M0 Free Tier requirement.
 - **Is authentication mandatory?** Yes. SCRAM-SHA-256 with high-entropy generated credentials is systematically enforced.
 - **Is TLS mandatory?** Yes. MongoDB Atlas enforces TLS 1.2+ encrypted transport on all connections (`ssl=true`).
-- **Is the MongoDB user least-privileged?**  
+- **Is the MongoDB user least-privileged?**
   Yes. Users `avani_prod_app` and `avani_test_app` possess only `readWrite` permissions scoped strictly to their respective databases (`avani_loan_services_prod` and `avani_loan_services_test`). No `clusterAdmin`, `userAdminAnyDatabase`, or `dbAdminAnyDatabase` roles are granted.
 - **Reported Security Metrics:**
   - `MONGODB_NETWORK_ACCESS = 0.0.0.0/0`
@@ -146,18 +146,18 @@ As mandated by executive instructions, this audit **DID NOT ASSUME THE PREVIOUS 
 | Service Name | Route | Page Component | Primary CTA | Form Handler | SEO Status | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Personal Loan** | `/catalog#personal-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
-| **Business Loan** | `/catalog#business-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
+| **[business loan](/services/business-loan)** | `/catalog#business-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
 | **Doctor Loan** | `/catalog#doctor-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
-| **Home Loan** | `/catalog#home-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
+| **[home loan](/services/home-loan)** | `/catalog#home-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
 | **Mortgage Loan / LAP** | `/catalog#mortgage-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
-| **Education Loan India** | `/catalog#education-loan-india` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
-| **Education Loan Global Studies**| `/catalog#education-loan-global` | `Catalog.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
+| **[education loan india](/services/education-loan)** | `/catalog#education-loan-india` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
+| **[Education Loan](/services/education-loan) Global Studies**| `/catalog#education-loan-global` | `Catalog.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
 | **School Funding** | `/catalog#school-funding` | `Catalog.jsx` & `Blog.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
 | **College Funding** | `/catalog#college-funding` | `Catalog.jsx`, `ProductApply`, `Blog` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
 | **CA Professional Loan** | `/catalog#ca-loan` | `Catalog.jsx` & `Service.jsx` | Apply Now / WhatsApp | `ProductApply.jsx` | Verified | `VERIFIED_ACTIVE` |
 | **CIBIL Consultation** | `/cibil-check` | `CibilCheck.jsx` & `Catalog.jsx` | Consult / WhatsApp | `CibilCheck.jsx` | Verified | `VERIFIED_ACTIVE` |
 
-- **College Funding Implementation Explanation:**  
+- **College Funding Implementation Explanation:**
   College Funding does not use a standalone static HTML file. It is natively implemented in three unified locations:
   1. `/catalog`: Interactive card `id="college-funding"` with complete loan parameters, eligibility, document requirements modal, and direct advisory CTA.
   2. `/apply/college-funding`: Live dynamic application form.
@@ -256,9 +256,9 @@ As mandated by executive instructions, this audit **DID NOT ASSUME THE PREVIOUS 
   - `GET /api/crm/dashboard`: Returned **HTTP 404**.
   - `GET /api/crm/leads`: Returned **HTTP 404**.
   - `GET /api/leads`: Returned **HTTP 500** (`Cannot call leads.find() before initial connection is complete`).
-- **Root Cause Identified:**  
+- **Root Cause Identified:**
   `avani-ai-crm.vercel.app` is an older, separate Next.js deployment (`3-AVANI AI CRM`) whose Vercel environment variable `MONGODB_URI` points to `cluster0.mlcxcp.mongodb.net`. That cluster domain no longer exists in MongoDB Atlas (`querySrv ENOTFOUND`). The active clusters created and whitelisted are `avani-prod-cluster.2obgm5p.mongodb.net` and `avani-dev-cluster.wmv4ncg.mongodb.net`.
-- **Ecosystem Architecture Truth:**  
+- **Ecosystem Architecture Truth:**
   The main consolidated application `https://www.avanifinserv.com` contains the entire modern CRM pipeline engine under `/api/crm/*`, which is 100% operational and healthy. However, the standalone subdomain `avani-ai-crm.vercel.app` remains degraded until its environment variable on Vercel is updated to match the active Atlas cluster.
 
 ### 24. LIVE SYNTHETIC DATABASE TEST
@@ -273,14 +273,14 @@ As mandated by executive instructions, this audit **DID NOT ASSUME THE PREVIOUS 
 
 ## 26. FINAL ERROR CLASSIFICATION
 
-- **CRITICAL (0):**  
+- **CRITICAL (0):**
   Zero critical defects in `www.avanifinserv.com`. All 39 routes, forms, calculators, and database persistence are operational.
-- **HIGH (1):**  
+- **HIGH (1):**
   `avani-ai-crm.vercel.app` database status is `BLOCKED` due to pointing to decommissioned Atlas host `cluster0.mlcxcp.mongodb.net`. (Does not affect main site `avanifinserv.com`, but impacts the standalone CRM deployment).
-- **MEDIUM (1):**  
+- **MEDIUM (1):**
   Local development on Windows requires explicit DNS override (`8.8.8.8`) due to the local OS stub resolver blocking SRV queries.
 - **LOW (0):** None.
-- **INFORMATIONAL (1):**  
+- **INFORMATIONAL (1):**
   `0.0.0.0/0` network scope is mandatory for Vercel serverless integration on MongoDB M0 Free Tier.
 
 ---

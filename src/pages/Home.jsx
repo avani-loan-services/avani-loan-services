@@ -17,13 +17,15 @@ import cibilBanner from '../assets/avani_cibil_banner.png';
 
 
 const loanCards = [
-  { image: personalImg, title: 'Salary Loan', desc: 'Fast personal loans for salaried employees up to ₹50L', rate: '10.5% p.a.' },
-  { image: businessImg, title: 'Business Loan', desc: 'Grow your business with unsecured loans up to ₹2Cr', rate: '12% p.a.' },
-  { image: educationImg, title: 'Education Loan', desc: 'Study in India or abroad with loans up to ₹1.5Cr', rate: '8.15% p.a.' },
-  { image: homeImg, title: 'Home Loan', desc: 'Realize your dream home with low EMIs for 30 years', rate: '8.5% p.a.' },
-  { image: mortgageImg, title: 'Mortgage / LAP', desc: 'Unlock your property value with Loan Against Property', rate: '9% p.a.' },
-  { image: businessImg, title: 'Chartered Accountant Loan', desc: 'Special professional loans for CAs without collateral', rate: '10.5% p.a.' },
-  { image: businessImg, title: 'Doctor / Professional Loan', desc: 'Customized funding for doctors and certified professionals', rate: '10.5% p.a.' },
+  { image: personalImg, title: 'Personal Loan', desc: 'Fast, collateral-free loans for salaried professionals with flexible tenures.', rate: '10.5% p.a.', link: '/personal-loan' },
+  { image: businessImg, title: 'Business Loan', desc: 'Working capital and MSME growth capital up to ₹2Cr with minimal compliance friction.', rate: '11.5% p.a.', link: '/business-loan' },
+  { image: businessImg, title: 'Doctor Loan', desc: 'Customized professional financing for clinic setup, advanced equipment, and expansion.', rate: '10.25% p.a.', link: '/doctor-loan' },
+  { image: homeImg, title: 'Home Loan', desc: 'Competitive home purchase, construction, and balance transfer options up to 30 years.', rate: '8.40% p.a.', link: '/home-loan' },
+  { image: mortgageImg, title: 'Mortgage / LAP', desc: 'Unlock maximum liquidity from residential or commercial property with high loan-to-value.', rate: '9.25% p.a.', link: '/mortgage-loan' },
+  { image: educationImg, title: 'Education Loan', desc: 'Comprehensive financing for premier institutions in India and overseas university degrees.', rate: '8.50% p.a.', link: '/education-loan' },
+  { image: businessImg, title: 'School Funding', desc: 'Institutional capital for classroom modernizations, labs, buses, and campus infrastructure.', rate: '9.75% p.a.', link: '/school-funding' },
+  { image: businessImg, title: 'College Funding', desc: 'Campus expansion, research lab setups, NAAC upgrade financing, and university credit lines.', rate: '9.50% p.a.', link: '/college-funding' },
+  { image: businessImg, title: 'Chartered Accountant Loan', desc: 'Specialized unsecured credit lines for practicing CAs, audits, and office expansion.', rate: '10.5% p.a.', link: '/ca-loan' }
 ];
 
 const trustBadges = [
@@ -133,12 +135,12 @@ export default function Home() {
             {loanCards.map((loan, i) => (
               <div key={i} className="loan-card glass-card animate-fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
                 <div className="loan-card-img-wrapper">
-                  <img src={loan.image} alt={loan.title} className="loan-card-img" />
+                  <img src={loan.image} alt={loan.title} className="loan-card-img" loading="lazy" />
                 </div>
                 <h3 className="loan-title">{loan.title}</h3>
                 <p className="loan-desc">{loan.desc}</p>
                 <div className="loan-rate">Starting @ <strong>{loan.rate}</strong></div>
-                <Link to="/contact" className="btn btn-primary loan-cta">Apply for {loan.title} <ArrowRight size={16} /></Link>
+                <Link to={loan.link} className="btn btn-primary loan-cta">Explore {loan.title} <ArrowRight size={16} /></Link>
               </div>
             ))}
           </div>
@@ -156,52 +158,45 @@ export default function Home() {
             </div>
           </div>
 
-          {/* CIBIL Correction Section */}
+          {/* Credit Profile & CIBIL Analysis Section */}
           <div className="cibil-section glass-card animate-fade-in" style={{ marginTop: 60 }}>
             <div className="cibil-grid">
               <div className="cibil-image-content">
-                <img src={cibilBanner} alt="Avani CIBIL Correction" className="cibil-img" />
+                <img src={cibilBanner} alt="Avani Loan Services Credit Profile Analysis" className="cibil-img" />
               </div>
               <div className="cibil-text-content">
-                <span className="badge badge-error">Elite CIBIL Services</span>
-                <h3>Improve Your Credit Score with Avani</h3>
+                <span className="badge badge-primary">Credit Advisory & Analysis</span>
+                <h3>Understand & Strengthen Your Credit Profile</h3>
                 <p className="cibil-message">
-                  Low CIBIL score stopping your dreams? Don't worry! 
-                  📲 <strong>Avani Loan Service provides expert guidance to fix your credit history and unlock better loan opportunities.</strong>
+                  Wondering how lenders evaluate your credit history or facing loan approval bottlenecks?
+                  <strong> Avani Loan Services provides structured credit profile analysis, dispute guidance, and debt optimization strategies to help you qualify for competitive interest rates.</strong>
                 </p>
-                <div className="cibil-contact-details">
-                  <p><strong>AVANI LOAN SERVICE – YOUR TRUSTED PARTNER</strong></p>
-                  <p>Expert Credit Correction & Loan Consultation</p>
-                  <p>
-                    <a 
-                      href={PHONE_NUMBER} 
-                      className="cibil-phone-link"
-                      aria-label="Call Avani Loan Services at 9175635165"
-                      style={{ color: '#1B3A6B', fontWeight: 'bold', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                    >
-                      📞 {DISPLAY_PHONE}
-                    </a>
-                    {' | '}💬 Dedicated Support
-                  </p>
+                <div className="cibil-highlights" style={{ margin: '14px 0', fontSize: '0.9rem', color: '#475569' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Comprehensive Bureau Profile Review & DTI Assessment
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Actionable Roadmap to Resolve Inaccuracies & Overdues
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ color: '#059669', fontWeight: 'bold' }}>✓</span> Transparent Advisory — Zero Fabricated Scores
+                  </div>
                 </div>
-                <div className="cibil-ctas" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '16px' }}>
-                  <a 
-                    href="https://b2c.creditsamadhaan.com/?refer_code=FY665935" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="btn btn-secondary"
+                <div className="cibil-ctas" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '18px' }}>
+                  <Link
+                    to="/cibil-check"
+                    className="btn btn-primary"
+                    aria-label="Analyze My Credit Profile with Avani Loan Services"
                   >
-                    Start CIBIL Correction with Avani
-                  </a>
-                  <a 
-                    href={generateWhatsAppDocumentLink('CIBIL Improvement')} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                    Analyze My Credit Profile
+                  </Link>
+                  <Link
+                    to="/documents"
                     className="btn btn-outline"
-                    aria-label="Get CIBIL document checklist on WhatsApp"
+                    aria-label="View Required Documents for Credit Repair"
                   >
-                    📲 Get Document List on WhatsApp
-                  </a>
+                    View Document Checklist
+                  </Link>
                 </div>
               </div>
             </div>

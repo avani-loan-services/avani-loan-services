@@ -153,7 +153,13 @@ async function main() {
   sitemapItems.push({ loc: `${base}/blog`, lastmod, changefreq: 'weekly', priority: '0.8' });
   sitemapItems.push({ loc: `${base}/contact`, lastmod, changefreq: 'monthly', priority: '0.7' });
   sitemapItems.push({ loc: `${base}/download-application`, lastmod, changefreq: 'monthly', priority: '0.7' });
-  sitemapItems.push({ loc: `${base}/privacy`, lastmod, changefreq: 'yearly', priority: '0.5' });
+  sitemapItems.push({ loc: `${base}/school-funding`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/college-funding`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/documents`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/cibil-check`, lastmod, changefreq: 'weekly', priority: '0.9' });
+  sitemapItems.push({ loc: `${base}/assets`, lastmod, changefreq: 'weekly', priority: '0.8' });
+  sitemapItems.push({ loc: `${base}/templates`, lastmod, changefreq: 'weekly', priority: '0.8' });
+  sitemapItems.push({ loc: `${base}/campaigns`, lastmod, changefreq: 'weekly', priority: '0.8' });
   for (const s of services) {
     sitemapItems.push({ loc: `${base}/services/${s.slug}`, lastmod, changefreq: 'weekly', priority: '0.8' });
     sitemapItems.push({ loc: `${base}/mr/services/${s.slug}`, lastmod, changefreq: 'weekly', priority: '0.8' });

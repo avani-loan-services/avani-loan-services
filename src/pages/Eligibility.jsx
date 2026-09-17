@@ -6,7 +6,7 @@ import PasswordGate from '../components/PasswordGate';
 import './Eligibility.css';
 
 const LOAN_TYPES = [
-  'Personal', 'Business', 'School_Funding', 'College_Funding', 'Doctor_Salaried', 'Doctor_Self', 
+  'Personal', 'Business', 'School_Funding', 'College_Funding', 'Doctor_Salaried', 'Doctor_Self',
   'CA', 'Education_India', 'Education_Global', 'Home', 'Mortgage'
 ];
 
@@ -46,7 +46,7 @@ export default function Eligibility() {
 
     const data = new FormData();
     data.append('payload', JSON.stringify(formData));
-    
+
     if (files.itrYear1) data.append('itrYear1', files.itrYear1);
     if (files.itrYear2) data.append('itrYear2', files.itrYear2);
     files.bankStatements.forEach(file => data.append('bankStatements', file));
@@ -60,7 +60,7 @@ export default function Eligibility() {
       if (response.data.success) {
         setResult(response.data.data);
         setStep(5);
-        
+
         // Also trigger CRM sync silently
         axios.post('/api/crm/sync', {
           name: formData.applicantName,
@@ -82,9 +82,8 @@ export default function Eligibility() {
   };
 
   return (
-    <PasswordGate title="AI Loan Eligibility Engine - Authorized Access">
-      <div className="eligibility-container">
-        <div className="eligibility-header">
+    <div className="eligibility-container">
+      <div className="eligibility-header">
           <h1>AI Loan Eligibility Engine</h1>
           <p>Get instant eligibility scores, EMI calculations, and personalized loan recommendations.</p>
           <div className="progress-bar">
@@ -101,21 +100,21 @@ export default function Eligibility() {
                 <h2>Step 1: Personal Information</h2>
                 <div className="input-group">
                   <label>Full Name</label>
-                  <input type="text" value={formData.applicantName} onChange={e => setFormData({...formData, applicantName: e.target.value})} required />
+                  <input type="text" value={formData.applicantName} onChange={e => setFormData({ ...formData, applicantName: e.target.value })} required />
                 </div>
                 <div className="input-group">
                   <label>Phone Number</label>
-                  <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} required />
+                  <input type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} required />
                 </div>
                 <div className="input-group">
                   <label>Email Address</label>
-                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
+                  <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
                 </div>
                 <div className="input-group">
                   <label>City</label>
-                  <input type="text" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} required />
+                  <input type="text" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} required />
                 </div>
-                <button type="button" className="primary-btn mt-4" onClick={handleNext}>Next <ChevronRight size={18}/></button>
+                <button type="button" className="primary-btn mt-4" onClick={handleNext}>Next <ChevronRight size={18} /></button>
               </div>
             )}
 
@@ -124,17 +123,17 @@ export default function Eligibility() {
                 <h2>Step 2: Loan Requirements</h2>
                 <div className="input-group">
                   <label>Loan Type</label>
-                  <select value={formData.loanType} onChange={e => setFormData({...formData, loanType: e.target.value})}>
+                  <select value={formData.loanType} onChange={e => setFormData({ ...formData, loanType: e.target.value })}>
                     {LOAN_TYPES.map(type => <option key={type} value={type}>{type.replace('_', ' ')}</option>)}
                   </select>
                 </div>
                 <div className="input-group">
                   <label>Requested Tenure (Months)</label>
-                  <input type="number" value={formData.tenureMonths} onChange={e => setFormData({...formData, tenureMonths: e.target.value})} required />
+                  <input type="number" value={formData.tenureMonths} onChange={e => setFormData({ ...formData, tenureMonths: e.target.value })} required />
                 </div>
                 <div className="step-actions">
-                  <button type="button" className="secondary-btn" onClick={handleBack}><ChevronLeft size={18}/> Back</button>
-                  <button type="button" className="primary-btn" onClick={handleNext}>Next <ChevronRight size={18}/></button>
+                  <button type="button" className="secondary-btn" onClick={handleBack}><ChevronLeft size={18} /> Back</button>
+                  <button type="button" className="primary-btn" onClick={handleNext}>Next <ChevronRight size={18} /></button>
                 </div>
               </div>
             )}
@@ -144,23 +143,23 @@ export default function Eligibility() {
                 <h2>Step 3: Financial Details</h2>
                 <div className="input-group">
                   <label>Monthly Net Income (₹)</label>
-                  <input type="number" value={formData.monthlyNetIncome} onChange={e => setFormData({...formData, monthlyNetIncome: e.target.value})} required />
+                  <input type="number" value={formData.monthlyNetIncome} onChange={e => setFormData({ ...formData, monthlyNetIncome: e.target.value })} required />
                 </div>
                 <div className="input-group">
                   <label>Year 1 Annual Income (₹) (from ITR)</label>
-                  <input type="number" value={formData.year1Income} onChange={e => setFormData({...formData, year1Income: e.target.value})} required />
+                  <input type="number" value={formData.year1Income} onChange={e => setFormData({ ...formData, year1Income: e.target.value })} required />
                 </div>
                 <div className="input-group">
                   <label>Year 2 Annual Income (₹) (from ITR)</label>
-                  <input type="number" value={formData.year2Income} onChange={e => setFormData({...formData, year2Income: e.target.value})} required />
+                  <input type="number" value={formData.year2Income} onChange={e => setFormData({ ...formData, year2Income: e.target.value })} required />
                 </div>
                 <div className="input-group">
                   <label>Existing EMI (₹)</label>
-                  <input type="number" value={formData.existingEmi} onChange={e => setFormData({...formData, existingEmi: e.target.value})} required />
+                  <input type="number" value={formData.existingEmi} onChange={e => setFormData({ ...formData, existingEmi: e.target.value })} required />
                 </div>
                 <div className="step-actions">
-                  <button type="button" className="secondary-btn" onClick={handleBack}><ChevronLeft size={18}/> Back</button>
-                  <button type="button" className="primary-btn" onClick={handleNext}>Next <ChevronRight size={18}/></button>
+                  <button type="button" className="secondary-btn" onClick={handleBack}><ChevronLeft size={18} /> Back</button>
+                  <button type="button" className="primary-btn" onClick={handleNext}>Next <ChevronRight size={18} /></button>
                 </div>
               </div>
             )}
@@ -185,9 +184,9 @@ export default function Eligibility() {
                     <input type="file" accept=".pdf,.png,.jpg" multiple onChange={e => handleFileChange(e, 'bankStatements')} />
                   </div>
                 </div>
-                
+
                 <div className="step-actions mt-6">
-                  <button type="button" className="secondary-btn" onClick={handleBack}><ChevronLeft size={18}/> Back</button>
+                  <button type="button" className="secondary-btn" onClick={handleBack}><ChevronLeft size={18} /> Back</button>
                   <button type="button" className="primary-btn" onClick={handleSubmit} disabled={loading}>
                     {loading ? 'Analyzing...' : 'Submit for AI Analysis'} <CheckCircle2 size={18} />
                   </button>
@@ -197,8 +196,8 @@ export default function Eligibility() {
 
             {step === 5 && result && (
               <div className="form-step slide-in result-step">
-                <h2><CheckCircle2 color="#25D366" size={28}/> Eligibility Analysis Complete</h2>
-                
+                <h2><CheckCircle2 color="#25D366" size={28} /> Eligibility Analysis Complete</h2>
+
                 <div className="result-grid">
                   <div className="result-card">
                     <h4>Maximum Eligible Loan</h4>
@@ -228,10 +227,10 @@ export default function Eligibility() {
                 </p>
 
                 <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '20px' }}>
-                  <a 
-                    href={`https://wa.me/919175635165?text=${encodeURIComponent(`Hello AVANI LOAN SERVICES, I checked my eligibility for ${formData.loanType} Loan on your website. Estimated Eligible Amount: ₹${result.maxPrincipal.toLocaleString()}. Please assist me.`)}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
+                  <a
+                    href={`https://wa.me/919175635165?text=${encodeURIComponent(`Hello AVANI LOAN SERVICES, I checked my eligibility for ${formData.loanType} Loan on your website. Estimated Eligible Amount: ₹${result.maxPrincipal.toLocaleString()}. Please assist me.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="primary-btn"
                     style={{ background: '#25D366', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                   >
@@ -244,7 +243,6 @@ export default function Eligibility() {
           </form>
         </div>
       </div>
-    </PasswordGate>
   );
 }
 

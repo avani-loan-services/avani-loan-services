@@ -7,7 +7,8 @@
 import { useState, useEffect } from 'react';
 import { Lock, Eye, EyeOff, ShieldAlert, KeyRound, Loader2 } from 'lucide-react';
 
-export default function PasswordGate({ children, pageTitle = 'Protected Access Area' }) {
+export default function PasswordGate({ children, pageTitle, title }) {
+  const displayTitle = pageTitle || title || 'Protected Access Area';
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [passwordInput, setPasswordInput] = useState('');
@@ -27,7 +28,7 @@ export default function PasswordGate({ children, pageTitle = 'Protected Access A
           setAuthenticated(true);
         }
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
@@ -66,6 +67,10 @@ export default function PasswordGate({ children, pageTitle = 'Protected Access A
         <p style={{ fontWeight: 600 }}>Verifying access authorization...</p>
       </div>
     );
+  }
+
+  if (authenticated) {
+    return children;
   }
 
   return (
@@ -110,7 +115,7 @@ export default function PasswordGate({ children, pageTitle = 'Protected Access A
             Security Authorization Required
           </h2>
           <p style={{ margin: 0, fontSize: '0.85rem', color: '#93C5FD' }}>
-            {pageTitle} is password protected
+            {displayTitle} is password protected
           </p>
         </div>
 
@@ -120,12 +125,18 @@ export default function PasswordGate({ children, pageTitle = 'Protected Access A
             <label style={{ display: 'block', fontWeight: 600, fontSize: '0.9rem', color: '#334155', marginBottom: '8px' }}>
               Enter Security Password
             </label>
-            
+
             <div style={{ position: 'relative' }}>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleUnlock(e);
+                  }
+                }}
                 placeholder="Enter password to unlock..."
                 required
                 style={{
@@ -179,16 +190,18 @@ export default function PasswordGate({ children, pageTitle = 'Protected Access A
 
           <button
             type="submit"
+            onClick={handleUnlock}
+            disabled={submitting}
             style={{
               width: '100%',
               padding: '14px',
-              background: 'linear-gradient(135deg, #1B3A6B 0%, #0052CC 100%)',
+              background: submitting ? '#64748B' : 'linear-gradient(135deg, #1B3A6B 0%, #0052CC 100%)',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: '8px',
               fontSize: '1rem',
               fontWeight: 600,
-              cursor: 'pointer',
+              cursor: submitting ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -196,7 +209,15 @@ export default function PasswordGate({ children, pageTitle = 'Protected Access A
               boxShadow: '0 4px 12px rgba(0, 82, 204, 0.3)'
             }}
           >
-            <KeyRound size={18} /> Unlock Page Access
+            {submitting ? (
+              <>
+                <Loader2 size={18} className="animate-spin" /> Authorizing Access...
+              </>
+            ) : (
+              <>
+                <KeyRound size={18} /> Unlock Page Access
+              </>
+            )}
           </button>
 
           <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#64748B', marginTop: '20px', margin: '20px 0 0 0' }}>

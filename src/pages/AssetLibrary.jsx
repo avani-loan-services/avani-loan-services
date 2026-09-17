@@ -3,26 +3,22 @@ import useSEO from '../hooks/useSEO';
 import {
   Image as ImageIcon,
   Video as VideoIcon,
-  Filter,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Eye,
-  Download,
-  Copy,
   Search,
   Sparkles,
-  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Eye,
+  Copy,
   Check,
   RefreshCw,
-  ExternalLink
+  Play
 } from 'lucide-react';
 import './AssetLibrary.css';
 
 export default function AssetLibrary() {
   useSEO({
     title: 'Media Asset Library — AVANI LOAN SERVICES',
-    description: 'Centralized media asset repository with compliance scoring, image/video previews, and approval workflows.'
+    description: 'Centralized media repository featuring authentic marketing images, video reels, and product compliance classification.'
   });
 
   const [assets, setAssets] = useState([]);
@@ -80,7 +76,7 @@ export default function AssetLibrary() {
   };
 
   const handleReject = async (assetId) => {
-    const reason = prompt('Reason for rejection / revision:') || 'Needs creative revision';
+    const reason = prompt('Reason for revision:') || 'Needs creative revision';
     setActionLoading(true);
     try {
       const res = await fetch('/api/templates/assets/reject', {
@@ -110,13 +106,23 @@ export default function AssetLibrary() {
 
   const filteredAssets = assets.filter(a => {
     if (filterType !== 'ALL' && a.type !== filterType) return false;
-    if (filterProduct !== 'ALL' && a.product !== filterProduct) return false;
+
+    if (filterProduct !== 'ALL') {
+      if (filterProduct === 'education') {
+        if (a.product !== 'education_loan_india' && a.product !== 'education_loan_global') return false;
+      } else if (a.product !== filterProduct) {
+        return false;
+      }
+    }
+
     if (filterStatus !== 'ALL' && a.status !== filterStatus) return false;
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const match = (a.title && a.title.toLowerCase().includes(q)) ||
                     (a.headline && a.headline.toLowerCase().includes(q)) ||
-                    (a.prompt && a.prompt.toLowerCase().includes(q));
+                    (a.prompt && a.prompt.toLowerCase().includes(q)) ||
+                    (a.product && a.product.toLowerCase().includes(q));
       if (!match) return false;
     }
     return true;
@@ -128,7 +134,7 @@ export default function AssetLibrary() {
         <div className="header-left">
           <h1>Media Asset Library</h1>
           <p className="header-sub">
-            Authoritative visual and video concepts with automated quality scores and approval workflows.
+            Curated brand visual assets, marketing creatives, and educational video reels for Avani Loan Services.
           </p>
         </div>
         <div className="header-actions">
@@ -144,40 +150,38 @@ export default function AssetLibrary() {
           <Search size={18} className="search-icon" />
           <input
             type="text"
-            placeholder="Search prompts, titles, hooks..."
+            placeholder="Search assets, products, concepts..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
         </div>
 
         <div className="filter-group">
-          <select value={filterType} onChange={e => setFilterType(e.target.value)}>
-            <option value="ALL">All Media Types</option>
-            <option value="IMAGE">Images (100 Concepts)</option>
-            <option value="VIDEO">Videos (300 Concepts)</option>
+          <select value={filterType} onChange={e => setFilterType(e.target.value)} aria-label="Filter Media Type">
+            <option value="ALL">ALL MEDIA TYPES</option>
+            <option value="IMAGE">IMAGES</option>
+            <option value="VIDEO">VIDEOS</option>
           </select>
 
-          <select value={filterProduct} onChange={e => setFilterProduct(e.target.value)}>
-            <option value="ALL">All Loan Products</option>
-            <option value="personal_loan">Personal Loan</option>
-            <option value="business_loan">Business Loan</option>
-            <option value="doctor_loan">Doctor Loan</option>
-            <option value="home_loan">Home Loan</option>
-            <option value="mortgage_loan">Mortgage Loan / LAP</option>
-            <option value="education_loan_india">Education Loan (India)</option>
-            <option value="education_loan_global">Education Loan (Global)</option>
-            <option value="school_funding">School Funding</option>
-            <option value="college_funding">College Funding</option>
-            <option value="cibil_consultation">CIBIL Consultation</option>
+          <select value={filterProduct} onChange={e => setFilterProduct(e.target.value)} aria-label="Filter Loan Category">
+            <option value="ALL">ALL CATEGORIES</option>
+            <option value="personal_loan">PERSONAL LOAN</option>
+            <option value="business_loan">BUSINESS LOAN</option>
+            <option value="doctor_loan">DOCTOR LOAN</option>
+            <option value="home_loan">HOME LOAN</option>
+            <option value="mortgage_loan">MORTGAGE / LAP</option>
+            <option value="education">EDUCATION LOAN</option>
+            <option value="school_funding">SCHOOL FUNDING</option>
+            <option value="college_funding">COLLEGE FUNDING</option>
+            <option value="ca_loan">CA PROFESSIONAL</option>
+            <option value="cibil_consultation">CIBIL / CREDIT</option>
           </select>
 
-          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-            <option value="ALL">All Statuses</option>
-            <option value="READY_FOR_RENDERING">Ready For Rendering</option>
-            <option value="GENERATED">Generated</option>
-            <option value="APPROVED_INTERNAL">Approved Internal</option>
-            <option value="REJECTED_INTERNAL">Rejected Internal</option>
-            <option value="READY_TO_PUBLISH">Ready To Publish</option>
+          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} aria-label="Filter Approval Status">
+            <option value="ALL">ALL STATUSES</option>
+            <option value="APPROVED_INTERNAL">APPROVED</option>
+            <option value="IMPORTED">IMPORTED</option>
+            <option value="REVIEW_REQUIRED">REVIEW REQUIRED</option>
           </select>
         </div>
       </div>
@@ -186,7 +190,7 @@ export default function AssetLibrary() {
       {loading ? (
         <div className="library-loading">
           <div className="spinner"></div>
-          <p>Loading media asset inventory...</p>
+          <p>Loading media asset library...</p>
         </div>
       ) : filteredAssets.length === 0 ? (
         <div className="empty-state">
@@ -197,44 +201,61 @@ export default function AssetLibrary() {
           {filteredAssets.map(asset => {
             const isImage = asset.type === 'IMAGE';
             const isApproved = asset.status === 'APPROVED_INTERNAL';
+            const mediaUrl = asset.publicUrl || asset.thumbnailUrl;
 
             return (
               <div key={asset.id} className="asset-card">
-                <div className="asset-card-top">
-                  <span className={`asset-type-badge ${isImage ? 'badge-img' : 'badge-vid'}`}>
-                    {isImage ? <ImageIcon size={14} /> : <VideoIcon size={14} />}
-                    {asset.format || '1:1'}
-                  </span>
+                {/* Media Preview Window */}
+                <div className="asset-media-preview" style={{ background: '#0f172a', borderRadius: '8px 8px 0 0', overflow: 'hidden', position: 'relative', height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {isImage ? (
+                    <img
+                      src={mediaUrl}
+                      alt={asset.title}
+                      loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/avani_cibil_banner.png';
+                      }}
+                    />
+                  ) : (
+                    <video
+                      src={asset.publicUrl}
+                      poster={asset.thumbnailUrl || '/assets/avani_cibil_banner.png'}
+                      controls
+                      preload="none"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
 
-                  <span className={`status-pill pill-${asset.status.toLowerCase().replace(/_/g, '-')}`}>
-                    {asset.status.replace(/_/g, ' ')}
+                  <span className={`asset-type-badge ${isImage ? 'badge-img' : 'badge-vid'}`} style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                    {isImage ? <ImageIcon size={14} /> : <VideoIcon size={14} />}
+                    {isImage ? 'IMAGE' : 'VIDEO'}
                   </span>
                 </div>
 
-                <div className="asset-card-body">
-                  <h3 className="asset-title">{asset.title}</h3>
-                  {asset.headline && <p className="asset-headline">"{asset.headline}"</p>}
-
-                  <div className="asset-meta-row">
-                    <span className="meta-tag">{asset.product.replace(/_/g, ' ')}</span>
-                    <span className="meta-tag">{asset.channel}</span>
-                    <span className="meta-score">
+                <div className="asset-card-body" style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <span className="meta-tag" style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700' }}>
+                      {asset.product ? asset.product.replace(/_/g, ' ') : 'General Brand'}
+                    </span>
+                    <span className="meta-score" style={{ fontSize: '0.8rem' }}>
                       <Sparkles size={12} /> {asset.qualityScore}/100
                     </span>
                   </div>
 
-                  {isImage ? (
-                    <div className="asset-prompt-preview">
-                      <strong>Visual Prompt:</strong> {asset.prompt.slice(0, 120)}...
-                    </div>
-                  ) : (
-                    <div className="asset-script-preview">
-                      <strong>Script Hook:</strong> {asset.headline || (asset.script?.beats?.hook || 'Video Hook')}
-                    </div>
+                  <h3 className="asset-title" style={{ fontSize: '1rem', fontWeight: '700', margin: '0 0 6px 0', color: '#0f274a', lineHeight: '1.3' }}>
+                    {asset.title}
+                  </h3>
+
+                  {asset.caption && (
+                    <p style={{ fontSize: '0.82rem', color: '#64748b', margin: '0 0 12px 0', lineHeight: '1.4' }}>
+                      {asset.caption.length > 90 ? `${asset.caption.slice(0, 90)}...` : asset.caption}
+                    </p>
                   )}
                 </div>
 
-                <div className="asset-card-actions">
+                <div className="asset-card-actions" style={{ padding: '0 16px 16px 16px' }}>
                   <button
                     type="button"
                     className="btn-preview"
@@ -249,8 +270,8 @@ export default function AssetLibrary() {
                   <button
                     type="button"
                     className="btn-copy"
-                    onClick={() => handleCopy(isImage ? asset.prompt : JSON.stringify(asset.script, null, 2), asset.id)}
-                    title="Copy specification to clipboard"
+                    onClick={() => handleCopy(asset.publicUrl || asset.prompt, asset.id)}
+                    title="Copy URL"
                   >
                     {copiedId === asset.id ? <Check size={15} /> : <Copy size={15} />}
                   </button>
@@ -286,46 +307,49 @@ export default function AssetLibrary() {
       {/* Detail & Preview Modal */}
       {previewModal && selectedAsset && (
         <div className="asset-modal-overlay" onClick={() => setPreviewModal(false)}>
-          <div className="asset-modal-content" onClick={e => e.stopPropagation()}>
+          <div className="asset-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '640px' }}>
             <div className="modal-header">
               <h2>{selectedAsset.title}</h2>
               <button type="button" className="btn-close-modal" onClick={() => setPreviewModal(false)}>✕</button>
             </div>
 
             <div className="modal-body">
-              <div className="modal-meta-grid">
-                <div><strong>Asset ID:</strong> <code>{selectedAsset.id}</code></div>
-                <div><strong>Product:</strong> {selectedAsset.product.replace(/_/g, ' ')}</div>
-                <div><strong>Format:</strong> {selectedAsset.format} ({selectedAsset.width}x{selectedAsset.height})</div>
-                <div><strong>Channel:</strong> {selectedAsset.channel}</div>
-                <div><strong>Language:</strong> {selectedAsset.language}</div>
-                <div><strong>Status:</strong> {selectedAsset.status}</div>
-                <div><strong>Quality Score:</strong> {selectedAsset.qualityScore}/100</div>
-                <div><strong>Storage Provider:</strong> {selectedAsset.storageProvider}</div>
+              {/* Media Player In Modal */}
+              <div style={{ background: '#0f172a', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px', textAlign: 'center' }}>
+                {selectedAsset.type === 'IMAGE' ? (
+                  <img
+                    src={selectedAsset.publicUrl || selectedAsset.thumbnailUrl}
+                    alt={selectedAsset.title}
+                    style={{ maxWidth: '100%', maxHeight: '360px', objectFit: 'contain' }}
+                  />
+                ) : (
+                  <video
+                    src={selectedAsset.publicUrl}
+                    poster={selectedAsset.thumbnailUrl || '/assets/avani_cibil_banner.png'}
+                    controls
+                    autoPlay={false}
+                    style={{ width: '100%', maxHeight: '360px' }}
+                  />
+                )}
               </div>
 
-              {selectedAsset.type === 'IMAGE' ? (
-                <div className="modal-section">
-                  <h4>Image Generation Specification</h4>
-                  <div className="code-block">{selectedAsset.prompt}</div>
-                  <p className="note-text">
-                    Brand: AVANI LOAN SERVICES • Founder: Sachin Shinde • Watermark: +91 91756 35165 • Web: avanifinserv.com
+              <div className="modal-meta-grid">
+                <div><strong>Asset ID:</strong> <code>{selectedAsset.id}</code></div>
+                <div><strong>Product:</strong> {selectedAsset.product ? selectedAsset.product.replace(/_/g, ' ') : 'General'}</div>
+                <div><strong>Format:</strong> {selectedAsset.format} ({selectedAsset.width}x{selectedAsset.height})</div>
+                <div><strong>Channel:</strong> {selectedAsset.channel || 'WEBSITE'}</div>
+                <div><strong>Language:</strong> {selectedAsset.language || 'en'}</div>
+                <div><strong>Status:</strong> {selectedAsset.status}</div>
+                <div><strong>Quality Score:</strong> {selectedAsset.qualityScore}/100</div>
+                <div><strong>Mime:</strong> {selectedAsset.mimeType || 'media'}</div>
+              </div>
+
+              {selectedAsset.caption && (
+                <div className="modal-section" style={{ marginTop: '16px' }}>
+                  <h4>Description & Narrative</h4>
+                  <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.5' }}>
+                    {selectedAsset.caption}
                   </p>
-                </div>
-              ) : (
-                <div className="modal-section">
-                  <h4>Video Storyboard & Beats</h4>
-                  {selectedAsset.script?.beats ? (
-                    <div className="video-beats-list">
-                      <div><strong>1. Hook (0-3s):</strong> {selectedAsset.script.beats.hook}</div>
-                      <div><strong>2. Problem (3-8s):</strong> {selectedAsset.script.beats.problem}</div>
-                      <div><strong>3. Solution (8-15s):</strong> {selectedAsset.script.beats.solution}</div>
-                      <div><strong>4. CTA (15-20s):</strong> {selectedAsset.script.beats.cta}</div>
-                      {selectedAsset.script.broll && <div><strong>B-Roll:</strong> {selectedAsset.script.broll}</div>}
-                    </div>
-                  ) : (
-                    <div className="code-block">{JSON.stringify(selectedAsset.script, null, 2)}</div>
-                  )}
                 </div>
               )}
             </div>
@@ -334,9 +358,9 @@ export default function AssetLibrary() {
               <button
                 type="button"
                 className="btn-modal-action btn-copy-full"
-                onClick={() => handleCopy(selectedAsset.prompt || JSON.stringify(selectedAsset.script), 'modal')}
+                onClick={() => handleCopy(selectedAsset.publicUrl, 'modal')}
               >
-                <Copy size={16} /> {copiedId === 'modal' ? 'Copied!' : 'Copy Full Spec'}
+                <Copy size={16} /> {copiedId === 'modal' ? 'Copied URL!' : 'Copy Media Link'}
               </button>
               {selectedAsset.status !== 'APPROVED_INTERNAL' ? (
                 <button

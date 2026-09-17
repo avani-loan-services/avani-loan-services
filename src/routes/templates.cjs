@@ -515,6 +515,21 @@ router.get('/export', async (req, res) => {
 
 // ── PHASE 3: MEDIA ASSETS, CAMPAIGNS & PUBLISHING QUEUE ─────────
 
+function sanitizeAssetForPublic(asset) {
+  if (!asset) return asset;
+  const safe = { ...asset };
+  if (typeof safe.storageKey === 'string' && (safe.storageKey.includes('C:') || safe.storageKey.includes('\\'))) {
+    safe.storageKey = safe.storageKey.replace(/\\/g, '/');
+    const idx = safe.storageKey.indexOf('public/media/');
+    if (idx !== -1) safe.storageKey = safe.storageKey.substring(idx);
+    else safe.storageKey = `public/media/${safe.type === 'VIDEO' ? 'videos' : 'images'}/${path.basename(safe.storageKey)}`;
+  }
+  if (typeof safe.sourcePath === 'string' && (safe.sourcePath.includes('C:') || safe.sourcePath.includes('\\'))) {
+    safe.sourcePath = `media/source/${safe.originalFilename || path.basename(safe.sourcePath)}`;
+  }
+  return safe;
+}
+
 // ── 19. GET /api/templates/assets (Query Media Assets) ──────────
 router.get('/assets', async (req, res) => {
   try {
@@ -524,11 +539,13 @@ router.get('/assets', async (req, res) => {
       assets = await queryMediaAssets(req.query);
     }
 
+    const sanitizedAssets = assets.map(sanitizeAssetForPublic);
+
     res.json({
       success: true,
       businessId: BUSINESS_IDENTITY.businessId,
-      count: assets.length,
-      assets
+      count: sanitizedAssets.length,
+      assets: sanitizedAssets
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -542,7 +559,7 @@ router.get('/assets/:assetId', async (req, res) => {
     if (!asset) {
       return res.status(404).json({ success: false, error: 'Media asset not found' });
     }
-    res.json({ success: true, asset });
+    res.json({ success: true, asset: sanitizeAssetForPublic(asset) });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -555,7 +572,12 @@ router.get('/assets/:assetId/stream', async (req, res) => {
     if (!asset) {
       return res.status(404).json({ success: false, error: 'Asset not found' });
     }
-    const targetPath = asset.sourcePath || asset.storageKey;
+    let targetPath = asset.storageKey ? path.resolve(process.cwd(), asset.storageKey) : null;
+    if (!targetPath || !fs.existsSync(targetPath)) {
+      if (asset.sourcePath && fs.existsSync(asset.sourcePath)) {
+        targetPath = asset.sourcePath;
+      }
+    }
     if (!targetPath || !fs.existsSync(targetPath)) {
       return res.status(404).json({ success: false, error: 'Physical media file not found on disk' });
     }

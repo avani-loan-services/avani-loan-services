@@ -2,65 +2,121 @@ import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin } from 'lucide-react';
 import './Footer.css';
 
-const FacebookIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>;
-const InstagramIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>;
-const LinkedinIcon = () => <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>;
+const FacebookIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
+);
+
+const LinkedinIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+  </svg>
+);
 
 import logo from '../assets/avani-brand-logo.png';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <footer className="footer">
       <div className="container">
-        <div className="footer-grid grid grid-4">
+        <div className="footer-nav-grid">
           
+          {/* Brand Col */}
           <div className="footer-col">
             <img src={logo} alt="Avani Loan Services" className="footer-logo" />
             <h3 className="footer-brand">Avani Loan Services</h3>
             <p className="footer-desc">
-              {t('footer_desc')}
+              {t('footer_desc') || 'Authoritative financial advisory, loan syndication, and credit architecture based in Latur, Maharashtra.'}
             </p>
             <div className="social-links">
-              <a href="https://www.facebook.com/share/17udSqXNrJ/" target="_blank" rel="noopener noreferrer" className="social-link"><FacebookIcon /></a>
-              <a href="https://www.instagram.com/avanifinservlatur?igsh=aGE5aHdzazN0OTk2" target="_blank" rel="noopener noreferrer" className="social-link"><InstagramIcon /></a>
-              <a href="#" className="social-link"><LinkedinIcon /></a>
+              <a href="https://www.facebook.com/share/17udSqXNrJ/" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Facebook">
+                <FacebookIcon />
+              </a>
+              <a href="https://www.instagram.com/avanifinservlatur?igsh=aGE5aHdzazN0OTk2" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="Instagram">
+                <InstagramIcon />
+              </a>
+              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="social-link" aria-label="LinkedIn">
+                <LinkedinIcon />
+              </a>
             </div>
           </div>
 
+          {/* 1. COMPANY */}
           <div className="footer-col">
-            <h4 className="footer-heading">{t('quick_links')}</h4>
+            <h4 className="footer-heading">Company</h4>
             <ul className="footer-links">
-              <li><Link to="/about">{t('about')}</Link></li>
-              <li><Link to="/loans">{t('all_loans')}</Link></li>
-              <li><Link to="/eligibility">{t('eligibility')}</Link></li>
-              <li><Link to="/documents">{t('documents')}</Link></li>
-              <li><Link to="/download-application">{t('download_app')}</Link></li>
-              <li><Link to="/calculators">Financial Calculators</Link></li>
-              <li><Link to="/blog">{t('blog')}</Link></li>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
             </ul>
           </div>
 
+          {/* 2. LOANS */}
           <div className="footer-col">
-            <h4 className="footer-heading">{t('loans')}</h4>
+            <h4 className="footer-heading">Loans</h4>
             <ul className="footer-links">
-              <li><Link to="/services/salary-loan">{language === 'en' ? 'Salary Loan' : language === 'mr' ? 'पगार कर्ज' : 'वेतन ऋण'}</Link></li>
-              <li><Link to="/services/business-loan">{language === 'en' ? 'Business Loan' : language === 'mr' ? 'व्यवसाय कर्ज' : 'व्यवसाय ऋण'}</Link></li>
-              <li><Link to="/services/education-loan">{language === 'en' ? 'Education Loan' : language === 'mr' ? 'शिक्षण कर्ज' : 'शिक्षा ऋण'}</Link></li>
-              <li><Link to="/services/home-loan">{language === 'en' ? 'Home Loan' : language === 'mr' ? 'घर कर्ज' : 'घर ऋण'}</Link></li>
-              <li><Link to="/services/chartered-accountant-loan">Chartered Accountant Loan</Link></li>
-               <li><Link to="/services/doctor-professional-loan">Doctor / Professional Loan</Link></li>
+              <li><Link to="/personal-loan">Personal Loan</Link></li>
+              <li><Link to="/business-loan">Business Loan</Link></li>
+              <li><Link to="/doctor-loan">Doctor Loan</Link></li>
+              <li><Link to="/home-loan">Home Loan</Link></li>
+              <li><Link to="/mortgage-loan">Mortgage Loan</Link></li>
+              <li><Link to="/education-loan">Education Loan</Link></li>
             </ul>
           </div>
 
+          {/* 3. FUNDING */}
           <div className="footer-col">
-            <h4 className="footer-heading">{t('contact_us')}</h4>
+            <h4 className="footer-heading">Funding</h4>
+            <ul className="footer-links">
+              <li><Link to="/school-funding">School Funding</Link></li>
+              <li><Link to="/college-funding">College Funding</Link></li>
+            </ul>
+          </div>
+
+          {/* 4. TOOLS */}
+          <div className="footer-col">
+            <h4 className="footer-heading">Tools</h4>
+            <ul className="footer-links">
+              <li><Link to="/eligibility">Eligibility Checker</Link></li>
+              <li><Link to="/cibil-check">CIBIL Check</Link></li>
+              <li><Link to="/calculators">Calculators</Link></li>
+              <li><Link to="/documents">Documents</Link></li>
+            </ul>
+          </div>
+
+          {/* 5. RESOURCES */}
+          <div className="footer-col">
+            <h4 className="footer-heading">Resources</h4>
+            <ul className="footer-links">
+              <li><Link to="/blog">Blog</Link></li>
+              <li><Link to="/catalog">Catalog</Link></li>
+              <li><Link to="/assets">Assets</Link></li>
+              <li><Link to="/templates">Templates</Link></li>
+              <li><Link to="/campaigns">Campaigns</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact Col */}
+          <div className="footer-col">
+            <h4 className="footer-heading">Contact Us</h4>
             <ul className="footer-contact">
               <li>
                 <MapPin size={18} className="contact-icon" />
-                <span>Old Barshi Road, 5 no Chauk, next to Sai School,<br />KulswaminiNagar, Latur-413531,<br />Maharashtra, India<br /><small>{language === 'en' ? 'Service Area: All Maharashtra' : language === 'mr' ? 'सेवा क्षेत्र: संपूर्ण महाराष्ट्र' : 'सेवा क्षेत्र: पूरे महाराष्ट्र'}</small></span>
+                <span>
+                  Old Barshi Road, 5 no Chauk, next to Sai School,<br />
+                  KulswaminiNagar, Latur-413531,<br />
+                  Maharashtra, India
+                </span>
               </li>
               <li>
                 <Phone size={18} className="contact-icon" />
@@ -76,9 +132,9 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Avani Loan Services. {t('rights_reserved')}</p>
+          <p>&copy; {new Date().getFullYear()} Avani Loan Services. All Rights Reserved. Founder: Sachin Shinde.</p>
           <div className="footer-bottom-links">
-            <Link to="/privacy">{language === 'en' ? 'Privacy Policy' : language === 'mr' ? 'गोपनीयता धोरण' : 'गोपनीयता नीति'}</Link>
+            <Link to="/privacy">Privacy Policy</Link>
           </div>
         </div>
       </div>
