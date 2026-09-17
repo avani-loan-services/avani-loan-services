@@ -6,10 +6,12 @@
 const mongoose = require('mongoose');
 const dns = require('dns');
 
-// Ensure SRV lookups resolve reliably on systems where local DNS forwarder refuses SRV queries
-try {
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
-} catch (e) {}
+// Ensure SRV lookups resolve reliably on systems where local DNS forwarder refuses SRV queries (e.g. Windows development)
+if (process.platform === 'win32' || !process.env.VERCEL) {
+  try {
+    dns.setServers(['8.8.8.8', '1.1.1.1']);
+  } catch (e) {}
+}
 
 // Vercel Serverless global connection & promise cache pattern
 let cached = global.mongoose;

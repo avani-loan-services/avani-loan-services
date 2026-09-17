@@ -11,21 +11,25 @@ const { verifyHubSpotWebhookRequest } = require('../utils/hubspotSignature.cjs')
 const WebhookInbox = require('../models/WebhookInbox.cjs');
 const {
   getDashboardMetrics,
+  getDashboardMetricsAsync,
   queryLeads,
+  queryLeadsAsync,
   transitionLeadStage,
   scheduleFollowUp,
   completeFollowUp
 } = require('../services/crmPipelineEngine.cjs');
-const { getLead, processIncomingLead, updateLead } = require('../services/centralLeadEngine.cjs');
+const { getLead, findLeadByIdAsync, processIncomingLead, updateLead } = require('../services/centralLeadEngine.cjs');
 const { evaluateQualification, getQualificationSchema } = require('../services/loanQualificationEngine.cjs');
 const { generateChecklistForLead, reviewDocument } = require('../services/documentWorkflowEngine.cjs');
 const { sendJourneyTemplate, handleCustomerEvent } = require('../services/whatsappJourneyEngine.cjs');
 const { runVoiceQualificationWorkflow } = require('../services/aiVoiceWorkflowEngine.cjs');
 
 // ── 1. GET /api/crm/dashboard ────────────────────────────────────
-router.get('/dashboard', (req, res) => {
+router.get('/dashboard', async (req, res) => {
   try {
-    const metrics = getDashboardMetrics();
+    const metrics = typeof getDashboardMetricsAsync === 'function'
+      ? await getDashboardMetricsAsync()
+      : getDashboardMetrics();
     res.json({ success: true, metrics });
   } catch (err) {
     console.error('[CRM Route] Dashboard error:', err.message);
@@ -34,9 +38,11 @@ router.get('/dashboard', (req, res) => {
 });
 
 // ── 2. GET /api/crm/leads (Query, Filter, Search, Paginate) ──────
-router.get('/leads', (req, res) => {
+router.get('/leads', async (req, res) => {
   try {
-    const result = queryLeads(req.query);
+    const result = typeof queryLeadsAsync === 'function'
+      ? await queryLeadsAsync(req.query)
+      : queryLeads(req.query);
     res.json({ success: true, ...result });
   } catch (err) {
     console.error('[CRM Route] Leads query error:', err.message);
@@ -45,9 +51,9 @@ router.get('/leads', (req, res) => {
 });
 
 // ── 3. GET /api/crm/leads/:id (Lead Details) ─────────────────────
-router.get('/leads/:id', (req, res) => {
+router.get('/leads/:id', async (req, res) => {
   try {
-    const lead = getLead(req.params.id);
+    const lead = (typeof findLeadByIdAsync === 'function' ? await findLeadByIdAsync(req.params.id) : null) || getLead(req.params.id);
     if (!lead) {
       return res.status(404).json({ success: false, error: 'Lead not found' });
     }

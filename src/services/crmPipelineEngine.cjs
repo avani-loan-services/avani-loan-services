@@ -4,7 +4,7 @@
 // AVANI LOAN SERVICES
 // ─────────────────────────────────────────────────────────────────
 
-const { getAllLeads, getLead, updateLead } = require('./centralLeadEngine.cjs');
+const { getAllLeads, getAllLeadsAsync, getLead, updateLead } = require('./centralLeadEngine.cjs');
 
 const PIPELINE_STAGES = [
   'NEW_LEAD',
@@ -172,10 +172,9 @@ function completeFollowUp(leadIdentifier, followUpId, outcome = '', notes = '') 
 }
 
 /**
- * Get comprehensive dashboard metrics
+ * Helper to compute dashboard metrics from a list of leads
  */
-function getDashboardMetrics() {
-  const leads = getAllLeads();
+function computeMetricsFromLeads(leads) {
   const now = new Date();
 
   const metrics = {
@@ -234,15 +233,30 @@ function getDashboardMetrics() {
 }
 
 /**
- * Filter, search, and paginate leads
+ * Get comprehensive dashboard metrics (Synchronous in-memory)
  */
-function queryLeads(params = {}) {
-  let leads = getAllLeads();
+function getDashboardMetrics() {
+  return computeMetricsFromLeads(getAllLeads());
+}
+
+/**
+ * Get comprehensive dashboard metrics (Asynchronous MongoDB Atlas + in-memory fallback)
+ */
+async function getDashboardMetricsAsync() {
+  const leads = typeof getAllLeadsAsync === 'function' ? await getAllLeadsAsync() : getAllLeads();
+  return computeMetricsFromLeads(leads);
+}
+
+/**
+ * Helper to filter, search, and paginate leads
+ */
+function filterAndPaginateLeads(leads, params = {}) {
+  let filtered = [...leads];
 
   // Search
   if (params.search) {
     const q = String(params.search).toLowerCase().trim();
-    leads = leads.filter(l =>
+    filtered = filtered.filter(l =>
       (l.leadId && l.leadId.toLowerCase().includes(q)) ||
       (l.fullName && l.fullName.toLowerCase().includes(q)) ||
       (l.mobile && l.mobile.includes(q)) ||
@@ -251,34 +265,34 @@ function queryLeads(params = {}) {
     );
   }
 
-  // Filter by status
-  if (params.status && params.status !== 'all') {
-    leads = leads.filter(l => l.status === params.status);
+  // Filter by stage
+  if (params.stage && params.stage !== 'all') {
+    filtered = filtered.filter(l => (l.status || 'NEW_LEAD') === params.stage);
   }
 
-  // Filter by loan product
+  // Filter by product
   if (params.loanProduct && params.loanProduct !== 'all') {
-    leads = leads.filter(l => (l.loanProduct === params.loanProduct || l.loanType === params.loanProduct));
+    filtered = filtered.filter(l => (l.loanProduct || l.loanType) === params.loanProduct);
   }
 
   // Filter by priority
   if (params.priority && params.priority !== 'all') {
-    leads = leads.filter(l => l.priority === params.priority);
+    filtered = filtered.filter(l => l.priority === params.priority);
   }
 
   // Filter by assigned advisor
   if (params.assignedAdvisor && params.assignedAdvisor !== 'all') {
-    leads = leads.filter(l => l.assignedAdvisor === params.assignedAdvisor);
+    filtered = filtered.filter(l => l.assignedAdvisor === params.assignedAdvisor);
   }
 
   // Sort (default newest first)
-  leads.sort((a, b) => new Date(b.createdAt || b.firstTouchDate || 0) - new Date(a.createdAt || a.firstTouchDate || 0));
+  filtered.sort((a, b) => new Date(b.createdAt || b.firstTouchDate || 0) - new Date(a.createdAt || a.firstTouchDate || 0));
 
-  const total = leads.length;
+  const total = filtered.length;
   const page = parseInt(params.page || '1', 10);
   const limit = parseInt(params.limit || '50', 10);
   const offset = (page - 1) * limit;
-  const paginated = leads.slice(offset, offset + limit);
+  const paginated = filtered.slice(offset, offset + limit);
 
   return {
     total,
@@ -289,6 +303,21 @@ function queryLeads(params = {}) {
   };
 }
 
+/**
+ * Filter, search, and paginate leads (Synchronous in-memory)
+ */
+function queryLeads(params = {}) {
+  return filterAndPaginateLeads(getAllLeads(), params);
+}
+
+/**
+ * Filter, search, and paginate leads (Asynchronous MongoDB Atlas + in-memory fallback)
+ */
+async function queryLeadsAsync(params = {}) {
+  const leads = typeof getAllLeadsAsync === 'function' ? await getAllLeadsAsync() : getAllLeads();
+  return filterAndPaginateLeads(leads, params);
+}
+
 module.exports = {
   PIPELINE_STAGES,
   ALLOWED_TRANSITIONS,
@@ -296,5 +325,8 @@ module.exports = {
   scheduleFollowUp,
   completeFollowUp,
   getDashboardMetrics,
-  queryLeads
+  getDashboardMetricsAsync,
+  queryLeads,
+  queryLeadsAsync
 };
+

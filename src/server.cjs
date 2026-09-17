@@ -1,4 +1,5 @@
 // src/server.cjs – main Express server entry point
+require('dotenv').config({ path: '.env.local' });
 require('dotenv').config();
 const express  = require('express');
 const path     = require('path');
