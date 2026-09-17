@@ -40,6 +40,7 @@ function fetchRoute(path) {
           status: res.statusCode,
           contentType: res.headers['content-type'],
           length: data.length,
+          fullBody: data,
           bodySnippet: data.substring(0, 300)
         });
       });
@@ -73,9 +74,14 @@ async function runLiveAudit() {
   // Check home page SEO elements
   console.log('\n--- VERIFYING LIVE SEO & CANONICAL TAGS ---');
   const home = await fetchRoute('/');
-  const hasCanonical = home.bodySnippet.includes('rel="canonical"') || (await fetchRoute('/')).bodySnippet.includes('canonical');
-  console.log(`  • Canonical Tag Present: ${home.bodySnippet.includes('canonical') ? '✅ YES' : '❌ NO'}`);
-  console.log(`  • Title Tag Present: ${home.bodySnippet.includes('<title>') ? '✅ YES' : '❌ NO'}`);
+  const hasCanonical = home.fullBody.includes('rel="canonical"');
+  const hasTitle = home.fullBody.includes('<title');
+  const hasOgImage = home.fullBody.includes('og:image');
+  const hasTwitter = home.fullBody.includes('twitter:card');
+  console.log(`  • Canonical Tag Present: ${hasCanonical ? '✅ YES' : '❌ NO'}`);
+  console.log(`  • Title Tag Present: ${hasTitle ? '✅ YES' : '❌ NO'}`);
+  console.log(`  • OG Image Present: ${hasOgImage ? '✅ YES' : '❌ NO'}`);
+  console.log(`  • Twitter Card Present: ${hasTwitter ? '✅ YES' : '❌ NO'}`);
 
   console.log('\n--- VERIFYING LIVE /api/health ---');
   const healthRes = await fetchRoute('/api/health');
