@@ -1,0 +1,46 @@
+{
+  "fixtureId": "SYNTH-001",
+  "applicantName": "Dr. Aarav Deshmukh",
+  "mobile": "919876543210",
+  "pan": "ABCDE1234F",
+  "aadhaar": "999988887777",
+  "bankAccountNumber": "100200300400",
+  "bankName": "State Bank of India",
+  "city": "Latur",
+  "geography": "MAHARASHTRA",
+  "employmentType": "SELF_EMPLOYED_PROFESSIONAL",
+  "profession": "DOCTOR",
+  "loanProduct": "DOCTOR_LOAN",
+  "monthlyIncome": 120000,
+  "existingMonthlyObligations": 15000,
+  "requestedLoanAmount": 2500000,
+  "requestedTenureMonths": 60,
+  "cibilScore": 780,
+  "dpdLast12Months": 0,
+  "ageYears": 35,
+  "consentGranted": true,
+  "optInGiven": true,
+  "transactions": [
+    {
+      "date": "2026-08-01",
+      "narration": "CONSULTING FEES CREDIT",
+      "credit": 60000,
+      "debit": 0,
+      "balance": 120000
+    },
+    {
+      "date": "2026-08-15",
+      "narration": "HOSPITAL RETAINERSHIP SALARY CR",
+      "credit": 60000,
+      "debit": 0,
+      "balance": 180000
+    },
+    {
+      "date": "2026-08-18",
+      "narration": "CAR LOAN EMI HDFC",
+      "credit": 0,
+      "debit": 15000,
+      "balance": 165000
+    }
+  ]
+}

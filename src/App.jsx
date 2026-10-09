@@ -86,6 +86,7 @@ export default function App() {
               <Route path="/admin" element={<PasswordGate pageTitle="Executive Operations Dashboard"><AdminDashboard /></PasswordGate>} />
               <Route path="/admin-eligibility" element={<PasswordGate pageTitle="Eligibility Admin Panel"><AdminEligibility /></PasswordGate>} />
               <Route path="/catalog" element={<Catalog />} />
+              <Route path="/loan-products" element={<Catalog />} />
               <Route path="/apply" element={<ProductApply />} />
               <Route path="/apply/:productSlug" element={<ProductApply />} />
 

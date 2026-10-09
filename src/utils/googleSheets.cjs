@@ -72,7 +72,7 @@ async function appendRowToGoogleSheet(row) {
   try {
     const { google } = require('googleapis');
     const auth = new google.auth.GoogleAuth({
-      keyFile,
+      keyFile: keyFilePath,
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     });
     const client = await auth.getClient();

@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Build outputs
 node_modules
 dist
 dist-ssr
@@ -23,25 +24,48 @@ dist-ssr
 *.sln
 *.sw?
 
+# Vercel and Environment Configs
 .vercel
+.vercel/
 .env
 .env.*
+.env*.local
+*.env
 !.env.example
 backend/.env
 
-# Ignore generated reference data & sensitive keys
+# Archives & Backups
+*.rar
+*.zip
+*.7z
+*.tar.gz
+
+
+# Sensitive Directories & Operational Data
 Ref Data/
 uploads/
 scratch/
+eligibility calculation sheet/
+migration-forensics/
+SAFE-MIGRATION-BACKUP/
+
+# Data Files & Spreadsheets
+*.csv
+*.xlsx
+*.xls
+*.pdf
+*.doc
+*.docx
+
+# Keys, Tokens, and Credentials
 config/*.json
 *.json.key
 *token*.txt
 *key*.txt
 *Token*.txt
+*.key
+*.pem
+*.p12
+*.pfx
+service-account*.json
 avani-loan-service-*.json
-
-# IDE / OS specific files
-.vscode/
-.DS_Store
-
-.env*

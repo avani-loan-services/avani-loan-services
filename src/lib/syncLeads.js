@@ -5,12 +5,16 @@ const getEnvVar = (key, fallback = '') => {
     if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
       return import.meta.env[key];
     }
-  } catch (e) {}
+  } catch {
+    // ignore browser environment check failure
+  }
   try {
     if (typeof process !== 'undefined' && process.env && process.env[key]) {
       return process.env[key];
     }
-  } catch (e) {}
+  } catch {
+    // ignore node process check failure
+  }
   return fallback;
 };
 

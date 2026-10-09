@@ -1,509 +1,655 @@
+// src/pages/Catalog.jsx
+// ─────────────────────────────────────────────────────────────────
+// AVANI LOAN SERVICES — Comprehensive Loan Product Catalog
+// Production Responsive Implementation
+// ─────────────────────────────────────────────────────────────────
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import useSEO from '../hooks/useSEO';
-import { Link } from 'react-router-dom';
-import brandLogo from '../assets/avani-brand-logo.png';
-import personalImg from '../assets/personal-loan.png';
-import businessImg from '../assets/business-loan.png';
-import educationImg from '../assets/education-loan.png';
-import homeImg from '../assets/home-loan.png';
-import mortgageImg from '../assets/mortgage-loan.png';
+import {
+  CATALOG_CATEGORIES,
+  CATALOG_PRODUCTS,
+  GENERAL_DOCUMENTS,
+  CATALOG_FAQS
+} from '../data/catalogProducts';
+import ProductCard from '../components/catalog/ProductCard';
+import DocumentModal from '../components/catalog/DocumentModal';
+import {
+  ShieldCheck,
+  Phone,
+  Mail,
+  MapPin,
+  MessageCircle,
+  ArrowRight,
+  FileText,
+  CheckCircle2,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Building2,
+  Clock,
+  Compass,
+  Users,
+  Award,
+  ExternalLink
+} from 'lucide-react';
 import './Catalog.css';
 
-// SVGs
-const ApplyIcon = () => (
-  <svg viewBox="0 0 24 24" className="btn-icon"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+const FacebookIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
 );
-const DocIcon = () => (
-  <svg viewBox="0 0 24 24" className="btn-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><polyline points="10 9 9 9 8 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
-);
-const WaIcon = () => (
-  <svg viewBox="0 0 24 24" className="btn-icon"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
 );
 
 export default function Catalog() {
-  useSEO({ title: 'Product Catalog - Avani Loan Services', description: 'Professional product catalog for Avani Loan Services.', keywords: 'Catalog, Loan, Avani Finserv, Latur' });
+  // ── SEO & Meta ──
+  useSEO({
+    title: 'Loan Products & Loan Consultancy Services in Latur & Maharashtra | AVANI LOAN SERVICES',
+    description: 'Explore Personal, Business, Doctor, Home, Mortgage, Education, School & College Funding and professional loan consultancy services from AVANI LOAN SERVICES in Latur and across Maharashtra.',
+    keywords: 'loan consultancy Latur, loan services Latur, personal loan Latur, business loan Latur, home loan Latur, education loan Latur, loan consultancy Maharashtra, business loan Maharashtra, education loan Maharashtra, mortgage loan Latur, doctor loan, CA professional loan, CIBIL guidance',
+    canonical: 'https://www.avanifinserv.com/catalog'
+  });
+
+  // ── State Management ──
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [expandedCards, setExpandedCards] = useState({});
+  const [selectedDocProduct, setSelectedDocProduct] = useState(null);
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const location = useLocation();
+
+  // Scroll to hash on load if present
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.querySelector(location.hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [location.hash]);
+
+  // Filter products by selected category
+  const filteredProducts = useMemo(() => {
+    if (activeCategory === 'all') return CATALOG_PRODUCTS;
+    return CATALOG_PRODUCTS.filter(p => p.category === activeCategory);
+  }, [activeCategory]);
+
+  const toggleExpand = (productId) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [productId]: !prev[productId]
+    }));
+  };
+
+  const handleOpenDocuments = (product = null) => {
+    setSelectedDocProduct(product);
+    setIsDocModalOpen(true);
+  };
+
+  const handleToggleFaq = (index) => {
+    setOpenFaq(prev => (prev === index ? null : index));
+  };
+
+  // Structured Data (Schema.org)
+  const jsonLdData = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://www.avanifinserv.com/#organization",
+          "name": "AVANI LOAN SERVICES",
+          "url": "https://www.avanifinserv.com/",
+          "telephone": "+91-9175635165",
+          "email": "enquiry@avanifinserv.com",
+          "founder": {
+            "@type": "Person",
+            "name": "Sachin Shinde"
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Old Barshi Road, 5 No Chauk, Kulswamini Nagar, Next to Sai School",
+            "addressLocality": "Latur",
+            "addressRegion": "Maharashtra",
+            "postalCode": "413512",
+            "addressCountry": "IN"
+          },
+          "sameAs": [
+            "https://www.facebook.com/share/19Pvp8PqP2/",
+            "https://www.instagram.com/avanifinservlatur/"
+          ]
+        },
+        {
+          "@type": "Service",
+          "serviceType": "Loan Consultancy & Advisory Services",
+          "provider": {
+            "@id": "https://www.avanifinserv.com/#organization"
+          },
+          "areaServed": [
+            { "@type": "City", "name": "Latur" },
+            { "@type": "State", "name": "Maharashtra" }
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "AVANI LOAN SERVICES Loan Product Portfolio",
+            "itemListElement": CATALOG_PRODUCTS.map((prod) => ({
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "FinancialProduct",
+                "name": prod.title,
+                "description": prod.shortDescription,
+                "category": prod.categoryLabel
+              }
+            }))
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": CATALOG_FAQS.map(faq => ({
+            "@type": "Question",
+            "name": faq.q,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.a
+            }
+          }))
+        }
+      ]
+    };
+  }, []);
 
   return (
-    <div className="catalog-wrapper">
-      <div className="page-wrap">
-        
-        {/* COVER PAGE */}
-        <div className="cover">
-          <div className="cover-bg"></div>
-          <div className="cover-overlay"></div>
-          <div className="cover-circle1"></div><div className="cover-circle2"></div><div className="cover-circle3"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          
-          <div className="cover-inner">
-            <div className="cover-header">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light">Avani Loan Services</div>
-                  <div className="logo-sub-light">Trusted DSA &middot; Latur</div>
-                </div>
-              </div>
-              <div className="cover-badge">Product Catalog 2026-27</div>
-            </div>
-            
-            <div className="cover-hero">
-              <div className="cover-eyebrow">Trust &middot; Speed &middot; Transparency</div>
-              <div className="cover-title">
-                Premium<br/>
-                <span className="t-gold">Financial</span><br/>
-                <span className="t-blue">Services</span>
-              </div>
-              <div className="cover-div"></div>
-              <div className="cover-desc">
-                From Latur to all over Maharashtra. We offer premium Personal, Business, Education, Home, and Mortgage Loans. Certified DSA partners with major nationalized banks.
-              </div>
-              <div className="cover-services-grid">
-                <div className="cover-chip"><span className="chip-dot"></span>Personal Loan</div>
-                <div className="cover-chip"><span className="chip-dot"></span>Business Loan</div>
-                <div className="cover-chip"><span className="chip-dot"></span>Education Loan</div>
-                <div className="cover-chip"><span className="chip-dot"></span>Home Loan</div>
-                <div className="cover-chip"><span className="chip-dot"></span>Mortgage / LAP</div>
-                <div className="cover-chip"><span className="chip-dot"></span>CIBIL Improvement</div>
-                <div className="cover-chip"><span className="chip-dot"></span>CA Loan</div>
-                <div className="cover-chip"><span className="chip-dot"></span>Professional Loan</div>
-              </div>
-            </div>
-            
-            <div className="cover-footer">
-              <div className="cover-contacts">
-                <div><div className="cinfo-label">Website</div><div className="cinfo-val">avanifinserv.com</div></div>
-                <div><div className="cinfo-label">Email</div><div className="cinfo-val">enquiry@avanifinserv.com</div></div>
-                <div><div className="cinfo-label">Location</div><div className="cinfo-val">Latur, Maharashtra, India</div></div>
-              </div>
-              <div>
-                <div className="cover-owner-name">Sachin Shinde</div>
-                <div className="cover-owner-role">Founder & Director</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="catalog-page">
+      {/* Schema.org Structured Data */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }} />
 
-        {/* SCARD 1: Personal Loan */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${personalImg})` }}></div>
-          <div className="scard-overlay-left"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">01</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">01 / 07</div>
-            </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">Salary<br/>Loan</div>
-              <div className="scard-subtitle">Fast personal loans for salaried employees.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Our Personal Loans are designed to meet your immediate financial needs. Whether it's a medical emergency, a wedding, or a dream vacation, we offer quick disbursements with minimal paperwork.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: Up to ₹50L</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: 10.5% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 5 Years</div></div>
-                <div className="feat"><div className="feat-txt">Processing: 48 Hours</div></div>
-                <div className="feat"><div className="feat-txt">No Collateral Required</div></div>
-                <div className="feat"><div className="feat-txt">Flexible Repayment Options</div></div>
-              </div>
-            </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20a%20Salary%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
-              </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
-            </div>
+      {/* ══════════════════════════════════════════════
+          SECTION 1 — HERO SECTION
+      ══════════════════════════════════════════════ */}
+      <section className="cat-hero">
+        <div className="cat-hero-bg-accent"></div>
+        <div className="container cat-hero-container">
+          <div className="cat-hero-badge">
+            <Sparkles size={15} />
+            <span>Financial Services & Loan Advisory</span>
           </div>
-        </div>
 
-        {/* SCARD 2: Business Loan */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${businessImg})` }}></div>
-          <div className="scard-overlay-right"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">02</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">02 / 07</div>
-            </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">Business<br/>Loan</div>
-              <div className="scard-subtitle">Fuel your business growth with unsecured capital.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Avani Loan Services provides quick business loans for MSMEs and entrepreneurs. Enhance your working capital, expand operations, or purchase new equipment with ease.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: Up to ₹2Cr</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: 12% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 5 Years</div></div>
-                <div className="feat"><div className="feat-txt">Quick Assessment & Approval</div></div>
-                <div className="feat"><div className="feat-txt">Minimal Documentation</div></div>
-                <div className="feat"><div className="feat-txt">Support for SMEs</div></div>
-              </div>
-            </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20a%20Business%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
-              </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* SCARD 3: Education Loan */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${educationImg})` }}></div>
-          <div className="scard-overlay-left"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">03</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">03 / 07</div>
-            </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">Education<br/>Loan</div>
-              <div className="scard-subtitle">Empowering students for a brighter future.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Study in India or abroad without financial worries. We help students cover tuition fees, accommodation, and travel expenses with flexible repayment terms.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: Up to ₹1.5Cr</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: 8.15% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 15 Years</div></div>
-                <div className="feat"><div className="feat-txt">100% Finance Available</div></div>
-                <div className="feat"><div className="feat-txt">For India & Overseas Studies</div></div>
-                <div className="feat"><div className="feat-txt">Moratorium Period Options</div></div>
-              </div>
-            </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20an%20Education%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
-              </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* SCARD 4: Home Loan */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${homeImg})` }}></div>
-          <div className="scard-overlay-right"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">04</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">04 / 07</div>
-            </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">Home<br/>Loan</div>
-              <div className="scard-subtitle">Turn your dream home into reality.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Looking to buy your first home or construct on a plot? Avani Loan Services connects you with top banks for the best home loan rates, longest tenures, and simplest processing.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: As per eligibility</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: 8.5% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 30 Years</div></div>
-                <div className="feat"><div className="feat-txt">For Purchase & Construction</div></div>
-                <div className="feat"><div className="feat-txt">Low Processing Fees</div></div>
-                <div className="feat"><div className="feat-txt">PMAY Subsidy Assistance</div></div>
-              </div>
-            </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20a%20Home%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
-              </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
-            </div>
-          </div>
-        </div>
+          <h1 className="cat-hero-headline">
+            Find the Right Loan for Your Financial Goals
+          </h1>
 
-        {/* SCARD 5: Mortgage / LAP */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${mortgageImg})` }}></div>
-          <div className="scard-overlay-left"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">05</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">05 / 07</div>
+          <p className="cat-hero-subtext">
+            AVANI LOAN SERVICES provides professional loan consultancy and advisory support for individuals, professionals, businesses, property buyers and students across Latur and Maharashtra.
+          </p>
+
+          <div className="cat-hero-ctas">
+            {/* Primary CTA */}
+            <Link to="/contact" className="btn btn-primary cat-btn-hero-primary" id="hero-apply-btn">
+              <span>Apply Now</span>
+              <ArrowRight size={18} />
+            </Link>
+
+            {/* Secondary CTA */}
+            <a
+              href="https://wa.me/919175635165?text=Hello%20AVANI%20LOAN%20SERVICES%2C%20I%20would%20like%20to%20consult%20with%20an%20advisor%20regarding%20loan%20options."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn cat-btn-hero-wa"
+              id="hero-wa-btn"
+            >
+              <MessageCircle size={18} />
+              <span>WhatsApp an Advisor</span>
+            </a>
+
+            {/* Third CTA */}
+            <Link to="/apply" className="btn btn-outline cat-btn-hero-eligibility" id="hero-eligibility-btn">
+              <ShieldCheck size={18} />
+              <span>Check Eligibility</span>
+            </Link>
+          </div>
+
+          <div className="cat-hero-features-strip">
+            <div className="cat-strip-item">
+              <Compass size={18} className="cat-strip-icon" />
+              <span>Expert Multi-Bank Guidance</span>
             </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">Mortgage<br/>LAP</div>
-              <div className="scard-subtitle">Unlock the hidden value of your property.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Use your residential or commercial property to get a high-value loan at affordable rates. Perfect for business expansion, debt consolidation, or massive personal expenses.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: Up to 70% of Property</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: 9.0% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 15 Years</div></div>
-                <div className="feat"><div className="feat-txt">Quick Property Valuation</div></div>
-                <div className="feat"><div className="feat-txt">Residential & Commercial</div></div>
-                <div className="feat"><div className="feat-txt">Maximum Funds, Lower EMI</div></div>
-              </div>
+            <div className="cat-strip-item">
+              <MapPin size={18} className="cat-strip-icon" />
+              <span>Latur & All Maharashtra Support</span>
             </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20a%20Mortgage%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
-              </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
+            <div className="cat-strip-item">
+              <FileText size={18} className="cat-strip-icon" />
+              <span>Doorstep Documentation</span>
+            </div>
+            <div className="cat-strip-item">
+              <Clock size={18} className="cat-strip-icon" />
+              <span>Fast Processing Support*</span>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* SCARD 6: CA Loan */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${businessImg})` }}></div>
-          <div className="scard-overlay-right"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">06</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">06 / 07</div>
+      {/* ══════════════════════════════════════════════
+          SECTION 2 — QUICK PRODUCT NAVIGATION / FILTERS
+      ══════════════════════════════════════════════ */}
+      <section className="cat-nav-section" id="product-nav">
+        <div className="container">
+          <div className="cat-nav-header">
+            <h2 className="cat-nav-title">Browse Our Loan Products ({CATALOG_PRODUCTS.length})</h2>
+            <p className="cat-nav-subtitle">Filter by category to explore targeted loan options and documentation requirements.</p>
+          </div>
+
+          <div className="cat-category-pills" role="tablist" aria-label="Loan Categories">
+            {CATALOG_CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                role="tab"
+                aria-selected={activeCategory === cat.id}
+                className={`cat-pill ${activeCategory === cat.id ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat.id)}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          SECTION 3 & 4 — PRODUCT CARDS & DETAILS GRID
+      ══════════════════════════════════════════════ */}
+      <section className="cat-grid-section">
+        <div className="container">
+          <div className="cat-products-grid">
+            {filteredProducts.map(product => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isExpanded={!!expandedCards[product.id]}
+                onToggleExpand={toggleExpand}
+                onOpenDocuments={handleOpenDocuments}
+              />
+            ))}
+          </div>
+
+          {filteredProducts.length === 0 && (
+            <div className="cat-no-results glass-card">
+              <p>No products found in this category.</p>
+              <button className="btn btn-primary" onClick={() => setActiveCategory('all')}>
+                Show All Loan Products
+              </button>
             </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">CA<br/>Loan</div>
-              <div className="scard-subtitle">Exclusive professional loans for Chartered Accountants.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Tailor-made financial solutions for CAs to expand their practice, set up new offices, or meet personal goals without requiring collateral.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: Up to ₹1Cr</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: From 10.25% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 5 Years</div></div>
-                <div className="feat"><div className="feat-txt">No Collateral Needed</div></div>
-                <div className="feat"><div className="feat-txt">Customized Limits on COP</div></div>
-                <div className="feat"><div className="feat-txt">Quick Approval Process</div></div>
+          )}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          SECTION 5 — TRUST SECTION (WHY CHOOSE US)
+      ══════════════════════════════════════════════ */}
+      <section className="cat-trust-section">
+        <div className="container">
+          <div className="section-header text-center">
+            <span className="badge">Transparent & Compliant</span>
+            <h2 className="section-title">Why Choose AVANI LOAN SERVICES?</h2>
+            <p className="section-subtitle">
+              We provide factual, ethical loan consultancy. We partner with you to find the most suitable lender match without exaggerated claims or false guarantees.
+            </p>
+          </div>
+
+          <div className="trust-cards-grid">
+            <div className="trust-card glass-card">
+              <div className="trust-icon-box">
+                <Compass size={28} />
               </div>
+              <h3 className="trust-card-title">Loan Consultancy & Advisory</h3>
+              <p className="trust-card-desc">
+                Unbiased loan consultancy evaluating options across 40+ nationalized banks, private banks, and leading NBFCs.
+              </p>
             </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20a%20CA%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
+
+            <div className="trust-card glass-card">
+              <div className="trust-icon-box">
+                <Award size={28} />
               </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
+              <h3 className="trust-card-title">Product-Wise Guidance</h3>
+              <p className="trust-card-desc">
+                Specialized advisory structures for Salaried Employees, Business Owners, Doctors, CAs, and Educational Institutions.
+              </p>
+            </div>
+
+            <div className="trust-card glass-card">
+              <div className="trust-icon-box">
+                <FileText size={28} />
+              </div>
+              <h3 className="trust-card-title">Documentation Assistance</h3>
+              <p className="trust-card-desc">
+                Careful pre-scrutiny of bank statements, ITRs, KYC, and property papers to ensure error-free file presentation.
+              </p>
+            </div>
+
+            <div className="trust-card glass-card">
+              <div className="trust-icon-box">
+                <ShieldCheck size={28} />
+              </div>
+              <h3 className="trust-card-title">Eligibility & Profile Matching</h3>
+              <p className="trust-card-desc">
+                Detailed FOIR and income analysis before application, minimizing file rejections and protecting your credit score.
+              </p>
+            </div>
+
+            <div className="trust-card glass-card">
+              <div className="trust-icon-box">
+                <Building2 size={28} />
+              </div>
+              <h3 className="trust-card-title">Rooted in Latur, Serving Maharashtra</h3>
+              <p className="trust-card-desc">
+                Physical presence on Old Barshi Road, Latur with prompt digital and doorstep assistance across all districts of Maharashtra.
+              </p>
+            </div>
+
+            <div className="trust-card glass-card">
+              <div className="trust-icon-box">
+                <Clock size={28} />
+              </div>
+              <h3 className="trust-card-title">Fast Processing Support*</h3>
+              <p className="trust-card-desc">
+                Fast processing support — subject to lender eligibility, documentation, credit underwriting, and final approval.
+              </p>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* SCARD 7: Doctor / Professional Loan */}
-        <div className="scard">
-          <div className="scard-photo" style={{ backgroundImage: `url(${businessImg})` }}></div>
-          <div className="scard-overlay-left"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="scard-num-bg">07</div>
-          
-          <div className="scard-inner">
-            <div className="scard-top">
-              <div className="logo-wrap">
-                <div className="logo-txt">
-                  <div className="logo-name-light" style={{ fontSize: '18px' }}>Avani Loan Services</div>
-                  <div className="logo-sub-light">avanifinserv.com</div>
-                </div>
-              </div>
-              <div className="scard-seq">07 / 07</div>
+      {/* ══════════════════════════════════════════════
+          SECTION 6 — 5-STEP LOAN ASSISTANCE PROCESS
+      ══════════════════════════════════════════════ */}
+      <section className="cat-process-section">
+        <div className="container">
+          <div className="section-header text-center">
+            <span className="badge">Step-by-Step Pathway</span>
+            <h2 className="section-title">Simple Loan Assistance Process</h2>
+            <p className="section-subtitle">
+              A transparent 5-step advisory journey from initial requirement to loan sanction.
+            </p>
+          </div>
+
+          <div className="process-timeline">
+            <div className="process-step-item">
+              <div className="process-step-badge">1</div>
+              <h3 className="process-step-title">Tell Us Your Requirement</h3>
+              <p className="process-step-desc">
+                Select your loan product and submit an online enquiry, or chat with our team on WhatsApp.
+              </p>
             </div>
-            
-            <div className="scard-body">
-              <div className="scard-title">Pro<br/>Loan</div>
-              <div className="scard-subtitle">For Doctors and Certified Professionals.</div>
-              <div className="scard-sep"></div>
-              <div className="scard-desc">Expand your clinic or professional practice. Get customized funding for equipment purchase, working capital, or personal needs with flexible repayment.</div>
-              <div className="features">
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Loan Amount: Up to ₹1Cr</div></div>
-                <div className="feat"><div className="feat-dot"></div><div className="feat-txt">Interest Rate: From 10.25% p.a.</div></div>
-                <div className="feat"><div className="feat-txt">Tenure: Up to 7 Years</div></div>
-                <div className="feat"><div className="feat-txt">No Collateral for Equipment</div></div>
-                <div className="feat"><div className="feat-txt">Special Rates for Doctors</div></div>
-                <div className="feat"><div className="feat-txt">Flexible EMIs</div></div>
-              </div>
+
+            <div className="process-step-item">
+              <div className="process-step-badge">2</div>
+              <h3 className="process-step-title">Eligibility Assessment</h3>
+              <p className="process-step-desc">
+                Our loan advisors evaluate your income, existing obligations, profile, and borrowing capacity.
+              </p>
             </div>
-            
-            <div className="scard-footer">
-              <div className="btn-group">
-                <Link to="/contact" className="cta-btn">
-                  Apply Now <ApplyIcon />
-                </Link>
-                <Link to="/documents" className="cta-btn-outline">
-                  View Documents <DocIcon />
-                </Link>
-                <a href="https://wa.me/919175635165?text=Hello!%20I'm%20interested%20in%20a%20Professional%20Loan." className="cta-btn-wa" target="_blank" rel="noopener noreferrer">
-                  WhatsApp Us <WaIcon />
-                </a>
-              </div>
-              <div className="scard-url">enquiry@avanifinserv.com &nbsp;|&nbsp; Latur, Maharashtra</div>
+
+            <div className="process-step-item">
+              <div className="process-step-badge">3</div>
+              <h3 className="process-step-title">Documentation</h3>
+              <p className="process-step-desc">
+                Submit the required KYC, financial statements, and property/academic documents for preliminary check.
+              </p>
+            </div>
+
+            <div className="process-step-item">
+              <div className="process-step-badge">4</div>
+              <h3 className="process-step-title">Lender Evaluation</h3>
+              <p className="process-step-desc">
+                Your file is submitted to the chosen partner bank or NBFC for formal credit appraisal and verification.
+              </p>
+            </div>
+
+            <div className="process-step-item">
+              <div className="process-step-badge">5</div>
+              <h3 className="process-step-title">Decision / Disbursement</h3>
+              <p className="process-step-desc">
+                Sanction letter is issued and funds disbursed into your account, subject to lender approval and terms.
+              </p>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* CONTACT PAGE */}
-        <div className="cpage">
-          <div className="cpage-bg"></div>
-          <div className="cpage-left-strip"></div>
-          <div className="gold-bar-top"></div><div className="gold-bar-bot"></div>
-          <div className="cpage-inner">
-            <div className="cpage-header">
-              <div>
-                <div className="cpage-eyebrow">Ready for Financial Growth?</div>
-                <div className="cpage-title">Contact <span className="t-gold">Us</span></div>
+      {/* ══════════════════════════════════════════════
+          SECTION 7 — COMPREHENSIVE DOCUMENTS SECTION
+      ══════════════════════════════════════════════ */}
+      <section className="cat-docs-section" id="documents">
+        <div className="container">
+          <div className="section-header text-center">
+            <span className="badge">Documentation Guidance</span>
+            <h2 className="section-title">General Documents Checklist by Profile</h2>
+            <p className="section-subtitle">
+              Keep these documents handy to ensure a smooth, prompt loan evaluation experience.
+            </p>
+          </div>
+
+          <div className="docs-profile-grid">
+            {GENERAL_DOCUMENTS.map((grp, gIdx) => (
+              <div key={gIdx} className="docs-profile-card glass-card">
+                <div className="docs-profile-header">
+                  <h3 className="docs-profile-title">{grp.category}</h3>
+                  <span className="docs-profile-sub">{grp.subtitle}</span>
+                </div>
+                <ul className="docs-profile-list">
+                  {grp.documents.map((d, dIdx) => (
+                    <li key={dIdx} className="docs-profile-item">
+                      <CheckCircle2 size={16} className="docs-profile-icon" />
+                      <span>{d}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="cpage-img" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=600&q=80')" }}></div>
+            ))}
+          </div>
+
+          <div className="docs-compliance-alert">
+            <ShieldCheck size={24} className="docs-alert-icon" />
+            <div>
+              <strong>Important Documentation Notice:</strong>
+              <p>
+                Exact documents vary by product, applicant profile and lender. This is a general checklist, not a final lender-specific document list. Specific lenders may request additional verifications, bank account statements, or title reports.
+              </p>
             </div>
-            <div className="cpage-grid">
-              {/* Contact Details */}
-              <div>
-                <div className="csect-title">Avani Loan Services</div>
-                
-                <div className="cinfo">
-                  <div className="cinfo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" strokeLinejoin="round"/><circle cx="12" cy="10" r="3" strokeLinejoin="round"/></svg>
+          </div>
+
+          <div className="docs-action-center text-center">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => handleOpenDocuments(null)}
+            >
+              <FileText size={18} />
+              <span>Open Interactive Document Vault</span>
+            </button>
+            <a
+              href="https://wa.me/919175635165?text=Hello%20AVANI%20LOAN%20SERVICES%2C%20please%20send%20me%20the%20complete%20verified%20documents%20checklist."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn cat-btn-hero-wa"
+            >
+              <MessageCircle size={18} />
+              <span>Request Checklist on WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          SECTION 8 — PRODUCT FAQS (ACCORDION)
+      ══════════════════════════════════════════════ */}
+      <section className="cat-faq-section" id="faqs">
+        <div className="container">
+          <div className="section-header text-center">
+            <span className="badge">Frequently Asked Questions</span>
+            <h2 className="section-title">Common Questions About Our Services</h2>
+            <p className="section-subtitle">
+              Get direct, transparent answers to questions regarding eligibility, processing, and our advisory role.
+            </p>
+          </div>
+
+          <div className="cat-faq-accordion">
+            {CATALOG_FAQS.map((faq, fIdx) => (
+              <div key={fIdx} className={`faq-item glass-card ${openFaq === fIdx ? 'faq-open' : ''}`}>
+                <button
+                  type="button"
+                  className="faq-question-btn"
+                  onClick={() => handleToggleFaq(fIdx)}
+                  aria-expanded={openFaq === fIdx}
+                >
+                  <span className="faq-q-text">{faq.q}</span>
+                  {openFaq === fIdx ? <ChevronUp size={20} className="faq-chevron" /> : <ChevronDown size={20} className="faq-chevron" />}
+                </button>
+                {openFaq === fIdx && (
+                  <div className="faq-answer-panel animate-fade-in">
+                    <p>{faq.a}</p>
                   </div>
-                  <div>
-                    <div className="cinfo-lbl">Office Address</div>
-                    <div className="cinfo-vl">Old Barshi Road, 5 no Chauk,<br/>KulswaminiNagar, Latur-413531,<br/>Maharashtra, India</div>
-                  </div>
-                </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-                <div className="cinfo">
-                  <div className="cinfo-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </div>
-                  <div>
-                    <div className="cinfo-lbl">Let's Talk</div>
-                    <div className="cinfo-vl">+91 91756 35165<br/>enquiry@avanifinserv.com<br/>www.avanifinserv.com</div>
-                  </div>
-                </div>
+      {/* ══════════════════════════════════════════════
+          SECTION 9 — FOOTER CALL-TO-ACTION SECTION
+      ══════════════════════════════════════════════ */}
+      <section className="cat-footer-cta-section">
+        <div className="container">
+          <div className="cat-cta-banner">
+            <div className="cat-cta-content">
+              <span className="badge" style={{ background: 'rgba(232, 163, 23, 0.2)', color: '#ffd166' }}>
+                Start Your Loan Journey
+              </span>
+              <h2 className="cat-cta-title">Need Help Choosing the Right Loan?</h2>
+              <p className="cat-cta-sub">
+                Talk to AVANI LOAN SERVICES. Our dedicated advisors are available to assess your eligibility and guide your loan application across Latur and Maharashtra.
+              </p>
 
+              <div className="cat-cta-buttons">
+                <a
+                  href="https://wa.me/919175635165?text=Hello%20AVANI%20LOAN%20SERVICES%2C%20I%20need%20help%20choosing%20the%20right%20loan.%20Please%20guide%20me."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn cat-btn-banner-wa"
+                >
+                  <MessageCircle size={18} />
+                  <span>WhatsApp Now</span>
+                </a>
+
+                <Link to="/contact" className="btn cat-btn-banner-apply">
+                  <span>Apply Online</span>
+                  <ArrowRight size={18} />
+                </Link>
+
+                <Link to="/contact" className="btn cat-btn-banner-contact">
+                  <span>Contact Us</span>
+                </Link>
               </div>
-              
-              {/* Portfolio Overview */}
-              <div>
-                <div className="csect-title">Our Loan Portfolio</div>
-                <div className="svc-list">
-                  <div className="svc-item"><div className="svc-num">1</div> Salary & Personal Loan</div>
-                  <div className="svc-item"><div className="svc-num">2</div> Business Expansion Loan</div>
-                  <div className="svc-item"><div className="svc-num">3</div> Education Loan (India & Global)</div>
-                  <div className="svc-item"><div className="svc-num">4</div> Home Loan & Plot Purchase</div>
-                  <div className="svc-item"><div className="svc-num">5</div> Mortgage / Loan Against Property</div>
-                  <div className="svc-item"><div className="svc-num">6</div> Chartered Accountant Loan</div>
-                  <div className="svc-item"><div className="svc-num">7</div> Doctor / Professional Loan</div>
+
+              {/* Office Contact Info Strip */}
+              <div className="cat-contact-summary-strip">
+                <div className="c-strip-col">
+                  <MapPin size={18} className="c-strip-icon" />
+                  <span>
+                    Old Barshi Road, 5 No Chauk, Kulswamini Nagar,<br />
+                    Next to Sai School, Latur – 413512, Maharashtra, India
+                  </span>
+                </div>
+                <div className="c-strip-col">
+                  <Phone size={18} className="c-strip-icon" />
+                  <span>+91 91756 35165</span>
+                </div>
+                <div className="c-strip-col">
+                  <Mail size={18} className="c-strip-icon" />
+                  <span>enquiry@avanifinserv.com</span>
                 </div>
               </div>
-            </div>
-            
-            <div className="cpage-footer">
-              <div className="cpage-footer-top">
-                <div className="logo-wrap">
-                  <div className="logo-txt">
-                    <div className="logo-name">Avani Loan Services</div>
-                    <div className="logo-sub" style={{ color: 'var(--text-mid)' }}>Trusted Financial Partner</div>
-                  </div>
+
+              {/* Verified Social Links */}
+              <div className="cat-social-strip">
+                <span className="cat-social-label">Follow AVANI LOAN SERVICES:</span>
+                <div className="cat-social-icons">
+                  <a
+                    href="https://www.facebook.com/share/19Pvp8PqP2/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cat-social-btn"
+                    title="AVANI LOAN SERVICES on Facebook"
+                  >
+                    <FacebookIcon />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/avanifinservlatur/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cat-social-btn"
+                    title="AVANI LOAN SERVICES on Instagram"
+                  >
+                    <InstagramIcon />
+                  </a>
                 </div>
-                <div className="tagline">From Latur to Maharashtra. <span>Empowering Dreams.</span></div>
-              </div>
-              <div className="disclaimer">
-                <strong>Disclaimer:</strong> Avani Loan Services acts as a DSA channel partner. Loan approval, interest rates, and processing fees are at the sole discretion of the respective banks/NBFCs based on the applicant's CIBIL score, income, and documentation.
               </div>
             </div>
           </div>
         </div>
+      </section>
 
+      {/* ══════════════════════════════════════════════
+          SECTION 10 — PROFESSIONAL LEGAL DISCLAIMER
+      ══════════════════════════════════════════════ */}
+      <section className="cat-disclaimer-section">
+        <div className="container">
+          <div className="cat-legal-disclaimer">
+            <p>
+              <strong>Disclaimer:</strong> AVANI LOAN SERVICES provides loan consultancy and advisory support. Loan approval, interest rate, tenure, loan amount, documentation and other terms are subject to lender policies, applicant eligibility, verification and final approval. Information on this website is for general guidance and does not constitute a guarantee of loan approval or disbursement.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          SECTION 11 — MOBILE STICKY BOTTOM ACTION BAR
+      ══════════════════════════════════════════════ */}
+      <div className="cat-mobile-sticky-bar" aria-label="Quick mobile contact actions">
+        <a
+          href="https://wa.me/919175635165?text=Hello%20AVANI%20LOAN%20SERVICES%2C%20I%20am%20exploring%20your%20Loan%20Product%20Catalog%20and%20would%20like%20to%20consult%20with%20an%20advisor."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mobile-sticky-btn mobile-wa-btn"
+        >
+          <MessageCircle size={18} />
+          <span>WhatsApp Us</span>
+        </a>
+        <Link to="/contact" className="mobile-sticky-btn mobile-apply-btn">
+          <span>Apply Now</span>
+          <ArrowRight size={18} />
+        </Link>
       </div>
+
+      {/* ══════════════════════════════════════════════
+          INTERACTIVE DOCUMENT CHECKLIST MODAL
+      ══════════════════════════════════════════════ */}
+      <DocumentModal
+        isOpen={isDocModalOpen}
+        onClose={() => setIsDocModalOpen(false)}
+        selectedProduct={selectedDocProduct}
+      />
     </div>
   );
 }

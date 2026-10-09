@@ -24,9 +24,8 @@ export default function Footer() {
               {t('footer_desc')}
             </p>
             <div className="social-links">
-              <a href="https://www.facebook.com/share/17udSqXNrJ/" target="_blank" rel="noopener noreferrer" className="social-link"><FacebookIcon /></a>
-              <a href="https://www.instagram.com/avanifinservlatur?igsh=aGE5aHdzazN0OTk2" target="_blank" rel="noopener noreferrer" className="social-link"><InstagramIcon /></a>
-              <a href="#" className="social-link"><LinkedinIcon /></a>
+              <a href="https://www.facebook.com/share/19Pvp8PqP2/" target="_blank" rel="noopener noreferrer" className="social-link" title="AVANI LOAN SERVICES on Facebook"><FacebookIcon /></a>
+              <a href="https://www.instagram.com/avanifinservlatur/" target="_blank" rel="noopener noreferrer" className="social-link" title="AVANI LOAN SERVICES on Instagram"><InstagramIcon /></a>
             </div>
           </div>
 
@@ -34,6 +33,7 @@ export default function Footer() {
             <h4 className="footer-heading">{t('quick_links')}</h4>
             <ul className="footer-links">
               <li><Link to="/about">{t('about')}</Link></li>
+              <li><Link to="/catalog">Loan Product Catalog</Link></li>
               <li><Link to="/loans">{t('all_loans')}</Link></li>
               <li><Link to="/eligibility">{t('eligibility')}</Link></li>
               <li><Link to="/documents">{t('documents')}</Link></li>

@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BureauReport",
+  "type": "object",
+  "required": [
+    "score",
+    "scoreBand",
+    "dpdLast12Months"
+  ],
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 900
+    },
+    "scoreBand": {
+      "type": "string",
+      "enum": [
+        "EXCELLENT",
+        "GOOD",
+        "FAIR",
+        "HIGH_RISK"
+      ]
+    },
+    "dpdLast12Months": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "verifiedAt": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FoirAssessment",
+  "type": "object",
+  "required": [
+    "verifiedMonthlyIncome",
+    "foirPercent",
+    "riskBand",
+    "isWithinPolicy"
+  ],
+  "properties": {
+    "verifiedMonthlyIncome": {
+      "type": "number",
+      "minimum": 0
+    },
+    "existingMonthlyObligations": {
+      "type": "number",
+      "minimum": 0
+    },
+    "proposedMonthlyEmi": {
+      "type": "number",
+      "minimum": 0
+    },
+    "totalMonthlyObligations": {
+      "type": "number",
+      "minimum": 0
+    },
+    "foirPercent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "maxEligibleLoanAmount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "riskBand": {
+      "type": "string",
+      "enum": [
+        "PRIME",
+        "STANDARD",
+        "STRETCHED",
+        "CRITICAL_OVERBURDENED"
+      ]
+    },
+    "isWithinPolicy": {
+      "type": "boolean"
+    }
+  }
+}

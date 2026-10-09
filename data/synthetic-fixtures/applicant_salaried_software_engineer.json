@@ -1,0 +1,39 @@
+{
+  "fixtureId": "SYNTH-003",
+  "applicantName": "Pooja Kulkarni",
+  "mobile": "919765432109",
+  "pan": "PQRST5678Z",
+  "aadhaar": "777766665555",
+  "bankAccountNumber": "300400500600",
+  "bankName": "HDFC Bank",
+  "city": "Pune",
+  "geography": "MAHARASHTRA",
+  "employmentType": "SALARIED",
+  "profession": "SOFTWARE_ENGINEER",
+  "loanProduct": "PERSONAL_LOAN",
+  "monthlyIncome": 65000,
+  "existingMonthlyObligations": 8000,
+  "requestedLoanAmount": 500000,
+  "requestedTenureMonths": 36,
+  "cibilScore": 760,
+  "dpdLast12Months": 0,
+  "ageYears": 28,
+  "consentGranted": true,
+  "optInGiven": true,
+  "transactions": [
+    {
+      "date": "2026-08-01",
+      "narration": "INFOSYS SALARY CREDIT AUG26",
+      "credit": 65000,
+      "debit": 0,
+      "balance": 95000
+    },
+    {
+      "date": "2026-08-05",
+      "narration": "PERSONAL LOAN EMI",
+      "credit": 0,
+      "debit": 8000,
+      "balance": 87000
+    }
+  ]
+}

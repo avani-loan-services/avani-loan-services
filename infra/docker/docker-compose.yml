@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: avani_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-avani_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_lending_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-avani_loans}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-avani_admin} -d ${POSTGRES_DB:-avani_loans}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: avani_redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: avani_n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-avani_loans}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-avani_admin}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-secure_lending_pass_2026}
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-ALS_ENCRYPT_KEY_OCT2026_SECURE}
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - WEBHOOK_URL=https://n8n.avanifinserv.com/
+    ports:
+      - "5678:5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: unless-stopped
+
+  n8n_worker:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: avani_n8n_worker
+    command: worker
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-avani_loans}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-avani_admin}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-secure_lending_pass_2026}
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-ALS_ENCRYPT_KEY_OCT2026_SECURE}
+    depends_on:
+      - n8n
+    restart: unless-stopped
+
+  lending_api:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.api
+    container_name: avani_lending_api
+    environment:
+      - APP_MODE=production
+      - PORT=5000
+      - BUSINESS_ENTITY=AVANI_LOAN_SERVICES
+      - POSTGRES_URI=postgresql://avani_admin:secure_lending_pass_2026@postgres:5432/avani_loans
+      - REDIS_URI=redis://redis:6379
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: avani_nginx_gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - lending_api
+      - n8n
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  n8n_data:

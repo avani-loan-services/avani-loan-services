@@ -21,10 +21,23 @@ async function notifyLeadCreated(lead) {
   // WhatsApp Acknowledgement
   const waMsg = `Namaskar ${lead.fullName} 👋 Thank you for contacting AVANI LOAN SERVICES. We have received your enquiry for ${lead.loanProduct}. Our team will review your requirement and guide you regarding eligibility and documents. To speed up processing, upload documents here: ${secureUploadLink} Lead ID: ${lead.leadId}`;
 
+  const ackCampaign = process.env.AISENSY_ACK_CAMPAIGN_NAME || 'avani_retail_day1_ack';
+  let waParams = [];
+  if (ackCampaign === 'avani_retail_day1_ack') {
+    waParams = [
+      lead.fullName || 'Valued Customer',
+      lead.city || 'Latur',
+      lead.loanProduct || 'Personal Loan',
+      lead.loanAmount ? String(lead.loanAmount) : '5,00,000'
+    ];
+  } else {
+    waParams = [lead.fullName, lead.loanProduct, secureUploadLink, lead.leadId];
+  }
+
   sendWhatsAppTemplate({
     destination: lead.mobile,
-    campaignName: 'als_lead_ack_2026',
-    templateParams: [lead.fullName, lead.loanProduct, secureUploadLink, lead.leadId]
+    campaignName: ackCampaign,
+    templateParams: waParams
   }).catch(e => console.warn('[NotificationService] WA non-fatal:', e.message));
 
   // Email Notification to Customer & Admin

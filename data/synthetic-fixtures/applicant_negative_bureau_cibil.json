@@ -1,0 +1,39 @@
+{
+  "fixtureId": "SYNTH-005",
+  "applicantName": "Vikas Jadhav",
+  "mobile": "919811223344",
+  "pan": "JKLMN4321P",
+  "aadhaar": "555544443333",
+  "bankAccountNumber": "800900100200",
+  "bankName": "Bank of Baroda",
+  "city": "Latur",
+  "geography": "MAHARASHTRA",
+  "employmentType": "SALARIED",
+  "profession": "SALES_EXEC",
+  "loanProduct": "PERSONAL_LOAN",
+  "monthlyIncome": 45000,
+  "existingMonthlyObligations": 5000,
+  "requestedLoanAmount": 300000,
+  "requestedTenureMonths": 36,
+  "cibilScore": 610,
+  "dpdLast12Months": 60,
+  "ageYears": 31,
+  "consentGranted": true,
+  "optInGiven": true,
+  "transactions": [
+    {
+      "date": "2026-08-02",
+      "narration": "ECS RETURN INSUFFICIENT FUNDS",
+      "credit": 0,
+      "debit": 500,
+      "balance": 1200
+    },
+    {
+      "date": "2026-08-10",
+      "narration": "CHQ RET BOUNCE CHARGES",
+      "credit": 0,
+      "debit": 590,
+      "balance": 610
+    }
+  ]
+}

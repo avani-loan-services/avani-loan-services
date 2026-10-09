@@ -14,6 +14,7 @@ export default function Navbar() {
     { name: t('home'), path: '/' },
     { name: t('about'), path: '/about' },
     { name: t('loans'), path: '/loans' },
+    { name: 'Loan Products', path: '/catalog' },
     { name: 'School Funding', path: '/loans#school-funding' },
     { name: 'College Funding', path: '/loans#college-funding' },
     { name: t('eligibility'), path: '/eligibility' },
@@ -21,8 +22,6 @@ export default function Navbar() {
     { name: t('documents'), path: '/documents' },
     { name: t('calculators'), path: '/calculators' },
     { name: t('blog'), path: '/blog' },
-    // Catalog opens in a new window
-    { name: 'Catalog', path: 'https://www.avanifinserv.com/catalog', external: true },
     { name: t('contact'), path: '/contact' }
   ];
 
@@ -113,9 +112,6 @@ export default function Navbar() {
                   {t('apply_now')}
                 </Link>
               </li>
-            <li>
-              <a href="https://www.avanifinserv.com/catalog" target="_blank" rel="noopener noreferrer" className="nav-link">Catalog</a>
-            </li>
             </ul>
           </div>
         )}

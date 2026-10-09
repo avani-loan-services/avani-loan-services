@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LenderPolicyRule",
+  "type": "object",
+  "required": [
+    "policyId",
+    "lenderId",
+    "product",
+    "policyVersion",
+    "minimumIncomeMonthly",
+    "maximumFoirPercent"
+  ],
+  "properties": {
+    "policyId": {
+      "type": "string"
+    },
+    "lenderId": {
+      "type": "string"
+    },
+    "product": {
+      "type": "string"
+    },
+    "policyVersion": {
+      "type": "string"
+    },
+    "minimumIncomeMonthly": {
+      "type": "number"
+    },
+    "maximumFoirPercent": {
+      "type": "number"
+    },
+    "minimumCibilScore": {
+      "type": "integer"
+    },
+    "allowedGeographies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "allowedEmploymentTypes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requiredDocuments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

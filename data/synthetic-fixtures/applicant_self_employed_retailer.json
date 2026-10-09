@@ -1,0 +1,46 @@
+{
+  "fixtureId": "SYNTH-002",
+  "applicantName": "Suresh Patil",
+  "mobile": "919822334455",
+  "pan": "BGHPK4321M",
+  "aadhaar": "888877776666",
+  "bankAccountNumber": "500600700800",
+  "bankName": "ICICI Bank",
+  "city": "Latur",
+  "geography": "MAHARASHTRA",
+  "employmentType": "SELF_EMPLOYED_BUSINESS",
+  "profession": "RETAIL_TRADER",
+  "loanProduct": "BUSINESS_LOAN",
+  "monthlyIncome": 85000,
+  "existingMonthlyObligations": 12000,
+  "requestedLoanAmount": 1000000,
+  "requestedTenureMonths": 48,
+  "cibilScore": 715,
+  "dpdLast12Months": 0,
+  "ageYears": 42,
+  "consentGranted": true,
+  "optInGiven": true,
+  "transactions": [
+    {
+      "date": "2026-08-05",
+      "narration": "UPI QR SALES COLLECTION",
+      "credit": 45000,
+      "debit": 0,
+      "balance": 90000
+    },
+    {
+      "date": "2026-08-20",
+      "narration": "DISTRIBUTOR PAYMENT",
+      "credit": 0,
+      "debit": 30000,
+      "balance": 60000
+    },
+    {
+      "date": "2026-08-25",
+      "narration": "BUSINESS CURRENT ACC SALES",
+      "credit": 40000,
+      "debit": 0,
+      "balance": 100000
+    }
+  ]
+}

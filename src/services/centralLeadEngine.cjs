@@ -8,28 +8,46 @@ const path = require('path');
 const crypto = require('crypto');
 const { syncToGoogleSheetMaster } = require('../utils/googleSheetsMaster.cjs');
 
-const LEADS_FILE = path.join(__dirname, '../../uploads/central_leads.json');
+const os = require('os');
+const LEADS_FILE = process.env.VERCEL
+  ? path.join(os.tmpdir(), 'central_leads.json')
+  : path.join(__dirname, '../../uploads/central_leads.json');
+
+let inMemoryLeads = [];
 
 // Ensure storage file exists
 function ensureStorage() {
-  const dir = path.dirname(LEADS_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(LEADS_FILE)) fs.writeFileSync(LEADS_FILE, JSON.stringify([], null, 2));
-}
-
-function loadLeads() {
-  ensureStorage();
   try {
-    const raw = fs.readFileSync(LEADS_FILE, 'utf8');
-    return JSON.parse(raw);
+    const dir = path.dirname(LEADS_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(LEADS_FILE)) fs.writeFileSync(LEADS_FILE, JSON.stringify([], null, 2));
   } catch (e) {
-    return [];
+    // Read-only filesystem safe
   }
 }
 
+function loadLeads() {
+  try {
+    ensureStorage();
+    if (fs.existsSync(LEADS_FILE)) {
+      const raw = fs.readFileSync(LEADS_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    // fallback
+  }
+  return inMemoryLeads;
+}
+
 function saveLeads(leads) {
-  ensureStorage();
-  fs.writeFileSync(LEADS_FILE, JSON.stringify(leads, null, 2));
+  inMemoryLeads = leads;
+  try {
+    ensureStorage();
+    fs.writeFileSync(LEADS_FILE, JSON.stringify(leads, null, 2));
+  } catch (e) {
+    // serverless safe
+  }
 }
 
 /**

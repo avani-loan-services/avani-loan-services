@@ -30,11 +30,16 @@ router.post('/submit', async (req, res) => {
       leadStatus: lead.status
     });
 
-    // Sync to Google Sheet Master
-    const sheetRes = await syncToGoogleSheetMaster(masterRecord);
+    // Sync to Google Sheet Master (skip if requested)
+    let sheetRes = { success: true, skipped: true };
+    if (!rawData._skipSheetsSync) {
+      sheetRes = await syncToGoogleSheetMaster(masterRecord);
+    }
 
     // Sync to HubSpot CRM
     syncToHubSpot({
+      leadId: masterRecord.leadId,
+      monthlyIncomeRange: masterRecord.monthlyIncomeRange,
       name: masterRecord.fullName,
       email: masterRecord.email,
       phone: masterRecord.mobile,

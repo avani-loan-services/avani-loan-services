@@ -1,0 +1,32 @@
+{
+  "system": "AVANI_LOAN_SERVICES",
+  "version": "1.0.0",
+  "lastUpdated": "2026-10-09",
+  "humanReviewer": {
+    "name": "Sachin Shinde",
+    "role": "Principal Loan Advisor & Underwriting Lead",
+    "escalationPhone": "+917249108474",
+    "email": "sachin@avanifinserv.com"
+  },
+  "compliance": {
+    "dataProtection": "DPDP_ACT_2023_INDIA",
+    "telephonyCompliance": "TRAI_DLT_DND_MANDATORY_OPTIN",
+    "fairLending": "RBI_FAIR_PRACTICES_CODE_ZERO_AUTONOMOUS_SANCTION"
+  },
+  "defaultThresholds": {
+    "maxPermissibleFoirStandard": 50,
+    "maxPermissibleFoirProfessional": 65,
+    "minCibilStandard": 700,
+    "minCibilPrime": 750,
+    "maxDpdLast12Months": 0,
+    "maxBouncesPermitted": 1
+  },
+  "supportedProducts": [
+    "PERSONAL_LOAN",
+    "BUSINESS_LOAN",
+    "DOCTOR_LOAN",
+    "HOME_LOAN",
+    "EDUCATION_LOAN",
+    "MORTGAGE_LOAN"
+  ]
+}

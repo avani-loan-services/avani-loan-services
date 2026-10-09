@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HumanReviewRecord",
+  "type": "object",
+  "required": [
+    "status",
+    "assignedUnderwriter",
+    "systemSanctionAuthorized"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING_HUMAN_UNDERWRITER_APPROVAL",
+        "APPROVED_BY_UNDERWRITER",
+        "REJECTED_BY_UNDERWRITER"
+      ]
+    },
+    "assignedUnderwriter": {
+      "type": "string"
+    },
+    "systemSanctionAuthorized": {
+      "type": "boolean"
+    },
+    "reviewerNotes": {
+      "type": "string"
+    },
+    "decisionTimestamp": {
+      "type": "string"
+    }
+  }
+}

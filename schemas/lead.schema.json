@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LoanLead",
+  "type": "object",
+  "required": [
+    "fullName",
+    "mobile",
+    "loanProduct"
+  ],
+  "properties": {
+    "leadId": {
+      "type": "string"
+    },
+    "fullName": {
+      "type": "string"
+    },
+    "mobile": {
+      "type": "string",
+      "pattern": "^[0-9]{10,12}$"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "loanProduct": {
+      "type": "string",
+      "enum": [
+        "PERSONAL_LOAN",
+        "BUSINESS_LOAN",
+        "DOCTOR_LOAN",
+        "HOME_LOAN",
+        "EDUCATION_LOAN",
+        "MORTGAGE_LOAN"
+      ]
+    },
+    "requestedAmount": {
+      "type": "number",
+      "minimum": 10000
+    },
+    "source": {
+      "type": "string"
+    },
+    "correlationId": {
+      "type": "string"
+    }
+  }
+}
