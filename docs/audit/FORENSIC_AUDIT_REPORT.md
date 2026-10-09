@@ -93,3 +93,33 @@ The workspace `1-AVANI LOAN SERVICE FY 26-27` is strictly isolated, structurally
 - **Overall Rating:** `CONDITIONAL`
 - **Logic, Calculations & Build:** `READY` (100% test pass rate across 9 test suites, 206 financial tool specifications, and production build)
 - **External Integrations:** `CONDITIONAL` (Pending commercial bureau license, live SIP trunk activation, and 13 October 2026 AiSensy webhook configuration)
+
+---
+
+## 6. Live Deployment & Repository Synchronization Evidence
+
+1. **Vercel Production Deployment**:
+   - **Deployment ID:** `dpl_JBwQUb6VvUj79UeT4K7xu7XMJp9K`
+   - **Target:** `production`
+   - **ReadyState:** `READY`
+   - **Deployment URL:** `https://avani-loan-service-fy-26-27-ciodaosvj.vercel.app`
+   - **Aliased Domains:** `https://avani-loan-service-fy-26-27.vercel.app`, `https://www.avanifinserv.com/`
+   - **Root-scoped Ignore Policy:** `.vercelignore` actively filters local RAR archives (`143.3MB`), tests, and raw document dumps while preserving `src/data/` catalog structures.
+
+2. **GitHub Repository Synchronization**:
+   - **Remote URL:** `https://github.com/avani-loan-services/avani-loan-services.git`
+   - **Branch:** `master`
+   - **Latest Commit:** `57e65bf` (`chore(deploy): add root-scoped .vercelignore for optimized production builds`)
+   - **Sync Status:** Verified clean — `Your branch is up to date with 'origin/master'`.
+
+3. **Live Production Health Check (`https://www.avanifinserv.com/`)**:
+   - **Audit Execution:** 8/8 Critical Routes Verified HTTP 200 OK
+     - `/` (200 OK)
+     - `/services` (200 OK)
+     - `/contact` (200 OK)
+     - `/cibil-check` (200 OK)
+     - `/financial-tools` (200 OK)
+     - `/calculators` (200 OK)
+     - `/robots.txt` (200 OK)
+     - `/sitemap.xml` (200 OK)
+
