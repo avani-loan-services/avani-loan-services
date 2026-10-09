@@ -1,0 +1,21 @@
+.git
+.github
+*.rar
+1-AVANI LOAN SERVICE FY 26-27.rar
+eng.traineddata
+Ref Data
+/docs
+/infra
+/tests
+/n8n
+/data
+/configs
+/policies
+/scratch
+!src/data
+!src/data/**
+*.docx
+*.pdf
+*.zip
+*.tar.gz
+*.log
