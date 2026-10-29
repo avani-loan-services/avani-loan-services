@@ -45,12 +45,12 @@ The deterministic helper `mapLoanTypeToHubSpot(loanType)` normalizes incoming lo
 | Incoming AVANI Display Label / Variant | Target HubSpot Internal Enum Value | Verification Status |
 | :--- | :--- | :---: |
 | `Personal Loan` | `personal_salary_loan` | **PASS** |
-| `[[[[[[[[[[[[Salary Loan](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)` | `personal_salary_loan` | **PASS** |
+| `[[[[[[[[[[[[[[Salary Loan](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)](/services/salary-loan)` | `personal_salary_loan` | **PASS** |
 | `Personal / Salary Loan` | `personal_salary_loan` | **PASS** |
-| `[[[[[[[[[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)` | `business_loan` | **PASS** |
+| `[[[[[[[[[[[[[[Business Loan](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)](/services/business-loan)` | `business_loan` | **PASS** |
 | `Commercial Loan` / `MSME Loan` | `business_loan` | **PASS** |
 | `Doctor Loan` / `Doctor Professional Loan` | `doctor_loan` | **PASS** |
-| `[[[[[[[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)` / `Housing Loan` | `home_loan` | **PASS** |
+| `[[[[[[[[[[[[Home Loan](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)](/services/home-loan)` / `Housing Loan` | `home_loan` | **PASS** |
 | `Mortgage Loan` / `Loan Against Property (LAP)` | `mortgage_loan` | **PASS** |
 | `[Education Loan](/services/education-loan) (India)` / `Education Loan` | `education_loan_india` | **PASS** |
 | `Education Loan (Global Studies)` / `Education Loan - Global` | `education_loan_global` | **PASS** |

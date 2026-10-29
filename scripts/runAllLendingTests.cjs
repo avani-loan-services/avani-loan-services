@@ -20,7 +20,8 @@ const testSuites = [
   { name: 'Security: DPDP Act Consent & PII Protection', command: 'node tests/security/test_pii_and_consent.test.cjs' },
   { name: 'Workflow: 15-Domain End-to-End Lifecycle', command: 'node tests/workflow/test_loan_workflows.test.cjs' },
   { name: 'Calculators: 20 Pure Financial Tools (65 specs)', command: 'node scripts/test-calculators.js' },
-  { name: 'Master: 20 Financial Tools Comprehensive Matrix (206 specs)', command: 'node scripts/testMasterFinancialTools.cjs' }
+  { name: 'Master: 20 Financial Tools Comprehensive Matrix (206 specs)', command: 'node scripts/testMasterFinancialTools.cjs' },
+  { name: 'Integration: Website & CRM Lead Intake & Click Tracker', command: 'node tests/integration/test_website_crm_intake.test.cjs' }
 ];
 
 console.log('===================================================================');

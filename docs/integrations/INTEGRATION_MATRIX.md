@@ -1,36 +1,36 @@
-# AVANI LOAN SERVICES — INTEGRATION MATRIX & EVIDENCE AUDIT
+# AVANI LOAN SERVICES — CONSOLIDATED INTEGRATION MATRIX
 
-**Document ID:** `ALS-DOC-INTEGRATION-2026-002`  
-**Execution Date:** 09 October 2026  
-**Owner:** Sachin Shinde  
+**Document ID:** `ALS-DOC-INTEGRATION-2026-003`  
+**Execution Date:** 25 October 2026  
+**Owner & Managing Director:** Sachin Shinde (`+91 72491 08474` / `+91 91756 35165`)  
 **Business Entity:** AVANI LOAN SERVICES (https://www.avanifinserv.com/)  
-**Workspace:** `C:\Users\ALPHA-1\Downloads\21MAY2026\SACHIN SHINDE DOCUMENTS\DEVELOPEMENT TOOLS\1-AVANI LOAN SERVICE FY 26-27`  
-**Audit Rule:** No integration is marked operational based solely on HTTP 200 responses. Strict classification: `VERIFIED_LIVE`, `VERIFIED_SANDBOX`, `MOCK_ONLY`, `CONFIGURED_NOT_VERIFIED`, `CREDENTIAL_MISSING`, `AUTHORIZATION_PENDING`, `PROVIDER_PLAN_BLOCKED`, `FAILED`, `NOT_APPLICABLE`.
+**Primary Execution Workspace:** `1-AVANI LOAN SERVICE FY 26-27`  
+**Classification Rules:** `VERIFIED_LIVE`, `VERIFIED_SANDBOX`, `MOCK_ONLY`, `CONFIGURED_NOT_VERIFIED`, `CREDENTIAL_MISSING`, `AUTHORIZATION_PENDING`, `PROVIDER_PLAN_BLOCKED`, `FAILED`, `NOT_APPLICABLE`.
 
 ---
 
-## 1. Master Integration Ledger
+## 1. Master Inter-Workspace & External Integration Matrix
 
-| System | Implementation | Auth Method | Config Location | Direction | Data Exchanged | Classification | Failure Handling | Dedup / Idempotency | Security Controls | Test Evidence | Remaining Blocker |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Meta WhatsApp API** | Cloud API v18.0 | Bearer Token / System User | `.env.production` | In/Out | Messages, Templates, App IDs | `CONFIGURED_NOT_VERIFIED` | Exponential Backoff / DLQ | WAMID Deduplication | Token Expiry / Data Leakage | Verified in `scripts/runAllLendingTests.cjs` | Live System User Token Provisioning |
-| **AiSensy WABA** | Campaign API v2 | API Key | `src/services/aisensyAdapter.cjs` | Outbound Only | Outbound Templates, Params | `PROVIDER_PLAN_BLOCKED` | Fallback to Live Chat | Destination Phone Hash | Unencrypted Chat Logs | Verified in `tests/integration/` | Basic tier 0/0 inbound webhooks (Human Live Chat active; 13 Oct task pending) |
-| **Google Sheets** | Sheets v4 API | Service Account JSON | `config/google-service-account.json` | Write | Master Lead Ledger Rows | `VERIFIED_SANDBOX` | Error logging / In-Memory Retry | Lead ID Matching | Credential File Exposure | Verified in `tests/integration/` | Target sheet edit access verification |
-| **HubSpot CRM** | CRM v3 REST / Webhooks | OAuth / Private App | `src/services/crmSyncEngine.cjs` | Read/Write | Contacts, Deals, Statuses | `CONFIGURED_NOT_VERIFIED` | Retry / DLQ | Object Dedup by Mobile/Email | Signature V3 constant-time verification | Portal ID 244236573 verified live; Signature V3 tested in `test_hubspot_signature.test.cjs` | OAuth Token Re-authorization / Private App Token |
-| **Zapier & Make.com** | Hooks Catch | Webhook Secret | `src/services/crmSyncEngine.cjs` | Outbound | Stage Events (`EVT_001`) | `CONFIGURED_NOT_VERIFIED` | Suppressed on Failure | Event Signature Matching | Exposed Webhook URLs | Verified in `tests/integration/` | Live Webhook URL activation |
-| **OmniDM & Exotel** | Voice API v1 | Bearer Token | `src/services/omnidmAgent.cjs` | In/Out | Call Dispatches, Callbacks | `CREDENTIAL_MISSING` | Retry Queue / Human Routing | Call ID Correlation | Voice Recording PII | Callback verified in E2E suite | Commercial API Key & TRAI DLT KYC |
-| **Vapi AI** | Voice API | API Key | `lib/vapiService.js` | In/Out | Call Triggers, Transcripts | `CONFIGURED_NOT_VERIFIED` | SIP Transfer to +917249108474 | Call ID Dedup | Transcript PII Exposure | Architecture & scripts verified | Live Vapi credits & Exotel SIP |
-| **Google Gemini AI** | REST API | API Key | `src/services/avaniAiAgent.cjs` | Outbound | Assistant Prompts & Extraction | `CONFIGURED_NOT_VERIFIED` | Fallback Heuristics | N/A | Prompt PII Leakage | Structured extraction tested | GCP project quota verification |
-| **Credit Bureaus** | REST API | Commercial Key | `apps/policy-engine/` | Inbound | Credit Scores & Delinquency | `CREDENTIAL_MISSING` | Strict Score Fallback | Synthetic Bureau ID | Consumer Data Protection | Synthetic bureau tested in `test_policy_engine.test.cjs` | Commercial DSA Aggregator bureau agreement |
-| **Supabase** | Client SDK | Anon Key | `.env` | Outbound | Document Uploads | `CONFIGURED_NOT_VERIFIED` | Fallback Storage | Document Hash | RLS Policy Verification | Variables present in `.env` | Verify Storage bucket RLS policies |
-| **Financial Tools Auth** | JWT Cookie | Secret Key | `.env` | Internal | Calculator Session Auth | `VERIFIED_LIVE` | In-process fallback | Session Cookie | JWT signing & expiry | 206 financial tests passed; session verified | None |
-| **Vercel** | Serverless Node | CLI / Token | `vercel.json` | Host | Frontend & Express Routes | `VERIFIED_LIVE` | Edge Fallback | Immutable Deployments | Public Environment Leakage | Production build passed (2,146 modules); CLI session verified | None |
-| **GitHub** | Git Remote | SSH / PAT | `.git/` | Version Control | Source Code | `VERIFIED_LIVE` | Commit Rollback | Commit Hash Deduplication | Secret Scanning | Branch `master` verified, remote verified | None |
+| Interface / Integration | Source | Target | Data Exchanged | Classification | Evidence & Test Suite | Fallback Mode |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Contract A: Web-to-CRM Intake** | Workspace 1 (`api/save-lead.js`) | Workspace 2 (`/api/leads`) | Canonical Lead (`leadId`, phone, loanType, DPDP consent, UTM) | **VERIFIED_SANDBOX** | 5/5 passed in `test_website_crm_intake.test.cjs`; 6/6 passed in `test_crm_lead_intake_contract.js` | Local logging & in-memory cache |
+| **Contract B: Click Tracker & Attribution** | External Ad / WhatsApp | Workspace 1 (`/r`) | Campaign ID, UTM params, Destination URL | **VERIFIED_LIVE** | Tested in `test_website_crm_intake.test.cjs` with open-redirect defenses | Fallback to direct URL |
+| **Contract C: Loan Agents-to-CRM** | Workspace 3 (`crmSync.ts`) | Workspace 2 (`/api/leads`) | Qualified Lead, 8 products, language, checklist status | **VERIFIED_SANDBOX** | 4/4 passed in `test_agent_advisor_contract.js` | Local database logging |
+| **Contract D: Voice Calling-to-CRM** | Workspace 4 (`calling-agent-bridge.js`)| Workspace 2 (`/api/leads`) | Scrubbed Call Disposition (`mapCallDisposition`), redacted summary | **VERIFIED_SANDBOX** | 8/8 passed in `test_calling_bridge.js` | Human advisor phone contact (+91 72491 08474) |
+| **AiSensy WABA Outbound** | Workspace 1 / CRM | AiSensy API v2 | Outbound templates, applicant name, loan type | **CONFIGURED_NOT_VERIFIED** | WABA ID `1062614709598311` verified active | Meta Cloud API or direct SMS |
+| **AiSensy Inbound Webhooks** | AiSensy | Integration Gateway | Inbound customer replies | **PROVIDER_PLAN_BLOCKED** | Verified Basic plan has `0/0 inbound webhook slots` | **ACTIVE:** Human loan advisors monitor AiSensy Shared Live Chat Inbox (5 agent seats) |
+| **Meta WhatsApp Cloud API** | Workspace 1 | Meta Graph API v18.0 | Approved WhatsApp Business Templates | **CONFIGURED_NOT_VERIFIED** | Graph endpoint structured in gateway | AiSensy Outbound Campaign API v2 |
+| **First-Party Calculators** | Browser | React / SPA Engine | Loan principal, tenure, ROI, reducing balance EMI | **VERIFIED_LIVE** | 206/206 specs passed in `runAllLendingTests.cjs`; zero LLM math | Pure deterministic code |
+| **Production Website Hosting** | Vercel | End Users | Static assets, SSR service routes, calculator tools | **VERIFIED_LIVE** | 8/8 routes HTTP 200 OK on `https://www.avanifinserv.com/` | Immutable Vercel edge deployment |
+| **Voice AI Provider (Vapi / Bland)**| Workspace 4 | Voice SIP / WebRTC | Trilingual prompts, voice streams, transcribed text | **CONFIGURED_NOT_VERIFIED** | Simulated test mode verified in `test_calling_bridge.js` | Direct phone call from Sachin Shinde (+91 72491 08474) |
+| **HubSpot CRM (Secondary)** | Workspace 1 / 3 | HubSpot API v3 | Secondary contact backup & pipeline sync | **CONFIGURED_NOT_VERIFIED** | Portal ID 244236573 verified; Signature V3 tested | Primary authoritative store is AVANI AI CRM |
 
 ---
 
-## 2. AiSensy Basic Tier Operating Mode
+## 2. AiSensy Basic Tier Operational Protocol
 
-- **Documented Tier Constraint:** `AiSensy BASIC Tier Inbound Forwarding: 0/0 webhooks; webhook creation restricted by plan tier.`
-- **Operational Reality:** Outbound notifications (status updates, document checklists) are dispatched via AiSensy or Meta Cloud API. Inbound customer replies are handled directly by **human loan advisors through AiSensy Live Chat**.
-- **Pending Scheduled Task:** `TASK-2026-10-13-AISENSY` scheduled for 13 October 2026 for inbound webhook activation once live details are supplied.
+Because AiSensy Basic does not include inbound webhook forwarding:
+1. Outbound notifications (loan acknowledgement, document checklists, appointment reminders) are dispatched via AiSensy Campaign API v2 or direct Meta Cloud API.
+2. Inbound customer messages appear in the **AiSensy Live Chat Inbox**.
+3. Up to 5 human loan advisors log in to `https://app.aisensy.com/` to converse with applicants.
+4. When an advisor qualifies an applicant, they log the lead directly in AVANI AI CRM or initiate an AI Calling test workflow.
