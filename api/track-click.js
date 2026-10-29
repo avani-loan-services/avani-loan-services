@@ -16,7 +16,7 @@ function isSafeDestination(destUrl) {
   try {
     const parsed = new URL(destUrl);
     const host = parsed.hostname.toLowerCase();
-    return host === 'www.avanifinserv.com' || host === 'avanifinserv.com' || host.endsWith('.avanifinserv.com');
+    return host === 'www.avanifinserv.com' || host === 'avanifinserv.com' || host.endsWith('.avanifinserv.com') || host === 'wa.me' || host === 'api.whatsapp.com';
   } catch (e) {
     return false;
   }

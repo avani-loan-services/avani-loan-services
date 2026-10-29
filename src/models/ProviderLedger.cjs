@@ -9,7 +9,7 @@ const { getInMemoryStore, isConnected } = require('./database.cjs');
 const ProviderLedgerSchema = new mongoose.Schema({
   provider: {
     type: String,
-    enum: ['META_WHATSAPP', 'AISENSY', 'OMNIDM', 'HUBSPOT', 'GOOGLE_SHEETS', 'ZAPIER'],
+    enum: ['META_WHATSAPP', 'AISENSY', 'OMNIDM', 'HUBSPOT', 'GOOGLE_SHEETS', 'ZAPIER', 'CHATMITRA'],
     required: true
   },
   operation: { type: String, required: true },

@@ -69,3 +69,18 @@ Since AiSensy Basic does not support inbound webhooks:
    - If CRM connectivity drops, `api/save-lead.js` returns a cached success response to avoid disrupting the user experience, while logging the lead for retry reconciliation.
 3. **Emergency Suppression (Opt-Out):**
    - If a customer requests DND / Opt-Out via any channel, update `isOptedOut: true` in AVANI AI CRM to suppress all follow-ups immediately across chat, broadcast, and voice.
+
+---
+
+## 4. MongoDB Atlas Connectivity Diagnostics & Verification
+
+1. **Non-Destructive Test Execution:**
+   ```powershell
+   cd "C:\Users\ALPHA-1\Downloads\21MAY2026\SACHIN SHINDE DOCUMENTS\DEVELOPEMENT TOOLS\3-AVANI AI CRM"
+   node test-mongo-connection.mjs
+   ```
+2. **Diagnostic Signatures:**
+   - **`SSL alert number 80 (Internal Error)`**: The requesting client IP is not whitelisted in MongoDB Atlas Network Access. Log in to [cloud.mongodb.com](https://cloud.mongodb.com) > **Security > Network Access** and add the required IP address.
+   - **`DNS_ERROR_RCODE_NAME_ERROR`**: Target domain does not exist. Ensure `MONGODB_URI` points to the active cluster `avani-dev-cluster.wmv4ncg.mongodb.net` and not the obsolete `mlcxcp.mongodb.net`.
+3. **Database Failure Fallback Verification:**
+   - Run `node scripts/test_crm_lead_intake_contract.js` to ensure the intake endpoint explicitly returns HTTP 503 `DATABASE_UNAVAILABLE` when the database is unreachable, preventing phantom lead records.

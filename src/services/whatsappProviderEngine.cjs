@@ -165,6 +165,40 @@ async function dispatchOutboundWhatsApp({
     }
   }
 
+  // 4. CHATMITRA PRO API
+  const chatmitraKey = process.env.CHATMITRA_API_KEY;
+  if (chatmitraKey || process.env.ACTIVE_WHATSAPP_PROVIDER === 'chatmitra') {
+    try {
+      const { dispatchChatMitraMessage } = require('./chatmitraProviderEngine.cjs');
+      const cmResult = await dispatchChatMitraMessage({
+        toPhone: formattedPhone,
+        messageText,
+        templateName,
+        leadId,
+        correlationId,
+        testRunId
+      });
+      if (cmResult.success) {
+        messageStatusLedger.set(cmResult.providerMessageId, {
+          status: 'API_ACCEPTED',
+          leadId,
+          correlationId,
+          timestamp: new Date().toISOString()
+        });
+        return {
+          success: true,
+          provider: 'ChatMitra',
+          providerStatus: 'API_ACCEPTED',
+          providerMessageId: cmResult.providerMessageId,
+          leadId,
+          correlationId
+        };
+      }
+    } catch (cmErr) {
+      console.error('[WhatsApp Provider] ChatMitra Error:', cmErr.message);
+    }
+  }
+
   return {
     success: false,
     providerStatus: 'FAILED',
