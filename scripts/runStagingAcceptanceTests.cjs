@@ -19,18 +19,21 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const path = require('path');
 const assert = require('assert');
+const fs = require('fs');
+require('dotenv').config();
+if (fs.existsSync(path.join(__dirname, '../.env.local'))) {
+  require('dotenv').config({ path: path.join(__dirname, '../.env.local'), override: true });
+}
 
 // 1. Configure Staging Environment Variables before loading app modules
 process.env.APP_MODE = 'staging';
 process.env.PROVIDER_MODE = 'mock';
 process.env.MONGODB_DB_NAME = 'avani_loan_services_test';
 
-const ALS_CLUSTER_HOST = 'avani-loan-services-m0.xj6nhak.mongodb.net';
+const STAGING_URI = process.env.MONGODB_URI || process.env.MONGODB_URL || '';
+process.env.MONGODB_URI = STAGING_URI;
+const ALS_CLUSTER_HOST = (STAGING_URI.match(/@([^/?]+)/)?.[1]) || 'avani-dev-cluster.wmv4ncg.mongodb.net';
 const ALS_TEST_DB = 'avani_loan_services_test';
-const STAGING_URI = process.env.MONGODB_URI || '';
-if (STAGING_URI) {
-  process.env.MONGODB_URI = STAGING_URI;
-}
 
 const TEST_RUN_MARKER = `SYNTH-STAGE-ALS-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 

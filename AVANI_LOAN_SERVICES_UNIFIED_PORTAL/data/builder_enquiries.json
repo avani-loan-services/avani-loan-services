@@ -270,5 +270,26 @@
     "ip_address": "::1",
     "created_at": "2026-11-03T03:24:45.909Z",
     "updated_at": "2026-11-03T03:24:45.909Z"
+  },
+  {
+    "enquiry_id": "ALS-ENQ-BLD-1793692661967-MGXR",
+    "company_name": "Phase5 Test Builder 1793692661965",
+    "contact_person": "Suresh Patil",
+    "designation": "Director of Business Development",
+    "official_email": "suresh_1793692661965@testbuilder.com",
+    "business_telephone": "+91 98200 11223",
+    "city": "Pune",
+    "website": "",
+    "residential_project_count": 3,
+    "partnership_interest": "Exclusive Site Home Loan Desk",
+    "preferred_discussion_time": "General Business Hours",
+    "enquiry_description": "",
+    "privacy_acknowledgement": true,
+    "marketing_opt_in": false,
+    "crm_lead_created": true,
+    "status": "New",
+    "ip_address": "::1",
+    "created_at": "2026-11-03T07:57:41.967Z",
+    "updated_at": "2026-11-03T07:57:41.967Z"
   }
 ]

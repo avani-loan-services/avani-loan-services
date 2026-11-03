@@ -218,5 +218,35 @@
     "created_at": "2026-11-03T03:25:08.579Z",
     "expires_at": "2026-11-03T11:25:08.579Z",
     "updated_at": "2026-11-03T03:25:08.579Z"
+  },
+  {
+    "session_id": "SESS-1793692658303-jjw4oupv",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2OTI2NTgsImV4cCI6MTc5MzcyMTQ1OH0.kZF9UMdYnMt6kinBC5wF8iEEhTOSKJb-GPpMSSwDnVQ",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-03T07:57:38.303Z",
+    "expires_at": "2026-11-03T15:57:38.303Z",
+    "updated_at": "2026-11-03T07:57:38.306Z"
+  },
+  {
+    "session_id": "SESS-1793692660372-7jw6wc2x",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2OTI2NjAsImV4cCI6MTc5MzcyMTQ2MH0.l5PGZe9QlBFItTRzYPqhwONt-2ET14feeEn56Ythmoo",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-03T07:57:40.372Z",
+    "expires_at": "2026-11-03T15:57:40.372Z",
+    "updated_at": "2026-11-03T07:57:40.372Z"
+  },
+  {
+    "session_id": "SESS-1793692684349-s1wld73k",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2OTI2ODQsImV4cCI6MTc5MzcyMTQ4NH0.CPQChDBmeOxSWsb1yIWBn4Gda02arpKB-cwYMSfDh4M",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-03T07:58:04.349Z",
+    "expires_at": "2026-11-03T15:58:04.349Z",
+    "updated_at": "2026-11-03T07:58:04.349Z"
   }
 ]

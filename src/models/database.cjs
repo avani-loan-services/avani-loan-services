@@ -4,6 +4,10 @@
 // ─────────────────────────────────────────────────────────────────
 
 const mongoose = require('mongoose');
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (_) {}
 
 let isConnected = false;
 
@@ -18,7 +22,7 @@ const inMemoryDb = {
 async function connectDB() {
   if (isConnected) return mongoose.connection;
 
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/avani_ai_crm_test';
+  const mongoUri = process.env.MONGODB_URI || process.env.MONGODB_URL || 'mongodb://localhost:27017/avani_ai_crm_test';
 
   try {
     mongoose.set('strictQuery', false);
