@@ -158,8 +158,8 @@ async function main() {
 
   await fs.writeFile(path.join(publicRoot, 'sitemap.xml'), sitemapXml, 'utf8');
 
-  // Generate robots.txt pointing to sitemap
-  const robotsTxt = `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`;
+  // Generate robots.txt pointing to sitemap with protection for admin and api routes
+  const robotsTxt = `User-agent: *\nDisallow: /admin/\nDisallow: /api/\nAllow: /\nSitemap: ${base}/sitemap.xml\n`;
   await fs.writeFile(path.join(publicRoot, 'robots.txt'), robotsTxt, 'utf8');
 
   console.log(`Generated ${services.length} service pages into public/services`);

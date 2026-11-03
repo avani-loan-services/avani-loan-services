@@ -1,0 +1,172 @@
+[
+  {
+    "session_id": "SESS-1793558198123-fycz1whi",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTgxOTgsImV4cCI6MTc5MzU4Njk5OH0.jG6srY9Z7D7QiRqi8wet1R0lL5kcuQHqBdKJ6FKsmgc",
+    "ip_address": "127.0.0.1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:36:38.123Z",
+    "expires_at": "2026-11-02T02:36:38.123Z",
+    "updated_at": "2026-11-01T18:36:38.123Z"
+  },
+  {
+    "session_id": "SESS-1793558226103-r47nidfq",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTgyMjYsImV4cCI6MTc5MzU4NzAyNn0.xtzfDXoAvKz0tF-_1bSIwD_tf7_dmgABC0bxRZb-_Mk",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:37:06.103Z",
+    "expires_at": "2026-11-02T02:37:06.103Z",
+    "updated_at": "2026-11-01T18:37:06.103Z"
+  },
+  {
+    "session_id": "SESS-1793558379701-7cfxu0q0",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTgzNzksImV4cCI6MTc5MzU4NzE3OX0.gfYV0dxJ0vU-fQpCfhNlVEMTHESqOjnA19XrFb7byS0",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:39:39.701Z",
+    "expires_at": "2026-11-02T02:39:39.701Z",
+    "updated_at": "2026-11-01T18:39:39.702Z"
+  },
+  {
+    "session_id": "SESS-1793558403696-msx9mc52",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTg0MDMsImV4cCI6MTc5MzU4NzIwM30.HkJzJ81eth_mepWBvKwLvdItwLND1SltZSvhN-laui8",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:40:03.696Z",
+    "expires_at": "2026-11-02T02:40:03.696Z",
+    "updated_at": "2026-11-01T18:40:03.696Z"
+  },
+  {
+    "session_id": "SESS-1793558406188-mag0pgji",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTg0MDYsImV4cCI6MTc5MzU4NzIwNn0.fEIdk0pd2MDl-4KgAmpAy4_7N0-k9OoKndNkjqgC_CY",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:40:06.188Z",
+    "expires_at": "2026-11-02T02:40:06.188Z",
+    "updated_at": "2026-11-01T18:40:06.188Z"
+  },
+  {
+    "session_id": "SESS-1793558758941-y8mahovw",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTg3NTgsImV4cCI6MTc5MzU4NzU1OH0.CdB0SN1xDN6j0J65RmwIP5qWYQU9jGeF8t-UpmKMDAA",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:45:58.941Z",
+    "expires_at": "2026-11-02T02:45:58.941Z",
+    "updated_at": "2026-11-01T18:45:58.942Z"
+  },
+  {
+    "session_id": "SESS-1793558761332-9oq68vl8",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTg3NjEsImV4cCI6MTc5MzU4NzU2MX0.JLkDUYhJpH-YdpE8e0W8FGv8UMvz0ukJHjzGt3WwGHo",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:46:01.332Z",
+    "expires_at": "2026-11-02T02:46:01.332Z",
+    "updated_at": "2026-11-01T18:46:01.332Z"
+  },
+  {
+    "session_id": "SESS-1793558807090-vay3inzi",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1NTg4MDcsImV4cCI6MTc5MzU4NzYwN30.qwBooJp22VhIciVfGNwEJ1lh_XiRSYKhXzTs6heYcOI",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-01T18:46:47.090Z",
+    "expires_at": "2026-11-02T02:46:47.090Z",
+    "updated_at": "2026-11-01T18:46:47.090Z"
+  },
+  {
+    "session_id": "SESS-1793598092802-65tcyqyf",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1OTgwOTIsImV4cCI6MTc5MzYyNjg5Mn0.i5XHs7mSHXOfOMg3wVrwe4wTijeN1FpItVTAUnz-Le0",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-02T05:41:32.802Z",
+    "expires_at": "2026-11-02T13:41:32.802Z",
+    "updated_at": "2026-11-02T05:41:32.803Z"
+  },
+  {
+    "session_id": "SESS-1793598095030-vjlpe9de",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1OTgwOTUsImV4cCI6MTc5MzYyNjg5NX0.YxhG7UpgT1y2Rj3O13U0VHCABdic2BNVFQLvXAzhzNk",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-02T05:41:35.030Z",
+    "expires_at": "2026-11-02T13:41:35.030Z",
+    "updated_at": "2026-11-02T05:41:35.030Z"
+  },
+  {
+    "session_id": "SESS-1793598153911-qgd5fy3j",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM1OTgxNTMsImV4cCI6MTc5MzYyNjk1M30.1-XPL8fkd0Z-ZKIyuZUA3nUk_86gxffSCX2EcZf-d5c",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-02T05:42:33.911Z",
+    "expires_at": "2026-11-02T13:42:33.911Z",
+    "updated_at": "2026-11-02T05:42:33.912Z"
+  },
+  {
+    "session_id": "SESS-1793606653131-evubtf4e",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2MDY2NTMsImV4cCI6MTc5MzYzNTQ1M30.VcRjEcCk3pPToJLLAYTIcNEA0TOETdOWDb7mK_erhhA",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-02T08:04:13.131Z",
+    "expires_at": "2026-11-02T16:04:13.131Z",
+    "updated_at": "2026-11-02T08:04:13.132Z"
+  },
+  {
+    "session_id": "SESS-1793606655251-48tvrvus",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2MDY2NTUsImV4cCI6MTc5MzYzNTQ1NX0.Igx-WNuwv-jtW7cmLQ9TTGNiCsLYn8TYj-cOtg_9JWk",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-02T08:04:15.251Z",
+    "expires_at": "2026-11-02T16:04:15.251Z",
+    "updated_at": "2026-11-02T08:04:15.251Z"
+  },
+  {
+    "session_id": "SESS-1793607288870-cs8xya5h",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2MDcyODgsImV4cCI6MTc5MzYzNjA4OH0.oF49ro7UB2MbbCkB8cQfGMvksHLY7-ewQnPCiQvJJB8",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-02T08:14:48.871Z",
+    "expires_at": "2026-11-02T16:14:48.871Z",
+    "updated_at": "2026-11-02T08:14:48.871Z"
+  },
+  {
+    "session_id": "SESS-1793670964949-5yfxonzl",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2NzA5NjQsImV4cCI6MTc5MzY5OTc2NH0.kc6qGg_ub66FiSAa1iHpNhBhwod12U1baoIDqV3xFlI",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-03T01:56:04.949Z",
+    "expires_at": "2026-11-03T09:56:04.949Z",
+    "updated_at": "2026-11-03T01:56:04.950Z"
+  },
+  {
+    "session_id": "SESS-1793670966974-myatwvud",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2NzA5NjYsImV4cCI6MTc5MzY5OTc2Nn0._HCUNCyHFN0KoCbp292SLUxaEsEXVXiWwaIyFTaWKAA",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-03T01:56:06.974Z",
+    "expires_at": "2026-11-03T09:56:06.974Z",
+    "updated_at": "2026-11-03T01:56:06.974Z"
+  },
+  {
+    "session_id": "SESS-1793671027440-s4qduftt",
+    "user_id": "USR-ADMIN-001",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJVU1ItQURNSU4tMDAxIiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYXZhbmlmaW5zZXJ2LmNvbSIsInJvbGUiOiJTdXBlciBBZG1pbmlzdHJhdG9yIiwibXVzdENoYW5nZVBhc3N3b3JkIjp0cnVlLCJpYXQiOjE3OTM2NzEwMjcsImV4cCI6MTc5MzY5OTgyN30.2lsen7jV878Q4LSIZtq0_PlwRnpe9hJIeIBCKDNzJs4",
+    "ip_address": "::1",
+    "user_agent": "",
+    "created_at": "2026-11-03T01:57:07.440Z",
+    "expires_at": "2026-11-03T09:57:07.440Z",
+    "updated_at": "2026-11-03T01:57:07.440Z"
+  }
+]

@@ -25,6 +25,11 @@ import DownloadApplication from './pages/DownloadApplication';
 import ProductApply from './pages/ProductApply';
 import ErrorBoundary from './components/ErrorBoundary';
 
+// ── AVANI UNIFIED BUSINESS GROWTH & LEAD MANAGEMENT PORTAL ──
+import UnifiedAdminPortal from './pages/UnifiedAdminPortal';
+import BuilderPartnershipPage from './pages/BuilderPartnershipPage';
+import InstitutionalFundingPage from './pages/InstitutionalFundingPage';
+
 // ── Financial Calculator Suite (Isolated & Password-Protected Admin) ──
 import { CalculatorAuthProvider } from './calculators/auth/CalculatorAuthContext';
 import CalculatorProtectedRoute from './calculators/auth/CalculatorProtectedRoute';
@@ -83,7 +88,12 @@ export default function App() {
               <Route path="/services" element={<ServicesList />} />
               <Route path="/services/:slug" element={<Service />} />
               <Route path="/ai-assistant" element={<AIAssistant />} />
-              <Route path="/admin" element={<PasswordGate pageTitle="Executive Operations Dashboard"><AdminDashboard /></PasswordGate>} />
+              {/* ── Unified Business Growth & Lead Management Portal ── */}
+              <Route path="/admin" element={<UnifiedAdminPortal />} />
+              <Route path="/admin/login" element={<UnifiedAdminPortal />} />
+              <Route path="/admin/dashboard" element={<UnifiedAdminPortal />} />
+              <Route path="/builder-partnership" element={<BuilderPartnershipPage />} />
+              <Route path="/institutional-funding" element={<InstitutionalFundingPage />} />
               <Route path="/admin-eligibility" element={<PasswordGate pageTitle="Eligibility Admin Panel"><AdminEligibility /></PasswordGate>} />
               <Route path="/catalog" element={<Catalog />} />
               <Route path="/loan-products" element={<Catalog />} />

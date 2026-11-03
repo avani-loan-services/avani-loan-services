@@ -1,0 +1,1682 @@
+[
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-001",
+    "institution_id": "ALS-EDU-MH-MUM-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.863Z",
+    "created_at": "2026-11-01T07:48:06.097Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-002",
+    "institution_id": "ALS-EDU-MH-MUM-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.869Z",
+    "created_at": "2026-11-01T07:48:06.103Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-003",
+    "institution_id": "ALS-EDU-MH-MUM-003",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.877Z",
+    "created_at": "2026-11-01T07:48:06.108Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-004",
+    "institution_id": "ALS-EDU-MH-MUM-004",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.884Z",
+    "created_at": "2026-11-01T07:48:06.112Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-005",
+    "institution_id": "ALS-EDU-MH-MUM-005",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.890Z",
+    "created_at": "2026-11-01T07:48:06.115Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-006",
+    "institution_id": "ALS-EDU-MH-MUM-006",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.899Z",
+    "created_at": "2026-11-01T07:48:06.120Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-MUM-007",
+    "institution_id": "ALS-EDU-MH-MUM-007",
+    "funding_categories": [
+      "College infrastructure finance",
+      "Education institution expansion finance",
+      "Equipment and laboratory finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.905Z",
+    "created_at": "2026-11-01T07:48:06.125Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-PUN-001",
+    "institution_id": "ALS-EDU-MH-PUN-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.914Z",
+    "created_at": "2026-11-01T07:48:06.128Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-PUN-002",
+    "institution_id": "ALS-EDU-MH-PUN-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.921Z",
+    "created_at": "2026-11-01T07:48:06.131Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-PUN-003",
+    "institution_id": "ALS-EDU-MH-PUN-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.932Z",
+    "created_at": "2026-11-01T07:48:06.135Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-PUN-004",
+    "institution_id": "ALS-EDU-MH-PUN-004",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.979Z",
+    "created_at": "2026-11-01T07:48:06.141Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NSK-001",
+    "institution_id": "ALS-EDU-MH-NSK-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.987Z",
+    "created_at": "2026-11-01T07:48:06.145Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NSK-002",
+    "institution_id": "ALS-EDU-MH-NSK-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:56.997Z",
+    "created_at": "2026-11-01T07:48:06.149Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NAG-001",
+    "institution_id": "ALS-EDU-MH-NAG-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.004Z",
+    "created_at": "2026-11-01T07:48:06.155Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NAG-002",
+    "institution_id": "ALS-EDU-MH-NAG-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.011Z",
+    "created_at": "2026-11-01T07:48:06.159Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-CSN-001",
+    "institution_id": "ALS-EDU-MH-CSN-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.019Z",
+    "created_at": "2026-11-01T07:48:06.162Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-KOL-001",
+    "institution_id": "ALS-EDU-MH-KOL-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.027Z",
+    "created_at": "2026-11-01T07:48:06.166Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-SOL-001",
+    "institution_id": "ALS-EDU-MH-SOL-001",
+    "funding_categories": [
+      "College infrastructure finance",
+      "Education institution expansion finance",
+      "Equipment and laboratory finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.034Z",
+    "created_at": "2026-11-01T07:48:06.172Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-SAN-001",
+    "institution_id": "ALS-EDU-MH-SAN-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.043Z",
+    "created_at": "2026-11-01T07:48:06.176Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-SAT-001",
+    "institution_id": "ALS-EDU-MH-SAT-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.050Z",
+    "created_at": "2026-11-01T07:48:06.179Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-AHI-001",
+    "institution_id": "ALS-EDU-MH-AHI-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.060Z",
+    "created_at": "2026-11-01T07:48:06.184Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-JAL-001",
+    "institution_id": "ALS-EDU-MH-JAL-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.069Z",
+    "created_at": "2026-11-01T07:48:06.189Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-LAT-001",
+    "institution_id": "ALS-EDU-MH-LAT-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.079Z",
+    "created_at": "2026-11-01T07:48:06.193Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-AMR-001",
+    "institution_id": "ALS-EDU-MH-AMR-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.087Z",
+    "created_at": "2026-11-01T07:48:06.197Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-BAR-001",
+    "institution_id": "ALS-EDU-MH-BAR-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.102Z",
+    "created_at": "2026-11-01T07:48:06.204Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KA-001",
+    "institution_id": "ALS-EDU-NAT-KA-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.118Z",
+    "created_at": "2026-11-01T07:48:06.209Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KA-002",
+    "institution_id": "ALS-EDU-NAT-KA-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.177Z",
+    "created_at": "2026-11-01T07:48:06.212Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KA-003",
+    "institution_id": "ALS-EDU-NAT-KA-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.189Z",
+    "created_at": "2026-11-01T07:48:06.215Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-GJ-001",
+    "institution_id": "ALS-EDU-NAT-GJ-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.197Z",
+    "created_at": "2026-11-01T07:48:06.221Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-GJ-002",
+    "institution_id": "ALS-EDU-NAT-GJ-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.204Z",
+    "created_at": "2026-11-01T07:48:06.225Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UP-001",
+    "institution_id": "ALS-EDU-NAT-UP-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.247Z",
+    "created_at": "2026-11-01T07:48:06.229Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UP-002",
+    "institution_id": "ALS-EDU-NAT-UP-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.253Z",
+    "created_at": "2026-11-01T07:48:06.233Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-TN-001",
+    "institution_id": "ALS-EDU-NAT-TN-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.259Z",
+    "created_at": "2026-11-01T07:48:06.238Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-TN-002",
+    "institution_id": "ALS-EDU-NAT-TN-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.265Z",
+    "created_at": "2026-11-01T07:48:06.242Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UK-001",
+    "institution_id": "ALS-EDU-NAT-UK-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.270Z",
+    "created_at": "2026-11-01T07:48:06.246Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-OD-001",
+    "institution_id": "ALS-EDU-NAT-OD-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.279Z",
+    "created_at": "2026-11-01T07:48:06.250Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-THA-001",
+    "institution_id": "ALS-EDU-MH-THA-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.287Z",
+    "created_at": "2026-11-01T07:48:06.256Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NAV-001",
+    "institution_id": "ALS-EDU-MH-NAV-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.294Z",
+    "created_at": "2026-11-01T07:48:06.260Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NAV-002",
+    "institution_id": "ALS-EDU-MH-NAV-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.301Z",
+    "created_at": "2026-11-01T07:48:06.264Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-PUN-006",
+    "institution_id": "ALS-EDU-MH-PUN-006",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.306Z",
+    "created_at": "2026-11-01T07:48:06.270Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-PUN-007",
+    "institution_id": "ALS-EDU-MH-PUN-007",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.313Z",
+    "created_at": "2026-11-01T07:48:06.275Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NSK-003",
+    "institution_id": "ALS-EDU-MH-NSK-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.318Z",
+    "created_at": "2026-11-01T07:48:06.280Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NAG-003",
+    "institution_id": "ALS-EDU-MH-NAG-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.323Z",
+    "created_at": "2026-11-01T07:48:06.287Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-KOL-002",
+    "institution_id": "ALS-EDU-MH-KOL-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.331Z",
+    "created_at": "2026-11-01T07:48:06.292Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-AHI-002",
+    "institution_id": "ALS-EDU-MH-AHI-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.337Z",
+    "created_at": "2026-11-01T07:48:06.296Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-JAL-002",
+    "institution_id": "ALS-EDU-MH-JAL-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.343Z",
+    "created_at": "2026-11-01T07:48:06.302Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-DHU-001",
+    "institution_id": "ALS-EDU-MH-DHU-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.348Z",
+    "created_at": "2026-11-01T07:48:06.306Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-BEE-001",
+    "institution_id": "ALS-EDU-MH-BEE-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.353Z",
+    "created_at": "2026-11-01T07:48:06.310Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-AKO-001",
+    "institution_id": "ALS-EDU-MH-AKO-001",
+    "funding_categories": [
+      "College infrastructure finance",
+      "Education institution expansion finance",
+      "Equipment and laboratory finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.360Z",
+    "created_at": "2026-11-01T07:48:06.315Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-NAN-001",
+    "institution_id": "ALS-EDU-MH-NAN-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.365Z",
+    "created_at": "2026-11-01T07:48:06.322Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-MH-CSN-002",
+    "institution_id": "ALS-EDU-MH-CSN-002",
+    "funding_categories": [
+      "College infrastructure finance",
+      "Education institution expansion finance",
+      "Equipment and laboratory finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.372Z",
+    "created_at": "2026-11-01T07:48:06.326Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KA-004",
+    "institution_id": "ALS-EDU-NAT-KA-004",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.378Z",
+    "created_at": "2026-11-01T07:48:06.331Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KA-005",
+    "institution_id": "ALS-EDU-NAT-KA-005",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.384Z",
+    "created_at": "2026-11-01T07:48:06.336Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KA-006",
+    "institution_id": "ALS-EDU-NAT-KA-006",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.389Z",
+    "created_at": "2026-11-01T07:48:06.341Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-TS-001",
+    "institution_id": "ALS-EDU-NAT-TS-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.396Z",
+    "created_at": "2026-11-01T07:48:06.346Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-TS-002",
+    "institution_id": "ALS-EDU-NAT-TS-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.402Z",
+    "created_at": "2026-11-01T07:48:06.350Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-AP-001",
+    "institution_id": "ALS-EDU-NAT-AP-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:57.689Z",
+    "created_at": "2026-11-01T07:48:06.356Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-GJ-003",
+    "institution_id": "ALS-EDU-NAT-GJ-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:58.718Z",
+    "created_at": "2026-11-01T07:48:06.360Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-DL-001",
+    "institution_id": "ALS-EDU-NAT-DL-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:55:58.731Z",
+    "created_at": "2026-11-01T07:48:06.365Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-PB-001",
+    "institution_id": "ALS-EDU-NAT-PB-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.000Z",
+    "created_at": "2026-11-01T07:48:06.371Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-PB-002",
+    "institution_id": "ALS-EDU-NAT-PB-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.014Z",
+    "created_at": "2026-11-01T07:48:06.376Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UK-002",
+    "institution_id": "ALS-EDU-NAT-UK-002",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.238Z",
+    "created_at": "2026-11-01T07:48:06.380Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-WB-001",
+    "institution_id": "ALS-EDU-NAT-WB-001",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.283Z",
+    "created_at": "2026-11-01T07:48:06.386Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-RJ-001",
+    "institution_id": "ALS-EDU-NAT-RJ-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.293Z",
+    "created_at": "2026-11-01T07:48:06.393Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-RJ-002",
+    "institution_id": "ALS-EDU-NAT-RJ-002",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.300Z",
+    "created_at": "2026-11-01T07:48:06.441Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-RJ-003",
+    "institution_id": "ALS-EDU-NAT-RJ-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.308Z",
+    "created_at": "2026-11-01T07:48:06.446Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-MP-001",
+    "institution_id": "ALS-EDU-NAT-MP-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.315Z",
+    "created_at": "2026-11-01T07:48:06.453Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-MP-002",
+    "institution_id": "ALS-EDU-NAT-MP-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.323Z",
+    "created_at": "2026-11-01T07:48:06.462Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-MP-003",
+    "institution_id": "ALS-EDU-NAT-MP-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.329Z",
+    "created_at": "2026-11-01T07:48:06.470Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-TN-003",
+    "institution_id": "ALS-EDU-NAT-TN-003",
+    "funding_categories": [
+      "College infrastructure finance",
+      "Education institution expansion finance",
+      "Equipment and laboratory finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.338Z",
+    "created_at": "2026-11-01T07:48:06.477Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-TN-004",
+    "institution_id": "ALS-EDU-NAT-TN-004",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.345Z",
+    "created_at": "2026-11-01T07:48:06.486Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KL-001",
+    "institution_id": "ALS-EDU-NAT-KL-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.356Z",
+    "created_at": "2026-11-01T07:48:06.493Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-KL-002",
+    "institution_id": "ALS-EDU-NAT-KL-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.363Z",
+    "created_at": "2026-11-01T07:48:06.500Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-HR-001",
+    "institution_id": "ALS-EDU-NAT-HR-001",
+    "funding_categories": [
+      "School infrastructure finance",
+      "Construction finance",
+      "Renovation and modernization finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.371Z",
+    "created_at": "2026-11-01T07:48:06.510Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UP-003",
+    "institution_id": "ALS-EDU-NAT-UP-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.378Z",
+    "created_at": "2026-11-01T07:48:06.515Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UP-004",
+    "institution_id": "ALS-EDU-NAT-UP-004",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.385Z",
+    "created_at": "2026-11-01T07:48:06.523Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-HR-002",
+    "institution_id": "ALS-EDU-NAT-HR-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.395Z",
+    "created_at": "2026-11-01T07:48:06.528Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-OD-002",
+    "institution_id": "ALS-EDU-NAT-OD-002",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.402Z",
+    "created_at": "2026-11-01T07:48:06.535Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-PB-003",
+    "institution_id": "ALS-EDU-NAT-PB-003",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.409Z",
+    "created_at": "2026-11-01T07:48:06.541Z"
+  },
+  {
+    "profile_id": "ALS-EFUND-NAT-UP-005",
+    "institution_id": "ALS-EDU-NAT-UP-005",
+    "funding_categories": [
+      "Educational trust funding",
+      "Land and building finance",
+      "Working capital finance",
+      "Secured institutional funding",
+      "Loan Against Property"
+    ],
+    "estimated_amount": 100000000,
+    "preferred_structure": "Secured institutional funding",
+    "eligible_lenders": [
+      "HDFC Bank Education Finance",
+      "Tata Capital Institutional Loans",
+      "SBI Project Finance"
+    ],
+    "financials_readiness": "Balance Sheets 3 Yrs Available, Land Title Clear",
+    "updated_at": "2026-11-01T17:56:01.416Z",
+    "created_at": "2026-11-01T07:48:06.547Z"
+  }
+]

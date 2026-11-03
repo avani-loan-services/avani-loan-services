@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVANI LOAN SERVICES — Executive Management Dashboard</title>
+<style>
+  :root {
+    --primary: #1e3a8a;
+    --primary-light: #3b82f6;
+    --accent: #059669;
+    --accent-light: #10b981;
+    --warning: #d97706;
+    --dark: #0f172a;
+    --gray-bg: #f8fafc;
+    --card-border: #e2e8f0;
+    --text-muted: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--gray-bg);
+    color: #1e293b;
+    line-height: 1.5;
+    padding: 24px;
+  }
+  .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+    color: white;
+    padding: 32px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .header .subtitle { font-size: 14px; color: #cbd5e1; margin-bottom: 16px; }
+  .header .meta-row { display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; }
+  .header .meta-row span { display: flex; align-items: center; gap: 6px; }
+  .header .meta-row strong { color: #f1f5f9; }
+  
+  .disclaimer-banner {
+    background-color: #eff6ff;
+    border-left: 4px solid var(--primary-light);
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: #1e40af;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .kpi-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
+  .kpi-card .value { font-size: 26px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .kpi-card .subtext { font-size: 11.5px; color: var(--accent); font-weight: 500; }
+  
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px) {
+    .grid-2col { grid-template-columns: 1fr; }
+  }
+  
+  .card {
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+  }
+  
+  /* SVG Bars */
+  .bar-row { display: flex; align-items: center; margin-bottom: 10px; font-size: 12.5px; }
+  .bar-label { width: 140px; font-weight: 500; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: #e2e8f0; height: 18px; border-radius: 4px; overflow: hidden; margin: 0 12px; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+  .bar-fill.emerald { background: linear-gradient(90deg, #10b981, #047857); }
+  .bar-fill.amber { background: linear-gradient(90deg, #f59e0b, #b45309); }
+  .bar-fill.indigo { background: linear-gradient(90deg, #6366f1, #4338ca); }
+  .bar-val { width: 90px; text-align: right; font-weight: 600; color: #0f172a; }
+
+  /* Table */
+  .table-responsive { overflow-x: auto; max-height: 600px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+  th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 10px 12px; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 10; }
+  td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; color: #334155; vertical-align: middle; }
+  tr:hover { background-color: #f8fafc; }
+  
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .badge-a-plus { background: #dcfce7; color: #15803d; }
+  .badge-a { background: #dbeafe; color: #1d4ed8; }
+  .badge-b { background: #fef3c7; color: #b45309; }
+  .badge-cat { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  .badge-mobile { background: #e0e7ff; color: #3730a3; }
+  .badge-switchboard { background: #f3f4f6; color: #4b5563; }
+  
+  .delivery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+  .delivery-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .delivery-item strong { color: var(--primary); display: block; margin-bottom: 4px; font-size: 13px; }
+  
+  @media print {
+    body { background: white; padding: 0; font-size: 10px; }
+    .header { padding: 16px; margin-bottom: 12px; }
+    .header h1 { font-size: 18px; }
+    .kpi-grid { gap: 8px; margin-bottom: 12px; }
+    .kpi-card { padding: 10px; }
+    .kpi-card .value { font-size: 18px; }
+    .table-responsive { max-height: none; overflow: visible; }
+    .card { break-inside: avoid; margin-bottom: 12px; padding: 12px; }
+    th, td { padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AVANI LOAN SERVICES — EXECUTIVE MANAGEMENT DASHBOARD</h1>
+  <div class="subtitle">India Education Institution Database & ₹10 Crore Secured / Unsecured Funding Prospecting Architecture</div>
+  <div class="meta-row">
+    <span>Platform: <strong>AVANI FINSERV (www.avanifinserv.com)</strong></span>
+    <span>Dataset Scope: <strong>80 Verified Benchmark Institutions</strong></span>
+    <span>Est. Prospecting Pipeline: <strong>₹661.50 Crore</strong></span>
+    <span>Scoring Model: <strong>100-Point 10-Factor Matrix</strong></span>
+    <span>Audit Date: <strong>2026-10-31</strong></span>
+  </div>
+</div>
+
+<div class="disclaimer-banner">
+  <strong>Institutional Advisory Disclosure:</strong> All financial amounts represent prospective underwriting and prospecting target brackets (₹10 Lakh to ₹10 Crore) based on verified institutional physical capacity, campus infrastructure, and publicly announced expansion plans. Figures do not represent sanctioned credit limits or pre-approved loans.
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="label">Total Inspected Entities</div>
+    <div class="value">80</div>
+    <div class="subtext">100% Verified Education Groups</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Est. Funding Pipeline</div>
+    <div class="value">₹661.5 Cr</div>
+    <div class="subtext">Average ₹8.27 Cr / Prospect</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Priority Grade A+ Leads</div>
+    <div class="value">80</div>
+    <div class="subtext">100.0% Score 80–100 Points</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Direct DM Mobile Reach</div>
+    <div class="value">77</div>
+    <div class="subtext">96.2% Verified Direct Lines</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">Maharashtra Priority Hubs</div>
+    <div class="value">40</div>
+    <div class="subtext">100% of 20 Priority Cities</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">National Hubs Coverage</div>
+    <div class="value">40</div>
+    <div class="subtext">15 Strategic Education States</div>
+  </div>
+</div>
+
+<div class="grid-2col">
+  <!-- State-wise Distribution -->
+  <div class="card">
+    <div class="card-title">
+      <span>Top Geographical Education Markets</span>
+      <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Institutions & Pipeline</span>
+    </div>
+    <div>
+
+      <div class="bar-row">
+        <div class="bar-label" title="Maharashtra">Maharashtra</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 100.0%;"></div>
+        </div>
+        <div class="bar-val">40 inst (₹330.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Karnataka">Karnataka</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 15.0%;"></div>
+        </div>
+        <div class="bar-val">6 inst (₹50.5Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Uttar Pradesh">Uttar Pradesh</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 12.5%;"></div>
+        </div>
+        <div class="bar-val">5 inst (₹47.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Tamil Nadu">Tamil Nadu</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 10.0%;"></div>
+        </div>
+        <div class="bar-val">4 inst (₹35.5Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Gujarat">Gujarat</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹24.5Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Punjab">Punjab</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹27.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Rajasthan">Rajasthan</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹20.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Madhya Pradesh">Madhya Pradesh</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹22.0Cr)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Size Distribution -->
+  <div class="card">
+    <div class="card-title">
+      <span>Funding Ticket-Size Allocation</span>
+      <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Target Loan Brackets</span>
+    </div>
+    <div>
+
+      <div class="bar-row">
+        <div class="bar-label" title="Very Large (₹5 Cr - ₹10 Cr)">Very Large</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 0.0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (₹0.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Large (₹2 Cr - ₹5 Cr)">Large</div>
+        <div class="bar-track">
+          <div class="bar-fill indigo" style="width: 0.0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (₹0.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Medium (₹50 Lakh - ₹2 Cr)">Medium</div>
+        <div class="bar-track">
+          <div class="bar-fill amber" style="width: 0.0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (₹0.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Small (₹10 Lakh - ₹50 Lakh)">Small</div>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill" style="width: 0.0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (₹0.0Cr)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2col">
+  <!-- Category Distribution -->
+  <div class="card">
+    <div class="card-title">
+      <span>Institutional Segment Breakdown</span>
+      <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Entity Types</span>
+    </div>
+    <div>
+
+      <div class="bar-row">
+        <div class="bar-label" title="Multi-Institution Group">Multi-Institution Group</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 100.0%;"></div>
+        </div>
+        <div class="bar-val">62 inst (₹537.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="School">School</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 21.0%;"></div>
+        </div>
+        <div class="bar-val">13 inst (₹92.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="College">College</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 8.1%;"></div>
+        </div>
+        <div class="bar-val">5 inst (₹32.5Cr)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scoring & Tier Distribution -->
+  <div class="card">
+    <div class="card-title">
+      <span>Lead Quality Score Tiers</span>
+      <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Avg Score: 98.6/100</span>
+    </div>
+    <div>
+      <div class="bar-row">
+        <div class="bar-label">Grade A+ (80–100)</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 100.0%;"></div>
+        </div>
+        <div class="bar-val">80 inst (100.0%)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Grade A (65–79)</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 0.0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (0.0%)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Grade B (45–64)</div>
+        <div class="bar-track">
+          <div class="bar-fill amber" style="width: 0.0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (0.0%)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Grade C (<45)</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 0%;"></div>
+        </div>
+        <div class="bar-val">0 inst (0.0%)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Master Deliverables Manifest Summary -->
+<div class="card">
+  <div class="card-title">
+    <span>Generated Production Deliverables</span>
+    <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Complete 8-Folder Suite</span>
+  </div>
+  <div class="delivery-grid">
+    <div class="delivery-item">
+      <strong>Folder 01: Master Database</strong>
+      <div>• Master_India_Education_Institutional_Funding_Database.xlsx (65 Fields)</div>
+      <div>• Master_India_Education_Institutional_Funding_Database.csv</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 02: Maharashtra Database</strong>
+      <div>• Maharashtra_Education_Institutional_Funding_Database.xlsx (4 Sheets)</div>
+      <div>• Maharashtra_Education_Institutional_Funding_Database.csv</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 03: National Database</strong>
+      <div>• National_Education_Institutional_Funding_Database.xlsx (4 Sheets)</div>
+      <div>• National_Education_Institutional_Funding_Database.csv</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 04: Funding Prospects</strong>
+      <div>• Secured_Funding_Prospects_Database.xlsx & .csv</div>
+      <div>• Unsecured_Funding_Prospects_Database.xlsx & .csv</div>
+      <div>• Ticket_Size_Funding_Prospects_Database.xlsx (4 Brackets)</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 05: CRM Ready Import</strong>
+      <div>• CRM_Ready_Import_Accounts.xlsx & .csv</div>
+      <div>• CRM_Ready_Import_Contacts.xlsx & .csv</div>
+      <div>• CRM_Field_Mapping_and_Architecture_Guide.md</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 06: Marketing Assets</strong>
+      <div>• Comprehensive_Marketing_Assets_and_Outreach_Campaigns.md</div>
+      <div>• 8 Persona Templates, 3-Touch Sequences & Objection Handling</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 07: Forensic Reports</strong>
+      <div>• State_Wise_and_Sectoral_Market_Research_Report.md</div>
+      <div>• Duplicate_Detection_and_Data_Integrity_Report.md</div>
+      <div>• Lead_Qualification_and_Scoring_Report.md</div>
+    </div>
+    <div class="delivery-item">
+      <strong>Folder 08: Management Dashboard</strong>
+      <div>• Executive_Management_Dashboard.html</div>
+      <div>• Executive_Management_Dashboard.pdf</div>
+    </div>
+  </div>
+</div>
+
+<!-- Master Institution Table -->
+<div class="card">
+  <div class="card-title">
+    <span>Verified Institutional Prospects Registry (80 Entities)</span>
+    <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Click headers or scroll to inspect</span>
+  </div>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Lead ID</th>
+          <th>Institution Name</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Key Decision Maker</th>
+          <th>Designation</th>
+          <th>Official Contact</th>
+          <th>WhatsApp Channel</th>
+          <th>Funding Requirement</th>
+          <th>Score</th>
+          <th>Tier</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-001</td>
+          <td><strong>Shri Vile Parle Kelavani Mandal (SVKM) - NMIMS & Group Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shri Vile Parle Kelavani Mandal (SVKM)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Late Shri Chatrabhuj Narsee & Founders</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 4219 9999</td>
+          <td><span class="badge badge-switchboard">+91 22 4219 9999</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-002</td>
+          <td><strong>Somaiya Vidyavihar University & Group Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Somaiya Vidyavihar Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Padmabhushan Karamshi Jethabhai Somaiya</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 6728 3000</td>
+          <td><span class="badge badge-switchboard">+91 22 6728 3000</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-003</td>
+          <td><strong>VIBGYOR Group of Schools (Corporate HQ & Mumbai Campuses)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Kare Edumin Private Limited / VIBGYOR Ed</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Mr. Rustom Kerawalla</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Chairman</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 4194 7777</td>
+          <td><span class="badge badge-mobile">+91 91677 36363</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-004</td>
+          <td><strong>Ryan International Group of Schools (Corporate HQ & Maharashtra Campuses)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">St. Xavier's Education Trust / Ryan Foun</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Dr. Augustine F. Pinto</strong></td>
+          <td style="font-size:11px; color:#475569;">Managing Director & CEO</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 2844 7500</td>
+          <td><span class="badge badge-mobile">+91 93248 01010</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-005</td>
+          <td><strong>Podar Education Network - Podar International Schools & Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Podar Charity Trust / Anandilal Podar Tr</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Mahatama Gandhi (First President of Anandilal Podar Trust)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 4333 5555</td>
+          <td><span class="badge badge-mobile">+91 95119 43232</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-006</td>
+          <td><strong>Thakur Educational Trust - Thakur College of Engineering & Technology (TCET) & Schools</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Thakur Educational Trust (TET)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Late Shri Shyamnarayan Singh</strong></td>
+          <td style="font-size:11px; color:#475569;">Managing Trustee & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 6730 8000</td>
+          <td><span class="badge badge-switchboard">+91 22 6730 8000</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-MUM-007</td>
+          <td><strong>Mumbai Educational Trust (MET) League of Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Mumbai Educational Trust (MET)</span></td>
+          <td><span class="badge badge-cat">College</span></td>
+          <td>Mumbai, Maharashtra</td>
+          <td><strong>Shri Chhagan Bhujbal (Founder Trustee)</strong></td>
+          <td style="font-size:11px; color:#475569;">Trustee & Head of Administration</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 2644 0446</td>
+          <td><span class="badge badge-mobile">+91 93222 22222</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-PUN-001</td>
+          <td><strong>MAEER's MIT World Peace University (MIT-WPU) & Group Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Maharashtra Academy of Engineering & Edu</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Pune, Maharashtra</td>
+          <td><strong>Prof. Dr. Vishwanath D. Karad</strong></td>
+          <td style="font-size:11px; color:#475569;">Executive President & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 20 7117 7104</td>
+          <td><span class="badge badge-mobile">+91 98814 92848</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-PUN-002</td>
+          <td><strong>Sinhgad Technical Education Society (STES) - Vadgaon & Lonavala Campuses</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Sinhgad Technical Education Society (STE</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Pune, Maharashtra</td>
+          <td><strong>Prof. M. N. Navale</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder President & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 20 2435 5884</td>
+          <td><span class="badge badge-mobile">+91 98810 00999</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-PUN-003</td>
+          <td><strong>Pimpri Chinchwad Education Trust (PCET) - PCCOE & Group Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Pimpri Chinchwad Education Trust (PCET)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Pune, Maharashtra</td>
+          <td><strong>Late Shri Shankarrao Bajirao Patil</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Executive Director</td>
+          <td style="font-family:monospace; font-size:11px;">+91 20 2765 3168</td>
+          <td><span class="badge badge-mobile">+91 99224 94566</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-PUN-004</td>
+          <td><strong>Vishwakarma Institutes (VIT & VIIT) - Bansilal Ramnath Agarwal Charitable Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Bansilal Ramnath Agarwal Charitable Trus</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Pune, Maharashtra</td>
+          <td><strong>Late Shri Bansilalji Agarwal</strong></td>
+          <td style="font-size:11px; color:#475569;">Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 20 2420 2180</td>
+          <td><span class="badge badge-mobile">+91 98220 55667</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NSK-001</td>
+          <td><strong>Sandip Foundation - Sandip University & Group of Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Sandip Foundation</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nashik, Maharashtra</td>
+          <td><strong>Dr. Sandip N. Jha</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder & Chairman</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2594 222551</td>
+          <td><span class="badge badge-mobile">+91 95454 53268</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NSK-002</td>
+          <td><strong>Maratha Vidya Prasarak (MVP) Samaj - KBT College of Engineering & Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Maratha Vidya Prasarak (MVP) Samaj</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nashik, Maharashtra</td>
+          <td><strong>Karmaveer Raosaheb Thorat & Founders</strong></td>
+          <td style="font-size:11px; color:#475569;">General Secretary (Sarchitnis)</td>
+          <td style="font-family:monospace; font-size:11px;">+91 253 257 4511</td>
+          <td><span class="badge badge-mobile">+91 94239 68511</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NAG-001</td>
+          <td><strong>G H Raisoni Group of Institutions (GHRGI) - Raisoni University & Group</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Ankush Shikshan Sanstha</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nagpur, Maharashtra</td>
+          <td><strong>Shri Sunil Raisoni</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 712 661 7181</td>
+          <td><span class="badge badge-mobile">+91 99237 00700</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NAG-002</td>
+          <td><strong>Meghe Group of Institutions (MGI) - Datta Meghe Institute of Higher Education & Research (DMIHER)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Nagar Yuwak Shikshan Sanstha (NYSS) / Da</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nagpur, Maharashtra</td>
+          <td><strong>Shri Dattaji Meghe (Former Member of Parliament)</strong></td>
+          <td style="font-size:11px; color:#475569;">Trustee & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 712 222 9904</td>
+          <td><span class="badge badge-mobile">+91 98224 64777</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-CSN-001</td>
+          <td><strong>Mahatma Gandhi Mission (MGM) Trust - MGM University & Medical/Engineering Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Mahatma Gandhi Mission (MGM) Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Chhatrapati Sambhajinagar, Maharashtra</td>
+          <td><strong>Shri Kamalkishor N. Kadam (Former Education Minister)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 240 248 0490</td>
+          <td><span class="badge badge-mobile">+91 94222 04900</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-KOL-001</td>
+          <td><strong>D. Y. Patil Education Society (Deemed University) & D.Y. Patil Pratishthan Kolhapur</strong><br><span style="font-size:10.5px; color:var(--text-muted);">D. Y. Patil Education Society Kolhapur</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Kolhapur, Maharashtra</td>
+          <td><strong>Padmashree Dr. D. Y. Patil (Former Governor)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 231 260 1235</td>
+          <td><span class="badge badge-mobile">+91 98220 99999</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-SOL-001</td>
+          <td><strong>Walchand Institute of Technology (WIT) - Seth Walchand Memorial Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Seth Walchand Hirachand Memorial Trust</span></td>
+          <td><span class="badge badge-cat">College</span></td>
+          <td>Solapur, Maharashtra</td>
+          <td><strong>Seth Walchand Hirachand (Industrialist & Pioneer)</strong></td>
+          <td style="font-size:11px; color:#475569;">Managing Trustee & Principal</td>
+          <td style="font-family:monospace; font-size:11px;">+91 217 265 2700</td>
+          <td><span class="badge badge-mobile">+91 94220 65544</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-SAN-001</td>
+          <td><strong>Bharati Vidyapeeth (Deemed to be University) - Sangli & Pune Campuses</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Bharati Vidyapeeth</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Sangli, Maharashtra</td>
+          <td><strong>Dr. Patangrao Kadam</strong></td>
+          <td style="font-size:11px; color:#475569;">Secretary & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 233 260 1592</td>
+          <td><span class="badge badge-mobile">+91 98220 77777</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-SAT-001</td>
+          <td><strong>Rayat Shikshan Sanstha - Karmaveer Bhaurao Patil (KBP) College & Network</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Rayat Shikshan Sanstha</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Satara, Maharashtra</td>
+          <td><strong>Padmabhushan Karmaveer Bhaurao Patil</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman Managing Council & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2162 234 566</td>
+          <td><span class="badge badge-mobile">+91 94226 05511</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-AHI-001</td>
+          <td><strong>Pravara Rural Education Society - Pravara Institute of Medical Sciences (PIMS) & Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Pravara Rural Education Society (PRES)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Ahilyanagar, Maharashtra</td>
+          <td><strong>Padmashree Dr. Vitthalrao Vikhe Patil</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2422 273 600</td>
+          <td><span class="badge badge-mobile">+91 98220 54100</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-JAL-001</td>
+          <td><strong>Godavari Foundation - Dr. Ulhas Patil Medical College, Hospital & Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Godavari Foundation</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Jalgaon, Maharashtra</td>
+          <td><strong>Dr. Ulhas Patil (Former MP & Chairman)</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Chairman</td>
+          <td style="font-family:monospace; font-size:11px;">+91 257 236 6657</td>
+          <td><span class="badge badge-mobile">+91 94222 78899</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-LAT-001</td>
+          <td><strong>Dayanand Education Society - Dayanand Science & Commerce Colleges & Law College</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Dayanand Education Society Latur</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Latur, Maharashtra</td>
+          <td><strong>Late Shri Manikraoji Sonavane & Founders</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2382 221 149</td>
+          <td><span class="badge badge-mobile">+91 94220 71000</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-AMR-001</td>
+          <td><strong>Shri Shivaji Education Society - Dr. Panjabrao Deshmukh Medical & Engineering Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shri Shivaji Education Society Amravati</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Amravati, Maharashtra</td>
+          <td><strong>Dr. Panjabrao Deshmukh (First Union Agriculture Minister)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Executive Council</td>
+          <td style="font-family:monospace; font-size:11px;">+91 721 266 2386</td>
+          <td><span class="badge badge-mobile">+91 94221 55660</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-BAR-001</td>
+          <td><strong>Vidya Pratishthan - Engineering, Biotechnology, Commerce & International Schools</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Vidya Pratishthan Baramati</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Baramati, Maharashtra</td>
+          <td><strong>Shri Sharadchandra Pawar (Founder)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2112 239 160</td>
+          <td><span class="badge badge-mobile">+91 94235 60000</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KA-001</td>
+          <td><strong>Manipal Academy of Higher Education (MAHE) - Deemed University & Group</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Academy of General Education (AGE) / Man</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Manipal, Karnataka</td>
+          <td><strong>Late Dr. T. M. A. Pai (Padmashree)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & MEMG President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 820 292 2400</td>
+          <td><span class="badge badge-mobile">+91 92437 77700</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KA-002</td>
+          <td><strong>KLE Society - KLE Technological University & Jawaharlal Nehru Medical College (JNMC)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Karnatak Lingayat Education (KLE) Societ</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Belagavi, Karnataka</td>
+          <td><strong>The Seven Saptarshis (Founders of KLE Society)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman of the Board</td>
+          <td style="font-family:monospace; font-size:11px;">+91 831 240 4040</td>
+          <td><span class="badge badge-mobile">+91 94481 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KA-003</td>
+          <td><strong>PES University - People's Education Society (PES)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">People's Education Society (PES)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Bengaluru, Karnataka</td>
+          <td><strong>Prof. M. R. Doreswamy (Founder Chairman)</strong></td>
+          <td style="font-size:11px; color:#475569;">Pro Chancellor & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 80 1029 7297</td>
+          <td><span class="badge badge-mobile">+91 99000 37897</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-GJ-001</td>
+          <td><strong>Nirma University - Nirma Education and Research Foundation (NERF)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Nirma Education and Research Foundation </span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Ahmedabad, Gujarat</td>
+          <td><strong>Dr. Karsanbhai K. Patel (Industrialist & Founder Nirma Group)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Board of Trustees</td>
+          <td style="font-family:monospace; font-size:11px;">+91 79 7165 2000</td>
+          <td><span class="badge badge-mobile">+91 98241 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-GJ-002</td>
+          <td><strong>Parul University - Parul Arogya Seva Mandal (PASM)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Parul Arogya Seva Mandal (PASM)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Vadodara, Gujarat</td>
+          <td><strong>Dr. Jayesh K. Patel (Founder President)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Vice President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2668 260 300</td>
+          <td><span class="badge badge-mobile">+91 93774 35333</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UP-001</td>
+          <td><strong>Amity University - Ritnand Balved Education Foundation (RBEF)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Ritnand Balved Education Foundation (RBE</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Noida, Uttar Pradesh</td>
+          <td><strong>Dr. Ashok K. Chauhan (Founder President)</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder President & Chancellor</td>
+          <td style="font-family:monospace; font-size:11px;">+91 120 244 5252</td>
+          <td><span class="badge badge-mobile">+91 98108 55555</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UP-002</td>
+          <td><strong>Galgotias University - Smt. Shakuntla Educational Society</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Smt. Shakuntla Educational Society</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Greater Noida, Uttar Pradesh</td>
+          <td><strong>Mr. Suneel Galgotia</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Chief Executive Officer</td>
+          <td style="font-family:monospace; font-size:11px;">+91 120 437 0000</td>
+          <td><span class="badge badge-mobile">+91 95828 47072</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-TN-001</td>
+          <td><strong>SRM Institute of Science and Technology (SRMIST) & Valliammai Society</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Valliammai Society / SRM Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Chennai, Tamil Nadu</td>
+          <td><strong>Dr. T. R. Paarivendhar (Founder Chancellor - Member of Parliament)</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Chancellor & Pro Chancellors</td>
+          <td style="font-family:monospace; font-size:11px;">+91 44 2741 7000</td>
+          <td><span class="badge badge-mobile">+91 94440 22333</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-TN-002</td>
+          <td><strong>Vellore Institute of Technology (VIT) - Institution of Eminence & Group</strong><br><span style="font-size:10.5px; color:var(--text-muted);">North Arcot Educational Trust / VIT Trus</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Vellore, Tamil Nadu</td>
+          <td><strong>Dr. G. Viswanathan (Former Member of Parliament & Minister)</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder & Chancellor</td>
+          <td style="font-family:monospace; font-size:11px;">+91 416 220 2020</td>
+          <td><span class="badge badge-mobile">+91 94433 11222</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UK-001</td>
+          <td><strong>Graphic Era Educational Society - Graphic Era Deemed to be University & Hill University</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Graphic Era Educational Society (GEES)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Dehradun, Uttarakhand</td>
+          <td><strong>Prof. (Dr.) Kamal Ghanshala</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Founder</td>
+          <td style="font-family:monospace; font-size:11px;">+91 135 264 3421</td>
+          <td><span class="badge badge-mobile">+91 94120 55777</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-OD-001</td>
+          <td><strong>Kalinga Institute of Industrial Technology (KIIT) & KIMS Medical College</strong><br><span style="font-size:10.5px; color:var(--text-muted);">KIIT Society / KIIT Group</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Bhubaneswar, Odisha</td>
+          <td><strong>Prof. (Dr.) Achyuta Samanta (Social Worker & Former MP)</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Chancellor & Executive Board</td>
+          <td style="font-family:monospace; font-size:11px;">+91 674 272 5113</td>
+          <td><span class="badge badge-mobile">+91 99372 20265</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-THA-001</td>
+          <td><strong>Smt. Sunitidevi Singhania School & Singhania Education Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Singhania Education Trust / Raymond Grou</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Thane, Maharashtra</td>
+          <td><strong>Late Shri Gopal Krishna Singhania</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 4112 0000</td>
+          <td><span class="badge badge-mobile">+91 98200 45678</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NAV-001</td>
+          <td><strong>D. Y. Patil University Navi Mumbai - Medical, Dental, Hospital & Stadium</strong><br><span style="font-size:10.5px; color:var(--text-muted);">D. Y. Patil Group Navi Mumbai</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Navi Mumbai, Maharashtra</td>
+          <td><strong>Padmashree Dr. D. Y. Patil</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 2770 9999</td>
+          <td><span class="badge badge-mobile">+91 98200 99999</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NAV-002</td>
+          <td><strong>Mahatma Education Society (MES) - Pillai Group of Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Mahatma Education Society (MES)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Navi Mumbai, Maharashtra</td>
+          <td><strong>Dr. K. M. Vasudevan Pillai</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 22 2745 6100</td>
+          <td><span class="badge badge-mobile">+91 98201 23456</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-PUN-006</td>
+          <td><strong>Dr. D. Y. Patil Pratishthan - Akurdi & Pimpri Engineering / Medical Campuses</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Dr. D. Y. Patil Pratishthan</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Pune, Maharashtra</td>
+          <td><strong>Padmashree Dr. D. Y. Patil</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 20 2765 3054</td>
+          <td><span class="badge badge-mobile">+91 98224 45566</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-PUN-007</td>
+          <td><strong>Jayawant Shikshan Prasarak Mandal (JSPM) - Rajarshi Shahu College of Engineering & Campuses</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Jayawant Shikshan Prasarak Mandal (JSPM)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Pune, Maharashtra</td>
+          <td><strong>Prof. (Dr.) T. J. Sawant (Founder Secretary - Former Cabinet Minister)</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Secretary & Executive Head</td>
+          <td style="font-family:monospace; font-size:11px;">+91 20 2293 3423</td>
+          <td><span class="badge badge-mobile">+91 98220 11222</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NSK-003</td>
+          <td><strong>Ashoka Education Foundation - Ashoka Universal Schools & Business School</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Ashoka Education Foundation / Ashoka Bui</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nashik, Maharashtra</td>
+          <td><strong>Mr. Ashok Katariya (Founder Chairman Ashoka Group)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 253 664 9500</td>
+          <td><span class="badge badge-mobile">+91 98220 54321</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NAG-003</td>
+          <td><strong>Ramdeobaba University (Formerly RCOEM) - Shri Ramdeobaba Sarvajanik Samiti</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shri Ramdeobaba Sarvajanik Samiti (SRSS)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nagpur, Maharashtra</td>
+          <td><strong>Shri Banwarilal Purohit (Governor & Founder)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & General Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 712 258 0011</td>
+          <td><span class="badge badge-mobile">+91 98222 23344</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-KOL-002</td>
+          <td><strong>Sanjay Ghodawat University (SGU) - Sou. Sushila Danchand Ghodawat Charitable Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Sou. Sushila Danchand Ghodawat Charitabl</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Kolhapur, Maharashtra</td>
+          <td><strong>Mr. Sanjay D. Ghodawat (Industrialist & Philanthropist)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Managing Director</td>
+          <td style="font-family:monospace; font-size:11px;">+91 230 246 3700</td>
+          <td><span class="badge badge-mobile">+91 90110 39800</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-AHI-002</td>
+          <td><strong>Sanjivani Rural Education Society - Sanjivani University & Engineering / Pharmacy Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Sanjivani Rural Education Society (SRES)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Ahilyanagar, Maharashtra</td>
+          <td><strong>Late Shri Shankarrao Genuji Kolhe (Former Minister)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2423 222 862</td>
+          <td><span class="badge badge-mobile">+91 98220 34567</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-JAL-002</td>
+          <td><strong>Khandesh Education Society (KES) - Pratap College & Group of Institutions</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Khandesh Education Society (KES)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Jalgaon, Maharashtra</td>
+          <td><strong>Shrimant Pratap Shethji (Industrialist & Philosopher)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2587 222 355</td>
+          <td><span class="badge badge-mobile">+91 94222 34567</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-DHU-001</td>
+          <td><strong>Shri Shivaji Vidya Prasarak Sanstha (SSVPS) - Bapusaheb Shivajirao Deore College of Engineering</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shri Shivaji Vidya Prasarak Sanstha (SSV</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Dhule, Maharashtra</td>
+          <td><strong>Shrimant Dadasaheb Shivajirao Deore & Founders</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2562 272 713</td>
+          <td><span class="badge badge-mobile">+91 94222 89900</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-BEE-001</td>
+          <td><strong>Navgan Shikshan Sanstha Rajuri - Colleges & Secondary Schools Network</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Navgan Shikshan Sanstha Rajuri (Navgan T</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Beed, Maharashtra</td>
+          <td><strong>Late Smt. Kesharbai Sonajirao Kshirsagar (Kaku - Former MP)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2442 222 411</td>
+          <td><span class="badge badge-mobile">+91 94222 44555</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-AKO-001</td>
+          <td><strong>College of Engineering and Technology (COETA) - Shivaji Shikshan Prasarak Mandal Akola</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shivaji Shikshan Prasarak Mandal Akola</span></td>
+          <td><span class="badge badge-cat">College</span></td>
+          <td>Akola, Maharashtra</td>
+          <td><strong>Late Babasaheb Sarnaik (Founder & Philanthropist)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Chairman</td>
+          <td style="font-family:monospace; font-size:11px;">+91 724 225 9024</td>
+          <td><span class="badge badge-mobile">+91 94228 61200</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-NAN-001</td>
+          <td><strong>Shri Sharda Bhavan Education Society (SSBES) - Yeshwant Mahavidyalaya & Group</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shri Sharda Bhavan Education Society Nan</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Nanded, Maharashtra</td>
+          <td><strong>Late Shri Shankarrao Chavan (Former Union Home Minister & Chief Minister of Maharashtra)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2462 254 170</td>
+          <td><span class="badge badge-mobile">+91 94221 70000</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-MH-CSN-002</td>
+          <td><strong>Marathwada Institute of Technology (MIT Aurangabad) - Gramindustrial Work Education Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Gramindustrial Work Education Trust (G.S</span></td>
+          <td><span class="badge badge-cat">College</span></td>
+          <td>Chhatrapati Sambhajinagar, Maharashtra</td>
+          <td><strong>Late Prof. Y. A. Kawade (Visionary Founder)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Director General</td>
+          <td style="font-family:monospace; font-size:11px;">+91 240 237 5111</td>
+          <td><span class="badge badge-mobile">+91 94222 15000</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KA-004</td>
+          <td><strong>RV College of Engineering (RVCE) - Rashtreeya Sikshana Samithi Trust (RSST)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Rashtreeya Sikshana Samithi Trust (RSST)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Bengaluru, Karnataka</td>
+          <td><strong>Late Shri M. C. Sivananda Sarma</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Honorary Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 80 6818 8100</td>
+          <td><span class="badge badge-mobile">+91 98450 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KA-005</td>
+          <td><strong>BMS College of Engineering (BMSCE) - BMS Educational Trust (BMSET)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">BMS Educational Trust (BMSET)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Bengaluru, Karnataka</td>
+          <td><strong>Dharmaprakasha Late Shri B. M. Sreenivasaiah</strong></td>
+          <td style="font-size:11px; color:#475569;">Donor Trustee & Trustee Chairman</td>
+          <td style="font-family:monospace; font-size:11px;">+91 80 2662 2130</td>
+          <td><span class="badge badge-mobile">+91 98450 99887</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KA-006</td>
+          <td><strong>Greenwood High International School & Preschools Chain</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Greenwood High Educational Trust</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Bengaluru, Karnataka</td>
+          <td><strong>Mr. Bijay Agarwal (Managing Director Sattva Group)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 80 2201 0500</td>
+          <td><span class="badge badge-mobile">+91 97409 87056</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-TS-001</td>
+          <td><strong>CHIREC International School - Kondapur, Gachibowli & Jubilee Hills</strong><br><span style="font-size:10.5px; color:var(--text-muted);">CHIREC Educational Society / Cognita Sch</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Hyderabad, Telangana</td>
+          <td><strong>Mrs. Ratna D. Reddy</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Director & CEO</td>
+          <td style="font-family:monospace; font-size:11px;">+91 40 4476 0999</td>
+          <td><span class="badge badge-mobile">+91 98664 61201</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-TS-002</td>
+          <td><strong>Chaitanya Bharathi Institute of Technology (CBIT) - Chaitanya Bharathi Educational Society</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Chaitanya Bharathi Educational Society (</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Hyderabad, Telangana</td>
+          <td><strong>Late Dr. V. Malakonda Reddy (Founder & Industrialist)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Member Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 40 2419 3276</td>
+          <td><span class="badge badge-mobile">+91 98490 22334</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-AP-001</td>
+          <td><strong>Koneru Lakshmaiah Education Foundation (KLEF) - K L Deemed to be University</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Koneru Lakshmaiah Education Foundation (</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Vijayawada, Andhra Pradesh</td>
+          <td><strong>Late Shri Koneru Lakshmaiah</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Vice President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 8645 350 200</td>
+          <td><span class="badge badge-mobile">+91 99899 99123</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-GJ-003</td>
+          <td><strong>Charotar University of Science and Technology (CHARUSAT) - Shri Charotar Moti Sattavis Patidar Kelavani Mandal</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shri Charotar Moti Sattavis Patidar Kela</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Anand, Gujarat</td>
+          <td><strong>Late Shri Chhotabhai Bhikhabhai Patel & Patidar Leaders</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Honorary Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 2697 265 011</td>
+          <td><span class="badge badge-mobile">+91 99258 35011</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-DL-001</td>
+          <td><strong>The Delhi Public School Society (DPSS) - Core Schools & Franchise Network</strong><br><span style="font-size:10.5px; color:var(--text-muted);">The Delhi Public School Society (DPSS)</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>New Delhi, Delhi NCR</td>
+          <td><strong>Late Shri Khurshed Lal & Founders</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman & Working Committee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 11 4744 4744</td>
+          <td><span class="badge badge-mobile">+91 98111 22334</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-PB-001</td>
+          <td><strong>Chitkara University - Chitkara Educational Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Chitkara Educational Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Rajpura, Punjab</td>
+          <td><strong>Dr. Ashok K. Chitkara & Dr. Madhu Chitkara</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Pro Chancellor</td>
+          <td style="font-family:monospace; font-size:11px;">+91 1762 507 084</td>
+          <td><span class="badge badge-mobile">+91 95011 05718</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-PB-002</td>
+          <td><strong>Lovely Professional University (LPU) - Lovely International Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Lovely International Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Phagwara, Punjab</td>
+          <td><strong>Late Shri Baldev Raj Mittal</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Pro Chancellor</td>
+          <td style="font-family:monospace; font-size:11px;">+91 1824 404 404</td>
+          <td><span class="badge badge-mobile">+91 98760 11222</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UK-002</td>
+          <td><strong>The Doon School - The Indian Public Schools Society (IPSS)</strong><br><span style="font-size:10.5px; color:var(--text-muted);">The Indian Public Schools Society (IPSS)</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Dehradun, Uttarakhand</td>
+          <td><strong>Late Shri Satish Ranjan Das (Law Member of Viceroy's Executive Council)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairman Board of Governors & Headmaster</td>
+          <td style="font-family:monospace; font-size:11px;">+91 135 252 6400</td>
+          <td><span class="badge badge-mobile">+91 94120 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-WB-001</td>
+          <td><strong>Techno India Group - Sister Nivedita University & Techno Main Salt Lake</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Techno India Educational Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Kolkata, West Bengal</td>
+          <td><strong>Mr. Satyam Roychowdhury</strong></td>
+          <td style="font-size:11px; color:#475569;">Managing Director & Co-Chairperson</td>
+          <td style="font-family:monospace; font-size:11px;">+91 33 2357 5683</td>
+          <td><span class="badge badge-mobile">+91 98300 22334</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-RJ-001</td>
+          <td><strong>Mayo College & Mayo College Girls School - Mayo College General Council</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Mayo College General Council</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Ajmer, Rajasthan</td>
+          <td><strong>6th Earl of Mayo (Viceroy of India)</strong></td>
+          <td style="font-size:11px; color:#475569;">President General Council & Director</td>
+          <td style="font-family:monospace; font-size:11px;">+91 145 266 1154</td>
+          <td><span class="badge badge-mobile">+91 94140 04411</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-RJ-002</td>
+          <td><strong>Jayshree Periwal Group of Schools - JPIS, High School & Pre-Schools</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Jayshree Periwal Educational Trust</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Jaipur, Rajasthan</td>
+          <td><strong>Dr. Jayshree Periwal</strong></td>
+          <td style="font-size:11px; color:#475569;">Chairperson & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 141 669 3333</td>
+          <td><span class="badge badge-mobile">+91 97827 44444</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-RJ-003</td>
+          <td><strong>Banasthali Vidyapith - Deemed University for Women & Aviation School</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Banasthali Vidyapith Sansthan</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Niwai, Rajasthan</td>
+          <td><strong>Pandit Hiralal Shastri (First Chief Minister of Rajasthan) & Smt. Ratan Shastri</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Vice Chancellor</td>
+          <td style="font-family:monospace; font-size:11px;">+91 1438 228 456</td>
+          <td><span class="badge badge-mobile">+91 94140 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-MP-001</td>
+          <td><strong>The Daly College - Board of Governors & Old Dalians Society</strong><br><span style="font-size:10.5px; color:var(--text-muted);">The Daly College Board of Governors</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Indore, Madhya Pradesh</td>
+          <td><strong>Sir Henry Daly (British Colonial Administrator & Central Indian Chiefs)</strong></td>
+          <td style="font-size:11px; color:#475569;">President Board of Governors & Principal</td>
+          <td style="font-family:monospace; font-size:11px;">+91 731 271 9000</td>
+          <td><span class="badge badge-mobile">+91 98260 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-MP-002</td>
+          <td><strong>Medi-Caps University - Medi-Caps Charitable Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Medi-Caps Charitable Trust / Medi-Caps G</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Indore, Madhya Pradesh</td>
+          <td><strong>Shri R. C. Mittal (Industrialist & Chairman)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Vice President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 731 311 1500</td>
+          <td><span class="badge badge-mobile">+91 98260 22334</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-MP-003</td>
+          <td><strong>LNCT Group of Colleges & LNCT University - H. K. Kalchuri Educational Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">H. K. Kalchuri Educational Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Bhopal, Madhya Pradesh</td>
+          <td><strong>Shri J. N. Chouksey</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Secretary</td>
+          <td style="font-family:monospace; font-size:11px;">+91 755 618 5300</td>
+          <td><span class="badge badge-mobile">+91 98260 33445</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-TN-003</td>
+          <td><strong>SSN College of Engineering - Sri Sivasubramaniya Nadar Educational Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Sri Sivasubramaniya Nadar Educational Tr</span></td>
+          <td><span class="badge badge-cat">College</span></td>
+          <td>Chennai, Tamil Nadu</td>
+          <td><strong>Mr. Shiv Nadar (Founder Chairman HCL Technologies)</strong></td>
+          <td style="font-size:11px; color:#475569;">Trustee & President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 44 2746 9700</td>
+          <td><span class="badge badge-mobile">+91 94440 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-TN-004</td>
+          <td><strong>PSG College of Technology - PSG & Sons' Charities Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">PSG & Sons' Charities Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Coimbatore, Tamil Nadu</td>
+          <td><strong>P. S. Govindaswamy Naidu & Sons</strong></td>
+          <td style="font-size:11px; color:#475569;">Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 422 257 2177</td>
+          <td><span class="badge badge-mobile">+91 98422 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KL-001</td>
+          <td><strong>The Choice School & Choice Foundation - Tripunithura, Thiruvalla & Kozhikode</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Choice Foundation / The Choice Group</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Kochi, Kerala</td>
+          <td><strong>Mr. Jose Thomas (President Choice Group)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Managing Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 484 277 9000</td>
+          <td><span class="badge badge-mobile">+91 98470 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹5.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-KL-002</td>
+          <td><strong>Rajagiri Educational Institutions - Rajagiri School of Engineering & Technology (RSET) & Colleges</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Rajagiri Educational Trust / CMI Sacred </span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Kochi, Kerala</td>
+          <td><strong>Carmelites of Mary Immaculate (CMI Fathers)</strong></td>
+          <td style="font-size:11px; color:#475569;">Director & Provincial Manager</td>
+          <td style="font-family:monospace; font-size:11px;">+91 484 242 6578</td>
+          <td><span class="badge badge-mobile">+91 94470 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹7.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-HR-001</td>
+          <td><strong>The Heritage School - Heritage Xperiential Learning School & Group</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Heritage Educational Trust / I am A Teac</span></td>
+          <td><span class="badge badge-cat">School</span></td>
+          <td>Gurugram, Haryana</td>
+          <td><strong>Mr. N. C. Jain & Mr. Manit Jain</strong></td>
+          <td style="font-size:11px; color:#475569;">Co-Founder & Director</td>
+          <td style="font-family:monospace; font-size:11px;">+91 124 285 5124</td>
+          <td><span class="badge badge-mobile">+91 98100 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹6.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UP-003</td>
+          <td><strong>Sharda University - Sharda Educational Trust & Hospital</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Sharda Educational Trust (SET)</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Greater Noida, Uttar Pradesh</td>
+          <td><strong>Mr. P. K. Gupta</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & CEO</td>
+          <td style="font-family:monospace; font-size:11px;">+91 120 457 0000</td>
+          <td><span class="badge badge-mobile">+91 99100 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.5 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UP-004</td>
+          <td><strong>Bennett University - The Times Group Foundation</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Bennett, Coleman & Co. Ltd. (The Times G</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Greater Noida, Uttar Pradesh</td>
+          <td><strong>The Times Group (Bennett, Coleman & Co. Ltd.)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Vice Chancellor</td>
+          <td style="font-family:monospace; font-size:11px;">+91 120 719 9300</td>
+          <td><span class="badge badge-mobile">+91 98110 55667</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">95</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-HR-002</td>
+          <td><strong>G.D. Goenka Group - GD Goenka University & World Schools Chain</strong><br><span style="font-size:10.5px; color:var(--text-muted);">GD Goenka Educational Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Gurugram, Haryana</td>
+          <td><strong>Shri Anjani Kumar Goenka</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder Chairman & Managing Director</td>
+          <td style="font-family:monospace; font-size:11px;">+91 124 331 5900</td>
+          <td><span class="badge badge-mobile">+91 98111 44556</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹9.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-OD-002</td>
+          <td><strong>Siksha 'O' Anusandhan (SOA) Deemed to be University - IMS & SUM Hospital</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Siksha 'O' Anusandhan Trust</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Bhubaneswar, Odisha</td>
+          <td><strong>Prof. (Dr.) Manojranjan Nayak</strong></td>
+          <td style="font-size:11px; color:#475569;">Founder President & Vice President</td>
+          <td style="font-family:monospace; font-size:11px;">+91 674 235 0199</td>
+          <td><span class="badge badge-mobile">+91 99370 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-PB-003</td>
+          <td><strong>Thapar Institute of Engineering & Technology (TIET) - Thapar Educational Trust</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Thapar Educational Trust / Avantha Group</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Patiala, Punjab</td>
+          <td><strong>Late Lala Karam Chand Thapar (Industrialist & Founder Thapar Group)</strong></td>
+          <td style="font-size:11px; color:#475569;">President & Director</td>
+          <td style="font-family:monospace; font-size:11px;">+91 175 239 3021</td>
+          <td><span class="badge badge-mobile">+91 98150 12345</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹8.0 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:monospace; font-weight:600;">ALS-EDU-NAT-UP-005</td>
+          <td><strong>Shiv Nadar Foundation - Shiv Nadar University (SNU) & Shiv Nadar Schools</strong><br><span style="font-size:10.5px; color:var(--text-muted);">Shiv Nadar Foundation / HCL Technologies</span></td>
+          <td><span class="badge badge-cat">Multi-Institution Group</span></td>
+          <td>Greater Noida, Uttar Pradesh</td>
+          <td><strong>Mr. Shiv Nadar (Founder HCL)</strong></td>
+          <td style="font-size:11px; color:#475569;">Chancellor & Trustee</td>
+          <td style="font-family:monospace; font-size:11px;">+91 120 717 0100</td>
+          <td><span class="badge badge-mobile">+91 98110 99887</span></td>
+          <td style="font-weight:600; color:#1e40af;">₹10 Crore</td>
+          <td style="font-weight:700; text-align:center;">100</td>
+          <td><span class="badge badge-a-plus">A+</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer style="text-align:center; padding: 24px 0 12px 0; font-size:11px; color:var(--text-muted); border-top: 1px solid var(--card-border); margin-top:24px;">
+  AVANI LOAN SERVICES — Institutional Loan Syndication & Financial Advisory Architecture © 2026. All Rights Reserved.<br>
+  Strict Compliance with TRAI Commercial Communications Regulations & Meta WhatsApp Business Policy.
+</footer>
+
+</body>
+</html>

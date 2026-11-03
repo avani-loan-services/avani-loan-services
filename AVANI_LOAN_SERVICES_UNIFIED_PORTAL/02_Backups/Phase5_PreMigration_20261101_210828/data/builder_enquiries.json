@@ -1,0 +1,43 @@
+[
+  {
+    "enquiry_id": "ALS-ENQ-BLD-001",
+    "company_name": "VTP Realty Group",
+    "contact_person": "Suresh Patil",
+    "designation": "Head of Channel Sales",
+    "official_email": "alliances@vtprealty.in",
+    "business_telephone": "+91 20 6711 5000",
+    "city": "Pune",
+    "website": "https://www.vtprealty.in",
+    "residential_project_count": 5,
+    "partnership_interest": "Home Loan Referral Tie-Up",
+    "preferred_discussion_time": "Weekday Mornings",
+    "enquiry_description": "Seeking dedicated home loan DSA partner for 3 upcoming residential launches in Pune.",
+    "privacy_acknowledgement": true,
+    "marketing_opt_in": true,
+    "crm_lead_created": true,
+    "status": "New",
+    "created_at": "2026-11-01T07:48:06.553Z",
+    "updated_at": "2026-11-01T07:48:06.553Z"
+  },
+  {
+    "enquiry_id": "ALS-ENQ-BLD-1793519723518-8D6W",
+    "company_name": "Godrej Properties Test",
+    "contact_person": "Rahul Godrej",
+    "designation": "VP Alliances",
+    "official_email": "alliances@godrejproperties-test.com",
+    "business_telephone": "+91 22 6188 0000",
+    "city": "Mumbai",
+    "website": "https://www.godrejproperties.com",
+    "residential_project_count": 8,
+    "partnership_interest": "Home Loan Referral Tie-Up",
+    "preferred_discussion_time": "General Business Hours",
+    "enquiry_description": "",
+    "privacy_acknowledgement": true,
+    "marketing_opt_in": true,
+    "crm_lead_created": true,
+    "status": "New",
+    "ip_address": "::1",
+    "created_at": "2026-11-01T07:55:23.518Z",
+    "updated_at": "2026-11-01T07:55:23.518Z"
+  }
+]

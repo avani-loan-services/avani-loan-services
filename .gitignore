@@ -69,3 +69,4 @@ config/*.json
 *.pfx
 service-account*.json
 avani-loan-service-*.json
+*.secret

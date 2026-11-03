@@ -1,0 +1,12 @@
+{
+  "state_id": "GLOBAL_CONFIG",
+  "stop_active": false,
+  "stop_triggered_by": null,
+  "stop_triggered_at": null,
+  "stop_reason": null,
+  "email_marketing_active": true,
+  "whatsapp_marketing_active": true,
+  "auto_followups_active": true,
+  "inbound_enquiries_active": true,
+  "last_sync_timestamp": "2026-11-02T05:42:34.086Z"
+}

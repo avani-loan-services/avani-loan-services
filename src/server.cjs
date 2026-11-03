@@ -68,6 +68,51 @@ app.use('/api/meta', metaWebhooks);
 const { router: calculatorAuthRouter } = require('./routes/calculatorAuth.cjs');
 app.use('/api/calculator-auth', calculatorAuthRouter);
 
+// ── AVANI UNIFIED BUSINESS GROWTH & LEAD MANAGEMENT PORTAL ──
+const portalAuthRouter = require('./routes/portalAuthRoutes.cjs');
+app.use('/api/portal/auth', portalAuthRouter);
+
+const builderPortalRouter = require('./routes/builderPortalRoutes.cjs');
+app.use('/api/portal/builder', builderPortalRouter);
+
+const educationPortalRouter = require('./routes/educationPortalRoutes.cjs');
+app.use('/api/portal/education', educationPortalRouter);
+
+const unifiedPortalRouter = require('./routes/unifiedPortalRoutes.cjs');
+app.use('/api/portal/dashboard', unifiedPortalRouter);
+
+const publicEnquiryRouter = require('./routes/publicEnquiryRoutes.cjs');
+app.use('/api/portal/public', publicEnquiryRouter);
+
+// Health check endpoints for container and API gateways
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'avani-loan-services-api',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api/portal/health', (req, res) => {
+  const portalDb = require('./models/portalDatabase.cjs');
+  res.status(200).json({
+    status: 'ok',
+    service: 'avani-loan-services-portal',
+    storage_engine: portalDb.isMongoConnected ? 'mongodb_atlas' : 'in_memory_safeguard',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Global Express error handler for status propagation (e.g. 503 storage unavailable)
+app.use((err, req, res, next) => {
+  const status = err.statusCode || err.status || 500;
+  if (res.headersSent) return next(err);
+  return res.status(status).json({
+    success: false,
+    error: err.message || 'Internal Server Error'
+  });
+});
+
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });

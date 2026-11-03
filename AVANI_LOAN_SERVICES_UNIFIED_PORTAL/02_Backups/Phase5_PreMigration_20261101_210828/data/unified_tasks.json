@@ -1,0 +1,93 @@
+[
+  {
+    "task_id": "TSK-001",
+    "module": "BUILDER",
+    "related_id": "ALS-BLD-MH-MUM-001",
+    "task_title": "Confirm Lodha Group partnership desk phone extension",
+    "task_type": "Contact Confirmation",
+    "due_date": "2026-11-02",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "updated_at": "2026-11-01T07:48:06.555Z",
+    "created_at": "2026-11-01T07:48:06.555Z"
+  },
+  {
+    "task_id": "TSK-002",
+    "module": "EDUCATION",
+    "related_id": "ALS-EDU-MH-MUM-005",
+    "task_title": "Deliver Podar Education Network consultative funding brief",
+    "task_type": "Send Proposal",
+    "due_date": "2026-11-03",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "updated_at": "2026-11-01T07:48:06.556Z",
+    "created_at": "2026-11-01T07:48:06.556Z"
+  },
+  {
+    "task_id": "TSK-1793519723519-I147",
+    "module": "BUILDER",
+    "related_id": "ALS-ENQ-BLD-1793519723518-8D6W",
+    "task_title": "Inbound Builder Enquiry: Godrej Properties Test (Mumbai)",
+    "task_type": "Follow-up Call",
+    "due_date": "2026-11-02",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "created_at": "2026-11-01T07:55:23.519Z",
+    "updated_at": "2026-11-01T07:55:23.519Z"
+  },
+  {
+    "task_id": "TSK-1793519723526-34LY",
+    "module": "EDUCATION",
+    "related_id": "ALS-ENQ-EDU-1793519723525-S2B7",
+    "task_title": "Inbound Institutional Funding Enquiry: Somaiya Vidyavihar Test Campus (₹10.0 Cr)",
+    "task_type": "Preliminary Eligibility Assessment",
+    "due_date": "2026-11-02",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "created_at": "2026-11-01T07:55:23.540Z",
+    "updated_at": "2026-11-01T07:55:23.540Z"
+  },
+  {
+    "task_id": "TSK-1793530113059-3CEQ",
+    "module": "EDUCATION",
+    "related_id": "ALS-ENQ-EDU-1793530113058-XTF1",
+    "task_title": "Inbound Institutional Funding Enquiry: Symbiosis International University Test (₹10.0 Cr)",
+    "task_type": "Preliminary Eligibility Assessment",
+    "due_date": "2026-11-02",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "created_at": "2026-11-01T10:48:33.060Z",
+    "updated_at": "2026-11-01T10:48:33.060Z"
+  },
+  {
+    "task_id": "TSK-1793530775673-W0GO",
+    "module": "EDUCATION",
+    "related_id": "ALS-ENQ-EDU-1793530775672-4AMO",
+    "task_title": "Inbound Institutional Funding Enquiry: Symbiosis Campus W3DA (₹10.0 Cr)",
+    "task_type": "Preliminary Eligibility Assessment",
+    "due_date": "2026-11-02",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "created_at": "2026-11-01T10:59:35.673Z",
+    "updated_at": "2026-11-01T10:59:35.673Z"
+  },
+  {
+    "task_id": "TSK-1793532142654-OTXT",
+    "module": "EDUCATION",
+    "related_id": "ALS-ENQ-EDU-1793532142653-92M5",
+    "task_title": "Inbound Institutional Funding Enquiry: Symbiosis Campus POWX (₹10.0 Cr)",
+    "task_type": "Preliminary Eligibility Assessment",
+    "due_date": "2026-11-02",
+    "priority": "High",
+    "status": "Pending",
+    "assigned_to": "USR-ADMIN-001",
+    "created_at": "2026-11-01T11:22:22.654Z",
+    "updated_at": "2026-11-01T11:22:22.654Z"
+  }
+]

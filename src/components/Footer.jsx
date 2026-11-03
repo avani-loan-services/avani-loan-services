@@ -79,6 +79,8 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} Avani Loan Services. {t('rights_reserved')}</p>
           <div className="footer-bottom-links">
             <Link to="/privacy">{language === 'en' ? 'Privacy Policy' : language === 'mr' ? 'गोपनीयता धोरण' : 'गोपनीयता नीति'}</Link>
+            <span className="footer-divider" aria-hidden="true" style={{ margin: '0 8px', color: '#475569' }}>•</span>
+            <Link to="/admin/login" className="admin-portal-footer-link" rel="nofollow">Admin Portal</Link>
           </div>
         </div>
       </div>
