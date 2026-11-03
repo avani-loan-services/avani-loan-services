@@ -14,7 +14,7 @@ async function walk(dir, fileList = []) {
   for (const ent of entries) {
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) {
-      if (['node_modules', '.git', 'public', 'dist', '.github'].includes(ent.name)) continue;
+      if (['node_modules', '.git', 'public', 'dist', '.github', 'AVANI_LOAN_SERVICES_UNIFIED_PORTAL', 'docs', 'Phase4_Deliverables', 'Phase4_1_Audit', 'V3_1_Deliverables', 'India_Education_Institutional_Funding_System'].includes(ent.name)) continue;
       await walk(full, fileList);
     } else if (ent.isFile() && ent.name.endsWith('.md')) {
       fileList.push(full);
@@ -46,11 +46,9 @@ async function main() {
       if (parts[i].startsWith('```')) continue; // skip code blocks
       for (const m of mappings) {
         if (replacements >= 6) break; // limit replacements per file
-        const regex = new RegExp('\\b' + escapeRegex(m.key) + '\\b', 'i');
+        // Ensure keyword is not preceded by [ or followed by ] or (
+        const regex = new RegExp('(?<!\\[|\\/)\\b' + escapeRegex(m.key) + '\\b(?![^\\[]*\\]|\\))', 'i');
         if (regex.test(parts[i])) {
-          // avoid replacing if already in a markdown link
-          const linkRegex = new RegExp('\\[' + escapeRegex(m.key) + '\\]\\(');
-          if (linkRegex.test(parts[i])) continue;
           parts[i] = parts[i].replace(regex, `[${m.key}](${m.url})`);
           changed = true;
           replacements++;
