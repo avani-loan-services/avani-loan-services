@@ -1,6 +1,6 @@
 # AVANI LOAN SERVICES — 35-POINT AUTOMATED QC REPORT
 
-**Execution Date:** 2026-11-03T01:57:08.078Z
+**Execution Date:** 2026-11-03T03:25:08.769Z
 **Result:** 35 / 35 Passed (100% PASS RATE)
 
 | QC ID | Category | Audit Test Description | Status | Evidence Recorded |
@@ -29,7 +29,7 @@
 | QC 22 | Education | Decision-Maker Contact Verification | **PASSED** | 80 verified leadership contacts |
 | QC 23 | Education | Permission-Based Consent Guard | **PASSED** | Pre-consent opt-in enforced for all prospects |
 | QC 24 | Education | Suppression & Opt-Out Handling | **PASSED** | Immediate opt-out suppression logged |
-| QC 25 | Education | Inbound Institutional Enquiry Form Validation | **PASSED** | Enquiry ID: ALS-ENQ-EDU-1793671028003-4EG5 |
+| QC 25 | Education | Inbound Institutional Enquiry Form Validation | **PASSED** | Enquiry ID: ALS-ENQ-EDU-1793676308672-AJJH |
 | QC 26 | Education | Follow-up Cadence Rules Enforced | **PASSED** | Cadence intervals: 2, 5, 10, 15 business days with weekend exclusion |
 | QC 27 | Education | 24-Stage Education CRM Pipeline | **PASSED** | 24 stages configured with strict lender sanction validation |
 | QC 28 | Education | All 8 Education Excel Reports Generated | **PASSED** | 8 XLSX reports generated |

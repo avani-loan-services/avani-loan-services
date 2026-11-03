@@ -6,11 +6,11 @@
     "channel": "Email",
     "consent_status": "Opted_Out",
     "opt_in_timestamp": null,
-    "opt_out_timestamp": "2026-11-03T01:57:07.992Z",
+    "opt_out_timestamp": "2026-11-03T03:25:08.662Z",
     "cadence_step": 0,
     "next_eligible_date": "2026-11-03",
     "suppression_reason": "Recipient Requested Opt-Out",
-    "updated_at": "2026-11-03T01:57:07.992Z",
+    "updated_at": "2026-11-03T03:25:08.662Z",
     "created_at": "2026-11-01T07:48:06.099Z"
   },
   {

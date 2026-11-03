@@ -345,4 +345,69 @@ router.get('/reports/unified-dashboard', requirePortalAuth, requirePermission('r
   }
 });
 
+// 7. Marketing Permission & Compliance Controls
+const { 
+  evaluateWhatsAppEligibility, 
+  evaluateMetaAudienceEligibility, 
+  registerOptOutSuppression 
+} = require('../services/marketingPermissionService.cjs');
+
+// POST /api/portal/dashboard/marketing/check-eligibility
+router.post('/marketing/check-eligibility', requirePortalAuth, (req, res) => {
+  const { contact, consent } = req.body;
+  if (!contact) {
+    return res.status(400).json({ success: false, message: 'Contact payload required.' });
+  }
+
+  const whatsappResult = evaluateWhatsAppEligibility(contact, consent);
+  const metaResult = evaluateMetaAudienceEligibility(contact, consent);
+
+  return res.json({
+    success: true,
+    data: {
+      contact_id: contact.contact_id || contact.builder_id || contact.institution_id || 'UNKNOWN',
+      whatsapp: whatsappResult,
+      meta_ads: metaResult,
+      evaluated_at: new Date().toISOString()
+    }
+  });
+});
+
+// POST /api/portal/dashboard/marketing/suppression/opt-out
+router.post('/marketing/suppression/opt-out', requirePortalAuth, (req, res) => {
+  const { identifier, channel = 'ALL', reason = 'Direct user opt-out request' } = req.body;
+  if (!identifier) {
+    return res.status(400).json({ success: false, message: 'Identifier (phone/email/id) is required.' });
+  }
+
+  const result = registerOptOutSuppression(identifier, channel, reason, req.portalUser.username || req.portalUser.userId);
+  return res.json(result);
+});
+
+// GET /api/portal/dashboard/marketing/compliance-summary
+router.get('/marketing/compliance-summary', requirePortalAuth, (req, res) => {
+  const autoState = db.getAutomationState();
+  const consents = db.getAll('education_consent_records');
+  const suppressedCount = consents.filter(c => c.opt_out === true || c.consent_status === 'Suppressed').length;
+  const grantedCount = consents.filter(c => c.consent_status === 'Granted' && !c.opt_out).length;
+
+  return res.json({
+    success: true,
+    data: {
+      provider_mode: process.env.PROVIDER_MODE || 'mock',
+      emergency_stop_active: Boolean(autoState.stop_active),
+      whatsapp_dispatch_active: Boolean(autoState.whatsapp_marketing_active && !autoState.stop_active),
+      total_consent_records: consents.length,
+      granted_active_consents: grantedCount,
+      suppressed_opt_outs: suppressedCount,
+      compliance_rules: {
+        unsolicited_outreach_barred: true,
+        meta_audience_consent_enforced: true,
+        dpdp_retention_limit_days: 180
+      },
+      audit_timestamp: new Date().toISOString()
+    }
+  });
+});
+
 module.exports = router;

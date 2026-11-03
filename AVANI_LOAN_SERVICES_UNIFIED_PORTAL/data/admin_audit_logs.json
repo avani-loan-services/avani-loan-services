@@ -1,5 +1,625 @@
 [
   {
+    "log_id": "LOG-1793676308763-UUL2DS",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "last_sync_timestamp": "2026-11-03T03:25:08.763Z"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:25:08.763Z"
+  },
+  {
+    "log_id": "LOG-1793676308747-3O1Z5F",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "stop_active": false,
+      "stop_triggered_by": null,
+      "stop_triggered_at": null,
+      "stop_reason": null,
+      "email_marketing_active": true,
+      "whatsapp_marketing_active": true,
+      "auto_followups_active": true
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:25:08.747Z"
+  },
+  {
+    "log_id": "LOG-1793676308740-SV59CJ",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "stop_active": true,
+      "stop_triggered_by": "admin",
+      "stop_triggered_at": "2026-11-03T03:25:08.725Z",
+      "stop_reason": "Automated 35-Point QC Test",
+      "email_marketing_active": false,
+      "whatsapp_marketing_active": false,
+      "auto_followups_active": false,
+      "inbound_enquiries_active": true
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:25:08.740Z"
+  },
+  {
+    "log_id": "LOG-1793676308675-AJXNNM",
+    "user_id": "PUBLIC_FORM",
+    "module": "ENQUIRY",
+    "action": "SUBMIT_EDUCATION_ENQUIRY",
+    "details": {
+      "enquiryId": "ALS-ENQ-EDU-1793676308672-AJJH",
+      "institution": "Symbiosis Campus QDUH"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:25:08.675Z"
+  },
+  {
+    "log_id": "LOG-1793676308663-E6ML06",
+    "user_id": "USR-ADMIN-001",
+    "module": "EDUCATION",
+    "action": "UPDATE_CONSENT_STATUS",
+    "details": {
+      "consentId": "ALS-ECONS-MH-MUM-001",
+      "newStatus": "Opted_Out"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:25:08.663Z"
+  },
+  {
+    "log_id": "LOG-1793676308651-ZPF4IR",
+    "user_id": "USR-ADMIN-001",
+    "module": "BUILDER",
+    "action": "PIPELINE_STAGE_CHANGE",
+    "details": {
+      "dealId": "ALS-BDEAL-MH-MUM-001",
+      "fromStage": 9,
+      "toStage": 9
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:25:08.651Z"
+  },
+  {
+    "log_id": "LOG-1793676308580-MBQQQA",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_SUCCESS",
+    "details": {
+      "role": "Super Administrator",
+      "mustChangePassword": true
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:25:08.581Z"
+  },
+  {
+    "log_id": "LOG-1793676285926-M79GE8",
+    "user_id": "PUBLIC_FORM",
+    "module": "ENQUIRY",
+    "action": "SUBMIT_EDUCATION_ENQUIRY",
+    "details": {
+      "enquiryId": "ALS-ENQ-EDU-1793676285923-29R8",
+      "institution": "Phase5 Academy of Engineering 1793676285904"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.926Z"
+  },
+  {
+    "log_id": "LOG-1793676285911-3CGO0F",
+    "user_id": "PUBLIC_FORM",
+    "module": "ENQUIRY",
+    "action": "SUBMIT_BUILDER_ENQUIRY",
+    "details": {
+      "enquiryId": "ALS-ENQ-BLD-1793676285909-BVRH",
+      "company": "Phase5 Test Builder 1793676285904"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.911Z"
+  },
+  {
+    "log_id": "LOG-1793676285900-9AIDED",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "last_sync_timestamp": "2026-11-03T03:24:45.899Z"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.900Z"
+  },
+  {
+    "log_id": "LOG-1793676285889-U7H6VQ",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "stop_active": false,
+      "stop_triggered_by": null,
+      "stop_triggered_at": null,
+      "stop_reason": null,
+      "email_marketing_active": true,
+      "whatsapp_marketing_active": true,
+      "auto_followups_active": true
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.889Z"
+  },
+  {
+    "log_id": "LOG-1793676285874-Q2Q1DR",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "stop_active": true,
+      "stop_triggered_by": "admin",
+      "stop_triggered_at": "2026-11-03T03:24:45.873Z",
+      "stop_reason": "Phase 5 Functional Testing Broadcast Halt",
+      "email_marketing_active": false,
+      "whatsapp_marketing_active": false,
+      "auto_followups_active": false,
+      "inbound_enquiries_active": true
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.874Z"
+  },
+  {
+    "log_id": "LOG-1793676285671-0IOB8P",
+    "user_id": "USR-ADMIN-001",
+    "module": "EDUCATION",
+    "action": "EXPORT_EDUCATION_DATA",
+    "details": {
+      "count": 80
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.671Z"
+  },
+  {
+    "log_id": "LOG-1793676285646-N6UAOV",
+    "user_id": "USR-ADMIN-001",
+    "module": "EDUCATION",
+    "action": "PIPELINE_STAGE_CHANGE",
+    "details": {
+      "dealId": "ALS-EDEAL-MH-MUM-001",
+      "fromStage": 10,
+      "toStage": 10,
+      "lender": "Pending Lender Matching"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.646Z"
+  },
+  {
+    "log_id": "LOG-1793676285257-4EIKTD",
+    "user_id": "USR-ADMIN-001",
+    "module": "BUILDER",
+    "action": "EXPORT_BUILDER_DATA",
+    "details": {
+      "format": "xlsx",
+      "count": 80
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.257Z"
+  },
+  {
+    "log_id": "LOG-1793676285183-D8M86S",
+    "user_id": "USR-ADMIN-001",
+    "module": "BUILDER",
+    "action": "PIPELINE_STAGE_CHANGE",
+    "details": {
+      "dealId": "ALS-BDEAL-MH-MUM-001",
+      "fromStage": 9,
+      "toStage": 9
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:24:45.183Z"
+  },
+  {
+    "log_id": "LOG-1793676285107-SGVZMB",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "PASSWORD_CHANGED",
+    "details": {},
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:45.107Z"
+  },
+  {
+    "log_id": "LOG-1793676283443-2AF7WG",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "PASSWORD_CHANGED",
+    "details": {},
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:43.443Z"
+  },
+  {
+    "log_id": "LOG-1793676281044-BVQYAE",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_SUCCESS",
+    "details": {
+      "role": "Super Administrator",
+      "mustChangePassword": true
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:41.044Z"
+  },
+  {
+    "log_id": "LOG-1793676280497-4XY1FH",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_LOCKED",
+    "details": {
+      "identifier": "admin",
+      "waitMins": 15
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:40.497Z"
+  },
+  {
+    "log_id": "LOG-1793676280466-JZ1142",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "ACCOUNT_LOCKED",
+    "details": {
+      "identifier": "admin"
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:40.466Z"
+  },
+  {
+    "log_id": "LOG-1793676279829-7Q7ZTL",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 1
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:39.829Z"
+  },
+  {
+    "log_id": "LOG-1793676279151-S4K0MR",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 2
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:39.151Z"
+  },
+  {
+    "log_id": "LOG-1793676278567-BI2UWN",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 3
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:38.567Z"
+  },
+  {
+    "log_id": "LOG-1793676277844-CJ4HSL",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 4
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:37.844Z"
+  },
+  {
+    "log_id": "LOG-1793676277379-531PL1",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_SUCCESS",
+    "details": {
+      "role": "Super Administrator",
+      "mustChangePassword": true
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:24:37.379Z"
+  },
+  {
+    "log_id": "LOG-1793676178380-I0PZ3K",
+    "user_id": "PUBLIC_FORM",
+    "module": "ENQUIRY",
+    "action": "SUBMIT_EDUCATION_ENQUIRY",
+    "details": {
+      "enquiryId": "ALS-ENQ-EDU-1793676178377-H8SP",
+      "institution": "Phase5 Academy of Engineering 1793676178349"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:58.380Z"
+  },
+  {
+    "log_id": "LOG-1793676178370-QLTAYR",
+    "user_id": "PUBLIC_FORM",
+    "module": "ENQUIRY",
+    "action": "SUBMIT_BUILDER_ENQUIRY",
+    "details": {
+      "enquiryId": "ALS-ENQ-BLD-1793676178367-8OJE",
+      "company": "Phase5 Test Builder 1793676178349"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:58.370Z"
+  },
+  {
+    "log_id": "LOG-1793676178345-XEJS84",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "last_sync_timestamp": "2026-11-03T03:22:58.345Z"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:58.345Z"
+  },
+  {
+    "log_id": "LOG-1793676178337-5QX3XT",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "stop_active": false,
+      "stop_triggered_by": null,
+      "stop_triggered_at": null,
+      "stop_reason": null,
+      "email_marketing_active": true,
+      "whatsapp_marketing_active": true,
+      "auto_followups_active": true
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:58.337Z"
+  },
+  {
+    "log_id": "LOG-1793676178243-UQ9DK2",
+    "user_id": "USR-ADMIN-001",
+    "module": "AUTOMATION",
+    "action": "UPDATE_AUTOMATION_STATE",
+    "details": {
+      "stop_active": true,
+      "stop_triggered_by": "admin",
+      "stop_triggered_at": "2026-11-03T03:22:58.191Z",
+      "stop_reason": "Phase 5 Functional Testing Broadcast Halt",
+      "email_marketing_active": false,
+      "whatsapp_marketing_active": false,
+      "auto_followups_active": false,
+      "inbound_enquiries_active": true
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:58.243Z"
+  },
+  {
+    "log_id": "LOG-1793676177936-L80901",
+    "user_id": "USR-ADMIN-001",
+    "module": "EDUCATION",
+    "action": "EXPORT_EDUCATION_DATA",
+    "details": {
+      "count": 80
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:57.936Z"
+  },
+  {
+    "log_id": "LOG-1793676177893-SFZNIM",
+    "user_id": "USR-ADMIN-001",
+    "module": "EDUCATION",
+    "action": "PIPELINE_STAGE_CHANGE",
+    "details": {
+      "dealId": "ALS-EDEAL-MH-MUM-001",
+      "fromStage": 10,
+      "toStage": 10,
+      "lender": "Pending Lender Matching"
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:57.893Z"
+  },
+  {
+    "log_id": "LOG-1793676177678-HFO3IB",
+    "user_id": "USR-ADMIN-001",
+    "module": "BUILDER",
+    "action": "EXPORT_BUILDER_DATA",
+    "details": {
+      "format": "xlsx",
+      "count": 80
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:57.678Z"
+  },
+  {
+    "log_id": "LOG-1793676177643-5ZGD4R",
+    "user_id": "USR-ADMIN-001",
+    "module": "BUILDER",
+    "action": "PIPELINE_STAGE_CHANGE",
+    "details": {
+      "dealId": "ALS-BDEAL-MH-MUM-001",
+      "fromStage": 9,
+      "toStage": 9
+    },
+    "ip_address": "::1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:57.643Z"
+  },
+  {
+    "log_id": "LOG-1793676177526-G6Z2Z0",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "PASSWORD_CHANGED",
+    "details": {},
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:57.526Z"
+  },
+  {
+    "log_id": "LOG-1793676176771-MSMUZG",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "PASSWORD_CHANGED",
+    "details": {},
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:56.771Z"
+  },
+  {
+    "log_id": "LOG-1793676175827-SYU82S",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_SUCCESS",
+    "details": {
+      "role": "Super Administrator",
+      "mustChangePassword": true
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:55.827Z"
+  },
+  {
+    "log_id": "LOG-1793676175462-7KZRQF",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_LOCKED",
+    "details": {
+      "identifier": "admin",
+      "waitMins": 15
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:55.462Z"
+  },
+  {
+    "log_id": "LOG-1793676175422-4A5XW7",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "ACCOUNT_LOCKED",
+    "details": {
+      "identifier": "admin"
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:55.422Z"
+  },
+  {
+    "log_id": "LOG-1793676175072-DB2YM8",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 1
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:55.072Z"
+  },
+  {
+    "log_id": "LOG-1793676174690-ZKIVKH",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 2
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:54.690Z"
+  },
+  {
+    "log_id": "LOG-1793676174329-125SZB",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 3
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:54.329Z"
+  },
+  {
+    "log_id": "LOG-1793676173950-18YNLU",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 4
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:53.950Z"
+  },
+  {
+    "log_id": "LOG-1793676173460-XS6SBW",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_SUCCESS",
+    "details": {
+      "role": "Super Administrator",
+      "mustChangePassword": true
+    },
+    "ip_address": "::1",
+    "user_agent": "",
+    "timestamp": "2026-11-03T03:22:53.460Z"
+  },
+  {
+    "log_id": "LOG-1793676145500-LQWBHM",
+    "user_id": "TEST_ADMIN",
+    "module": "MARKETING_COMPLIANCE",
+    "action": "REGISTER_SUPPRESSION",
+    "details": {
+      "identifier": "919876543211",
+      "channel": "ALL",
+      "reason": "Unsubscribe request via SMS"
+    },
+    "ip_address": "127.0.0.1",
+    "user_agent": "PortalClient",
+    "timestamp": "2026-11-03T03:22:25.501Z"
+  },
+  {
     "log_id": "LOG-1793671028071-KEEMJT",
     "user_id": "USR-ADMIN-001",
     "module": "AUTOMATION",

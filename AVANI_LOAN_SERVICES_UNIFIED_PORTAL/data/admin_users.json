@@ -4,7 +4,7 @@
     "username": "admin",
     "email": "admin@avanifinserv.com",
     "full_name": "Avani Executive SuperAdmin",
-    "password_hash": "$2b$12$oawezV9DSfkSRLykEZr8q.n3pS.KLBUmbbCjJnTClFHSEspOVi1E.",
+    "password_hash": "$2b$12$SSmOeP0pFlWf/PLIJ4/fu.bRlpsJ3LKxwjv5X98g.2iI3zBzCXHrW",
     "role": "Super Administrator",
     "must_change_password": true,
     "failed_login_attempts": 0,
@@ -12,6 +12,6 @@
     "is_active": true,
     "created_at": "2026-11-01T07:05:29.618Z",
     "last_login": null,
-    "updated_at": "2026-11-03T01:57:08.075Z"
+    "updated_at": "2026-11-03T03:25:08.767Z"
   }
 ]
