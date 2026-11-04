@@ -363,7 +363,10 @@ const db = {
 
   // Direct persistence trigger
   persist: persistTable,
-  init: initDatabase
+  init: initDatabase,
+  get isMongoConnected() {
+    return typeof isConnected === 'function' ? isConnected() : Boolean(isConnected);
+  }
 };
 
 // Initialize right away
