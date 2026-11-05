@@ -4,6 +4,7 @@ const express  = require('express');
 const path     = require('path');
 const cors     = require('cors');
 const app      = express();
+app.set('trust proxy', 1);
 
 const { validateEnvironmentIsolation } = require('./config/envValidator.cjs');
 const { connectDB } = require('./models/database.cjs');
@@ -93,12 +94,31 @@ app.get('/health', (req, res) => {
   });
 });
 
-app.get('/api/portal/health', (req, res) => {
+app.get('/api/portal/health', async (req, res) => {
   const portalDb = require('./models/portalDatabase.cjs');
-  res.status(200).json({
-    status: 'ok',
+  const mongoose = require('mongoose');
+  let isAtlas = false;
+  let dbStatus = 'disconnected';
+
+  if (portalDb.isMongoConnected && mongoose.connection && mongoose.connection.readyState === 1) {
+    try {
+      await mongoose.connection.db.admin().ping();
+      dbStatus = 'connected';
+      isAtlas = true;
+    } catch (err) {
+      dbStatus = 'ping_failed';
+      isAtlas = false;
+    }
+  }
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const statusCode = (isProduction && !isAtlas) ? 503 : 200;
+
+  return res.status(statusCode).json({
+    status: isAtlas ? 'ok' : 'degraded',
     service: 'avani-loan-services-portal',
-    storage_engine: portalDb.isMongoConnected ? 'mongodb_atlas' : 'in_memory_safeguard',
+    storage_engine: isAtlas ? 'mongodb_atlas' : 'in_memory_safeguard',
+    database: dbStatus,
     timestamp: new Date().toISOString()
   });
 });
@@ -119,7 +139,8 @@ app.use((req, res) => {
 
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+  const HOST = process.env.HOST || '127.0.0.1';
+  app.listen(PORT, HOST, () => console.log(`✅ Server running on http://${HOST}:${PORT}`));
   require('./cron/retention.cjs');
 }
 
