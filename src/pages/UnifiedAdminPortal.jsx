@@ -31,17 +31,41 @@ export default function UnifiedAdminPortal() {
   const [pwdSubmitting, setPwdSubmitting] = useState(false);
 
   // Navigation State (12 sections)
-  const [activeTab, setActiveTab] = useState('overview'); // overview, builder, education, tasks, enquiries, campaigns, reports, sync, automation, users, settings, audit
-  const [activeModulePill, setActiveModulePill] = useState('all'); // all, builder, education
+  const [activeTab, setActiveTab] = useState('overview'); // overview, builder, schools, colleges, tasks, enquiries, campaigns, reports, sync, automation, users, settings, audit
+  const [activeModulePill, setActiveModulePill] = useState('all'); // all, builder, schools, colleges
 
-  // Data States
+  // Overview Data
   const [overviewData, setOverviewData] = useState(null);
+
+  // Database 1: Builders State (80 records)
   const [builders, setBuilders] = useState([]);
   const [selectedBuilder, setSelectedBuilder] = useState(null);
   const [builderFilterCity, setBuilderFilterCity] = useState('');
   const [builderSearch, setBuilderSearch] = useState('');
+  const [builderSubview, setBuilderSubview] = useState('all');
+  const [builderSubviewCounts, setBuilderSubviewCounts] = useState({});
   const [builderPipeline, setBuilderPipeline] = useState(null);
 
+  // Database 2: Schools Funding Database State (24 records)
+  const [schools, setSchools] = useState([]);
+  const [selectedSchool, setSelectedSchool] = useState(null);
+  const [schoolsSearch, setSchoolsSearch] = useState('');
+  const [schoolsFilterCity, setSchoolsFilterCity] = useState('');
+  const [schoolsFilterTier, setSchoolsFilterTier] = useState('');
+  const [schoolsSubview, setSchoolsSubview] = useState('all');
+  const [schoolsSubviewCounts, setSchoolsSubviewCounts] = useState({});
+
+  // Database 3: College & University Funding Database State (56 records)
+  const [colleges, setColleges] = useState([]);
+  const [selectedCollege, setSelectedCollege] = useState(null);
+  const [collegesSearch, setCollegesSearch] = useState('');
+  const [collegesFilterCategory, setCollegesFilterCategory] = useState('');
+  const [collegesFilterCity, setCollegesFilterCity] = useState('');
+  const [collegesFilterTier, setCollegesFilterTier] = useState('');
+  const [collegesSubview, setCollegesSubview] = useState('all');
+  const [collegesSubviewCounts, setCollegesSubviewCounts] = useState({});
+
+  // Legacy/Unified Institutions State
   const [institutions, setInstitutions] = useState([]);
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const [eduSearch, setEduSearch] = useState('');
@@ -50,6 +74,7 @@ export default function UnifiedAdminPortal() {
   const [eduPipeline, setEduPipeline] = useState(null);
   const [aplusSegments, setAplusSegments] = useState(null);
 
+  // Operations & System States
   const [tasks, setTasks] = useState([]);
   const [enquiries, setEnquiries] = useState([]);
   const [enquiryFilter, setEnquiryFilter] = useState('ALL');
@@ -192,6 +217,8 @@ export default function UnifiedAdminPortal() {
   const loadAllData = async () => {
     fetchOverview();
     fetchBuilders();
+    fetchSchools();
+    fetchColleges();
     fetchInstitutions();
     fetchBuilderPipeline();
     fetchEduPipeline();
@@ -217,13 +244,42 @@ export default function UnifiedAdminPortal() {
     }
   };
 
-  const fetchBuilders = async () => {
+  const fetchBuilders = async (subview = builderSubview) => {
     try {
-      const res = await fetch('/api/portal/builder/companies?limit=100');
+      const res = await fetch(`/api/portal/builder/companies?limit=100&subview=${subview}`);
       const data = await res.json();
-      if (res.ok && data.success) setBuilders(data.data);
+      if (res.ok && data.success) {
+        setBuilders(data.data);
+        if (data.subviewCounts) setBuilderSubviewCounts(data.subviewCounts);
+      }
     } catch (e) {
       console.error('Failed to fetch builders', e);
+    }
+  };
+
+  const fetchSchools = async (subview = schoolsSubview) => {
+    try {
+      const res = await fetch(`/api/portal/education/schools?limit=100&subview=${subview}`);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSchools(data.data);
+        if (data.subviewCounts) setSchoolsSubviewCounts(data.subviewCounts);
+      }
+    } catch (e) {
+      console.error('Failed to fetch schools', e);
+    }
+  };
+
+  const fetchColleges = async (subview = collegesSubview) => {
+    try {
+      const res = await fetch(`/api/portal/education/colleges?limit=100&subview=${subview}`);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setColleges(data.data);
+        if (data.subviewCounts) setCollegesSubviewCounts(data.subviewCounts);
+      }
+    } catch (e) {
+      console.error('Failed to fetch colleges', e);
     }
   };
 
@@ -448,6 +504,35 @@ export default function UnifiedAdminPortal() {
     return matchSearch && matchCity;
   });
 
+  const filteredSchools = schools.filter(s => {
+    const matchSearch = !schoolsSearch || (
+      (s.institution_name && s.institution_name.toLowerCase().includes(schoolsSearch.toLowerCase())) ||
+      (s.institution_id && s.institution_id.toLowerCase().includes(schoolsSearch.toLowerCase())) ||
+      (s.city && s.city.toLowerCase().includes(schoolsSearch.toLowerCase())) ||
+      (s.parent_trust_society && s.parent_trust_society.toLowerCase().includes(schoolsSearch.toLowerCase()))
+    );
+    const matchCity = !schoolsFilterCity || s.city.toLowerCase() === schoolsFilterCity.toLowerCase();
+    const matchTier = !schoolsFilterTier || s.lead_priority_tier === schoolsFilterTier;
+    return matchSearch && matchCity && matchTier;
+  });
+
+  const filteredColleges = colleges.filter(c => {
+    const matchSearch = !collegesSearch || (
+      (c.institution_name && c.institution_name.toLowerCase().includes(collegesSearch.toLowerCase())) ||
+      (c.institution_id && c.institution_id.toLowerCase().includes(collegesSearch.toLowerCase())) ||
+      (c.city && c.city.toLowerCase().includes(collegesSearch.toLowerCase())) ||
+      (c.state && c.state.toLowerCase().includes(collegesSearch.toLowerCase())) ||
+      (c.parent_trust_society && c.parent_trust_society.toLowerCase().includes(collegesSearch.toLowerCase()))
+    );
+    const matchCity = !collegesFilterCity || c.city.toLowerCase() === collegesFilterCity.toLowerCase();
+    const matchTier = !collegesFilterTier || c.lead_priority_tier === collegesFilterTier;
+    const matchCat = !collegesFilterCategory || (
+      (c.institution_category && c.institution_category.toLowerCase().includes(collegesFilterCategory.toLowerCase())) ||
+      (c.subcategory && c.subcategory.toLowerCase().includes(collegesFilterCategory.toLowerCase()))
+    );
+    return matchSearch && matchCity && matchTier && matchCat;
+  });
+
   const filteredInstitutions = institutions.filter(i => {
     const matchSearch = !eduSearch || (
       (i.institution_name && i.institution_name.toLowerCase().includes(eduSearch.toLowerCase())) ||
@@ -591,25 +676,31 @@ export default function UnifiedAdminPortal() {
             </div>
           </div>
 
-          {/* Module Switcher Pills */}
+          {/* Database Switcher Pills */}
           <div className="portal-module-pills">
             <button
-              onClick={() => setActiveModulePill('all')}
-              className={`portal-pill ${activeModulePill === 'all' ? 'active' : ''}`}
+              onClick={() => setActiveTab('overview')}
+              className={`portal-pill ${activeTab === 'overview' ? 'active' : ''}`}
             >
-              Unified View
+              Overview
             </button>
             <button
-              onClick={() => { setActiveModulePill('builder'); setActiveTab('builder'); }}
-              className={`portal-pill ${activeModulePill === 'builder' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('builder'); fetchBuilders('all'); }}
+              className={`portal-pill ${activeTab === 'builder' ? 'active' : ''}`}
             >
-              <Building2 size={14} /> Module A: Builders
+              <Building2 size={14} /> Builders ({builders.length || 80})
             </button>
             <button
-              onClick={() => { setActiveModulePill('education'); setActiveTab('education'); }}
-              className={`portal-pill ${activeModulePill === 'education' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('schools'); fetchSchools('all'); }}
+              className={`portal-pill ${activeTab === 'schools' ? 'active' : ''}`}
             >
-              <GraduationCap size={14} /> Module B: Education
+              <GraduationCap size={14} /> Schools ({schools.length || 24})
+            </button>
+            <button
+              onClick={() => { setActiveTab('colleges'); fetchColleges('all'); }}
+              className={`portal-pill ${activeTab === 'colleges' ? 'active' : ''}`}
+            >
+              <Award size={14} /> Colleges ({colleges.length || 56})
             </button>
           </div>
 
@@ -652,24 +743,32 @@ export default function UnifiedAdminPortal() {
               onClick={() => setActiveTab('overview')}
               className={`portal-nav-item ${activeTab === 'overview' ? 'active' : ''}`}
             >
-              <LayoutDashboard size={18} /> <span>1. Executive Overview</span>
+              <LayoutDashboard size={18} /> <span>Executive Overview</span>
             </button>
 
-            <div className="portal-nav-group-title">BUSINESS MODULES</div>
+            <div className="portal-nav-group-title">PASSWORD-PROTECTED DATABASES</div>
             <button
-              onClick={() => setActiveTab('builder')}
+              onClick={() => { setActiveTab('builder'); fetchBuilders('all'); }}
               className={`portal-nav-item ${activeTab === 'builder' ? 'active' : ''}`}
             >
-              <Building2 size={18} /> <span>2. Builder Partnerships</span>
-              <span className="portal-nav-count">{builders.length}</span>
+              <Building2 size={18} /> <span>1. Builder Database</span>
+              <span className="portal-nav-count">{builders.length || 80}</span>
             </button>
 
             <button
-              onClick={() => setActiveTab('education')}
-              className={`portal-nav-item ${activeTab === 'education' ? 'active' : ''}`}
+              onClick={() => { setActiveTab('schools'); fetchSchools('all'); }}
+              className={`portal-nav-item ${activeTab === 'schools' ? 'active' : ''}`}
             >
-              <GraduationCap size={18} /> <span>3. Education Funding</span>
-              <span className="portal-nav-count">{institutions.length}</span>
+              <GraduationCap size={18} /> <span>2. School Funding Database</span>
+              <span className="portal-nav-count">{schools.length || 24}</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('colleges'); fetchColleges('all'); }}
+              className={`portal-nav-item ${activeTab === 'colleges' ? 'active' : ''}`}
+            >
+              <Award size={18} /> <span>3. College & Univ Database</span>
+              <span className="portal-nav-count">{colleges.length || 56}</span>
             </button>
 
             <div className="portal-nav-group-title">OPERATIONS</div>
@@ -763,6 +862,54 @@ export default function UnifiedAdminPortal() {
                 </div>
               </div>
 
+              {/* Three Password-Protected Databases Header Grid */}
+              <div className="portal-three-db-grid">
+                <div className="portal-db-card" onClick={() => { setActiveTab('builder'); fetchBuilders('all'); }}>
+                  <div className="portal-db-card-header">
+                    <div className="portal-db-card-icon blue">
+                      <Building2 size={24} />
+                    </div>
+                    <div className="portal-db-card-count">{overviewData?.databases?.builderDatabase?.count || builders.length || 80}</div>
+                  </div>
+                  <h3>1. Builder Database</h3>
+                  <p>80 Verified Developers • MahaRERA Certified • 10 Maharashtra Cities</p>
+                  <div className="portal-db-card-footer">
+                    <span>Residential Developers, Contacts & APF Deals</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+
+                <div className="portal-db-card" onClick={() => { setActiveTab('schools'); fetchSchools('all'); }}>
+                  <div className="portal-db-card-header">
+                    <div className="portal-db-card-icon green">
+                      <GraduationCap size={24} />
+                    </div>
+                    <div className="portal-db-card-count">{overviewData?.schools?.totalSchools || schools.length || 24}</div>
+                  </div>
+                  <h3>2. School Funding Database</h3>
+                  <p>24 K-12 Chains, School Groups & Boarding Institutions</p>
+                  <div className="portal-db-card-footer">
+                    <span>Infrastructure Finance & Campus Loans</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+
+                <div className="portal-db-card" onClick={() => { setActiveTab('colleges'); fetchColleges('all'); }}>
+                  <div className="portal-db-card-header">
+                    <div className="portal-db-card-icon purple">
+                      <Award size={24} />
+                    </div>
+                    <div className="portal-db-card-count">{overviewData?.colleges?.totalColleges || colleges.length || 56}</div>
+                  </div>
+                  <h3>3. College & University Database</h3>
+                  <p>56 Higher Education Institutions • Engineering, Medical & Deemed</p>
+                  <div className="portal-db-card-footer">
+                    <span>Expansion Finance & Working Capital</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+              </div>
+
               {/* Module A Cards */}
               <div className="portal-section-label">
                 <Building2 size={16} /> MODULE A — MAHARASHTRA BUILDER PARTNERSHIPS
@@ -851,14 +998,54 @@ export default function UnifiedAdminPortal() {
             <div className="portal-tab-pane">
               <div className="portal-pane-header">
                 <div>
-                  <h2>Module A: Maharashtra Builder Partnerships</h2>
-                  <p>80 Benchmark Residential Developers across 10 Cities • MahaRERA Verified</p>
+                  <h2>Database 1: Maharashtra Builder Database</h2>
+                  <p>80 Benchmark Residential Developers across 10 Cities • MahaRERA Verified Database</p>
                 </div>
                 <div className="flex-align gap-2">
                   <a href="/api/portal/builder/export" target="_blank" rel="noreferrer" className="portal-btn portal-btn-outline">
                     <Download size={14} /> Export Builders XLSX
                   </a>
                 </div>
+              </div>
+
+              {/* Builder Subviews Bar */}
+              <div className="portal-subview-bar">
+                <button
+                  onClick={() => { setBuilderSubview('all'); fetchBuilders('all'); }}
+                  className={`portal-subview-tab ${builderSubview === 'all' ? 'active' : ''}`}
+                >
+                  All Builders <span className="portal-subview-badge">{builderSubviewCounts.all || builders.length || 80}</span>
+                </button>
+                <button
+                  onClick={() => { setBuilderSubview('residential'); fetchBuilders('residential'); }}
+                  className={`portal-subview-tab ${builderSubview === 'residential' ? 'active' : ''}`}
+                >
+                  Residential Developers <span className="portal-subview-badge">{builderSubviewCounts.residential || 80}</span>
+                </button>
+                <button
+                  onClick={() => { setBuilderSubview('contacts'); fetchBuilders('contacts'); }}
+                  className={`portal-subview-tab ${builderSubview === 'contacts' ? 'active' : ''}`}
+                >
+                  Builder Contacts <span className="portal-subview-badge">{builderSubviewCounts.contacts || 80}</span>
+                </button>
+                <button
+                  onClick={() => { setBuilderSubview('decision_makers'); fetchBuilders('decision_makers'); }}
+                  className={`portal-subview-tab ${builderSubview === 'decision_makers' ? 'active' : ''}`}
+                >
+                  Decision Makers <span className="portal-subview-badge">{builderSubviewCounts.decision_makers || 80}</span>
+                </button>
+                <button
+                  onClick={() => { setBuilderSubview('pipeline'); fetchBuilders('pipeline'); }}
+                  className={`portal-subview-tab ${builderSubview === 'pipeline' ? 'active' : ''}`}
+                >
+                  Partnership Pipeline <span className="portal-subview-badge">{builderSubviewCounts.pipeline || 80}</span>
+                </button>
+                <button
+                  onClick={() => { setBuilderSubview('tasks'); fetchBuilders('tasks'); }}
+                  className={`portal-subview-tab ${builderSubview === 'tasks' ? 'active' : ''}`}
+                >
+                  Follow-up Tasks <span className="portal-subview-badge">{builderSubviewCounts.tasks || 80}</span>
+                </button>
               </div>
 
               {/* Filter Bar */}
@@ -993,19 +1180,61 @@ export default function UnifiedAdminPortal() {
             </div>
           )}
 
-          {/* 3. EDUCATION INSTITUTIONAL FUNDING */}
-          {activeTab === 'education' && (
+          {/* 2. SCHOOL FUNDING DATABASE (24 RECORDS) */}
+          {activeTab === 'schools' && (
             <div className="portal-tab-pane">
               <div className="portal-pane-header">
                 <div>
-                  <h2>Module B: India Education Institutional Funding</h2>
-                  <p>80 Benchmark Institutions • 52 Priority A+ Prospects • ₹10L to ₹10Cr Capital Solutions</p>
+                  <h2>Database 2: School Funding Database</h2>
+                  <p>24 K-12 Chains, School Groups, Boards & Residential Campuses • Infrastructure Finance Desk</p>
                 </div>
                 <div className="flex-align gap-2">
-                  <a href="/api/portal/education/export" target="_blank" rel="noreferrer" className="portal-btn portal-btn-outline">
-                    <Download size={14} /> Export Education XLSX
+                  <a href="/api/portal/education/schools/export" target="_blank" rel="noreferrer" className="portal-btn portal-btn-outline">
+                    <Download size={14} /> Export Schools XLSX
                   </a>
                 </div>
+              </div>
+
+              {/* Research Estimates Alert */}
+              <div className="portal-estimate-alert">
+                <AlertTriangle size={18} />
+                <div>
+                  <strong>Data Classification Notice:</strong> School identities, regulatory boards, affiliations, addresses, and official contact channels are confirmed records. Student capacities, approx enrolment, and funding potentials are research-based analytical estimates.
+                </div>
+              </div>
+
+              {/* Schools Subviews Bar */}
+              <div className="portal-subview-bar">
+                <button
+                  onClick={() => { setSchoolsSubview('all'); fetchSchools('all'); }}
+                  className={`portal-subview-tab ${schoolsSubview === 'all' ? 'active' : ''}`}
+                >
+                  All Schools <span className="portal-subview-badge">{schoolsSubviewCounts.all || schools.length || 24}</span>
+                </button>
+                <button
+                  onClick={() => { setSchoolsSubview('groups'); fetchSchools('groups'); }}
+                  className={`portal-subview-tab ${schoolsSubview === 'groups' ? 'active' : ''}`}
+                >
+                  School Groups & Chains <span className="portal-subview-badge">{schoolsSubviewCounts.groups || 18}</span>
+                </button>
+                <button
+                  onClick={() => { setSchoolsSubview('trusts'); fetchSchools('trusts'); }}
+                  className={`portal-subview-tab ${schoolsSubview === 'trusts' ? 'active' : ''}`}
+                >
+                  Education Trusts <span className="portal-subview-badge">{schoolsSubviewCounts.trusts || 20}</span>
+                </button>
+                <button
+                  onClick={() => { setSchoolsSubview('prospects'); fetchSchools('prospects'); }}
+                  className={`portal-subview-tab ${schoolsSubview === 'prospects' ? 'active' : ''}`}
+                >
+                  Funding Prospects (A+) <span className="portal-subview-badge">{schoolsSubviewCounts.prospects || 16}</span>
+                </button>
+                <button
+                  onClick={() => { setSchoolsSubview('pipeline'); fetchSchools('pipeline'); }}
+                  className={`portal-subview-tab ${schoolsSubview === 'pipeline' ? 'active' : ''}`}
+                >
+                  Follow-up Pipeline <span className="portal-subview-badge">{schoolsSubviewCounts.pipeline || 24}</span>
+                </button>
               </div>
 
               {/* Filter Bar */}
@@ -1014,24 +1243,34 @@ export default function UnifiedAdminPortal() {
                   <Search size={16} />
                   <input
                     type="text"
-                    placeholder="Search institution name, city, state, trust..."
-                    value={eduSearch}
-                    onChange={(e) => setEduSearch(e.target.value)}
+                    placeholder="Search school name, city, board, trust..."
+                    value={schoolsSearch}
+                    onChange={(e) => setSchoolsSearch(e.target.value)}
                   />
                 </div>
-                <select value={eduFilterTier} onChange={(e) => setEduFilterTier(e.target.value)}>
+                <select value={schoolsFilterTier} onChange={(e) => setSchoolsFilterTier(e.target.value)}>
                   <option value="">All Tiers</option>
-                  <option value="A+">A+ Priority (52 Leads)</option>
+                  <option value="A+">Tier A+ (Priority)</option>
                   <option value="A">Tier A</option>
                   <option value="B">Tier B</option>
                 </select>
-                <select value={eduFilterCategory} onChange={(e) => setEduFilterCategory(e.target.value)}>
-                  <option value="">All Categories</option>
-                  <option value="school">Schools</option>
-                  <option value="college">Colleges / Universities</option>
-                  <option value="trust">Educational Trusts</option>
+                <select value={schoolsFilterCity} onChange={(e) => setSchoolsFilterCity(e.target.value)}>
+                  <option value="">All Cities</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Pune">Pune</option>
+                  <option value="Thane">Thane</option>
+                  <option value="Bengaluru">Bengaluru</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Dehradun">Dehradun</option>
+                  <option value="Ajmer">Ajmer</option>
+                  <option value="Jaipur">Jaipur</option>
+                  <option value="Indore">Indore</option>
+                  <option value="Kochi">Kochi</option>
+                  <option value="Gurugram">Gurugram</option>
+                  <option value="Noida">Noida</option>
                 </select>
-                <div className="portal-record-count">Showing {filteredInstitutions.length} of {institutions.length} Institutions</div>
+                <div className="portal-record-count">Showing {filteredSchools.length} of {schools.length} Schools</div>
               </div>
 
               {/* Table */}
@@ -1039,42 +1278,48 @@ export default function UnifiedAdminPortal() {
                 <table className="portal-table">
                   <thead>
                     <tr>
-                      <th>Lead ID</th>
-                      <th>Institution Name</th>
-                      <th>Category</th>
+                      <th>School ID</th>
+                      <th>School / Group Name</th>
+                      <th>Board / Category</th>
                       <th>Location</th>
-                      <th>Decision-Maker Desk</th>
+                      <th>Contact Desk</th>
+                      <th>Capacity (Est.)</th>
                       <th>Tier</th>
                       <th>Score</th>
-                      <th>Requirement</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredInstitutions.map((inst) => (
-                      <tr key={inst.institution_id}>
-                        <td><code>{inst.institution_id}</code></td>
+                    {filteredSchools.map((s) => (
+                      <tr key={s.institution_id}>
+                        <td><code>{s.institution_id}</code></td>
                         <td>
-                          <strong>{inst.institution_name}</strong>
-                          {inst.parent_trust_society && (
-                            <div className="text-muted text-xs">{inst.parent_trust_society}</div>
+                          <strong>{s.institution_name}</strong>
+                          {s.parent_trust_society && (
+                            <div className="text-muted text-xs">{s.parent_trust_society}</div>
                           )}
                         </td>
-                        <td>{inst.institution_category}</td>
-                        <td>{inst.city}, {inst.state}</td>
                         <td>
-                          <div className="text-sm">{inst.official_telephone}</div>
-                          <div className="text-muted text-xs">{inst.official_email}</div>
+                          <span className="text-sm">{s.subcategory || s.board_affiliation || 'K-12 School'}</span>
+                        </td>
+                        <td>{s.city}, {s.state}</td>
+                        <td>
+                          <div className="text-sm">{s.official_telephone}</div>
+                          <div className="text-muted text-xs">{s.official_email}</div>
                         </td>
                         <td>
-                          <span className={`portal-badge ${inst.lead_priority_tier === 'A+' ? 'badge-success' : 'badge-primary'}`}>
-                            {inst.lead_priority_tier}
+                          <span className="portal-tag-pill estimate">
+                            {s.student_capacity ? `${s.student_capacity} Est.` : 'Verified Profile'}
                           </span>
                         </td>
-                        <td><strong>{inst.qualification_score}</strong></td>
-                        <td>{inst.potential_funding_requirement || '₹5Cr - ₹10Cr'}</td>
                         <td>
-                          <button onClick={() => setSelectedInstitution(inst)} className="portal-btn-sm portal-btn-outline">
+                          <span className={`portal-badge ${s.lead_priority_tier === 'A+' ? 'badge-success' : 'badge-primary'}`}>
+                            {s.lead_priority_tier}
+                          </span>
+                        </td>
+                        <td><strong>{s.qualification_score}</strong>/100</td>
+                        <td>
+                          <button onClick={() => setSelectedSchool(s)} className="portal-btn-sm portal-btn-outline">
                             <Eye size={12} /> View
                           </button>
                         </td>
@@ -1084,44 +1329,294 @@ export default function UnifiedAdminPortal() {
                 </table>
               </div>
 
-              {/* Institution Detail Drawer */}
-              {selectedInstitution && (
-                <div className="portal-drawer-backdrop" onClick={() => setSelectedInstitution(null)}>
+              {/* School Detail Drawer */}
+              {selectedSchool && (
+                <div className="portal-drawer-backdrop" onClick={() => setSelectedSchool(null)}>
                   <div className="portal-drawer" onClick={(e) => e.stopPropagation()}>
                     <div className="portal-drawer-header">
                       <div>
-                        <h3>{selectedInstitution.institution_name}</h3>
-                        <span className="text-muted"><code>{selectedInstitution.institution_id}</code> • {selectedInstitution.city}, {selectedInstitution.state}</span>
+                        <h3>{selectedSchool.institution_name}</h3>
+                        <span className="text-muted"><code>{selectedSchool.institution_id}</code> • {selectedSchool.city}, {selectedSchool.state}</span>
                       </div>
-                      <button onClick={() => setSelectedInstitution(null)} className="portal-btn-icon">✕</button>
+                      <button onClick={() => setSelectedSchool(null)} className="portal-btn-icon">✕</button>
                     </div>
 
                     <div className="portal-drawer-body">
                       <div className="portal-card">
-                        <h4>Institutional Profile</h4>
-                        <p><strong>Category:</strong> {selectedInstitution.institution_category}</p>
-                        <p><strong>Ownership:</strong> {selectedInstitution.ownership_type}</p>
-                        <p><strong>Parent Trust / Society:</strong> {selectedInstitution.parent_trust_society || 'Self-Governing'}</p>
-                        <p><strong>Campus Address:</strong> {selectedInstitution.complete_address}</p>
-                        <p><strong>Official Website:</strong> <a href={selectedInstitution.website} target="_blank" rel="noreferrer">{selectedInstitution.website}</a></p>
+                        <h4>Confirmed Institutional Data</h4>
+                        <p><strong>Board Affiliation / Category:</strong> {selectedSchool.subcategory || selectedSchool.board_affiliation}</p>
+                        <p><strong>Ownership Type:</strong> {selectedSchool.ownership_type}</p>
+                        <p><strong>Parent Trust / Society:</strong> {selectedSchool.parent_trust_society || 'Registered Society'}</p>
+                        <p><strong>Campus Address:</strong> {selectedSchool.complete_address}</p>
+                        <p><strong>Official Telephone:</strong> {selectedSchool.official_telephone}</p>
+                        <p><strong>Official Email:</strong> {selectedSchool.official_email}</p>
                       </div>
 
                       <div className="portal-card mt-3">
-                        <h4>Funding Requirement & Purpose</h4>
-                        <p><strong>Requirement Bracket:</strong> {selectedInstitution.potential_funding_requirement}</p>
-                        <p><strong>Expansion Purpose:</strong> {selectedInstitution.funding_purpose}</p>
-                        <p><strong>Priority Tier:</strong> <span className="portal-badge badge-success">{selectedInstitution.lead_priority_tier}</span> (Score: {selectedInstitution.qualification_score})</p>
+                        <h4>Research-Based Analytical Estimates</h4>
+                        <div className="portal-score-breakdown">
+                          <div><span>Estimated Student Capacity:</span> <strong>{selectedSchool.student_capacity || 'N/A'}</strong></div>
+                          <div><span>Estimated Student Enrolment:</span> <strong>{selectedSchool.approx_enrolment || 'N/A'}</strong></div>
+                          <div><span>Potential Funding Bracket:</span> <strong>{selectedSchool.potential_funding_requirement || '₹2Cr - ₹10Cr'}</strong></div>
+                        </div>
+                        <p className="text-muted text-xs mt-3">Estimates formulated from publicly disclosed campus metrics, branch counts, and affiliation registries.</p>
                       </div>
 
                       <div className="portal-card mt-3">
-                        <h4>Consent & Regulatory Compliance</h4>
-                        <p><strong>Consent Cadence:</strong> 2, 5, 10, 15 Business Days Schedule</p>
-                        <p><strong>Current Consent Status:</strong> Restricted (Permission Request Required prior to marketing)</p>
+                        <h4>Infrastructure Capital Need</h4>
+                        <p><strong>Expansion Purpose:</strong> {selectedSchool.funding_purpose || 'School campus modernization & lab equipment finance'}</p>
+                        <p><strong>Priority Tier:</strong> <span className="portal-badge badge-success">{selectedSchool.lead_priority_tier}</span> (Score: {selectedSchool.qualification_score}/100)</p>
+                        <p><strong>Verification Status:</strong> {selectedSchool.verification_status}</p>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* 3. COLLEGE & UNIVERSITY FUNDING DATABASE (56 RECORDS) */}
+          {activeTab === 'colleges' && (
+            <div className="portal-tab-pane">
+              <div className="portal-pane-header">
+                <div>
+                  <h2>Database 3: College & University Funding Database</h2>
+                  <p>56 Higher Education Institutions • Engineering, Medical, Deemed & Autonomous Campuses</p>
+                </div>
+                <div className="flex-align gap-2">
+                  <a href="/api/portal/education/colleges/export" target="_blank" rel="noreferrer" className="portal-btn portal-btn-outline">
+                    <Download size={14} /> Export Colleges XLSX
+                  </a>
+                </div>
+              </div>
+
+              {/* Colleges Subviews Bar */}
+              <div className="portal-subview-bar">
+                <button
+                  onClick={() => { setCollegesSubview('all'); fetchColleges('all'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'all' ? 'active' : ''}`}
+                >
+                  All Higher Ed <span className="portal-subview-badge">{collegesSubviewCounts.all || colleges.length || 56}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('engineering'); fetchColleges('engineering'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'engineering' ? 'active' : ''}`}
+                >
+                  Engineering Colleges <span className="portal-subview-badge">{collegesSubviewCounts.engineering || 28}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('medical'); fetchColleges('medical'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'medical' ? 'active' : ''}`}
+                >
+                  Medical & Healthcare <span className="portal-subview-badge">{collegesSubviewCounts.medical || 16}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('autonomous'); fetchColleges('autonomous'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'autonomous' ? 'active' : ''}`}
+                >
+                  Autonomous Institutes <span className="portal-subview-badge">{collegesSubviewCounts.autonomous || 18}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('deemed'); fetchColleges('deemed'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'deemed' ? 'active' : ''}`}
+                >
+                  Deemed Universities <span className="portal-subview-badge">{collegesSubviewCounts.deemed || 14}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('trusts'); fetchColleges('trusts'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'trusts' ? 'active' : ''}`}
+                >
+                  Education Trusts <span className="portal-subview-badge">{collegesSubviewCounts.trusts || 48}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('groups'); fetchColleges('groups'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'groups' ? 'active' : ''}`}
+                >
+                  Multi-Institution Groups <span className="portal-subview-badge">{collegesSubviewCounts.groups || 42}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('prospects'); fetchColleges('prospects'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'prospects' ? 'active' : ''}`}
+                >
+                  Prospects (A+) <span className="portal-subview-badge">{collegesSubviewCounts.prospects || 36}</span>
+                </button>
+                <button
+                  onClick={() => { setCollegesSubview('pipeline'); fetchColleges('pipeline'); }}
+                  className={`portal-subview-tab ${collegesSubview === 'pipeline' ? 'active' : ''}`}
+                >
+                  Follow-up Pipeline <span className="portal-subview-badge">{collegesSubviewCounts.pipeline || 56}</span>
+                </button>
+              </div>
+
+              {/* Filter Bar */}
+              <div className="portal-filter-bar">
+                <div className="portal-search-box">
+                  <Search size={16} />
+                  <input
+                    type="text"
+                    placeholder="Search college name, university, city, trust..."
+                    value={collegesSearch}
+                    onChange={(e) => setCollegesSearch(e.target.value)}
+                  />
+                </div>
+                <select value={collegesFilterTier} onChange={(e) => setCollegesFilterTier(e.target.value)}>
+                  <option value="">All Tiers</option>
+                  <option value="A+">Tier A+ (Priority)</option>
+                  <option value="A">Tier A</option>
+                  <option value="B">Tier B</option>
+                </select>
+                <select value={collegesFilterCategory} onChange={(e) => setCollegesFilterCategory(e.target.value)}>
+                  <option value="">All Disciplines</option>
+                  <option value="engineering">Engineering & Tech</option>
+                  <option value="medical">Medical & Dental</option>
+                  <option value="management">Management & MBA</option>
+                  <option value="pharmacy">Pharmacy</option>
+                  <option value="university">Private / Deemed Universities</option>
+                </select>
+                <div className="portal-record-count">Showing {filteredColleges.length} of {colleges.length} Institutions</div>
+              </div>
+
+              {/* Table */}
+              <div className="portal-table-wrap">
+                <table className="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Lead ID</th>
+                      <th>Institution Name</th>
+                      <th>Category & Specialization</th>
+                      <th>Location</th>
+                      <th>Contact Desk</th>
+                      <th>Tier</th>
+                      <th>Score</th>
+                      <th>Potential Requirement</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredColleges.map((c) => (
+                      <tr key={c.institution_id}>
+                        <td><code>{c.institution_id}</code></td>
+                        <td>
+                          <strong>{c.institution_name}</strong>
+                          {c.parent_trust_society && (
+                            <div className="text-muted text-xs">{c.parent_trust_society}</div>
+                          )}
+                        </td>
+                        <td>
+                          <span className="text-sm">{c.subcategory || c.institution_category}</span>
+                        </td>
+                        <td>{c.city}, {c.state}</td>
+                        <td>
+                          <div className="text-sm">{c.official_telephone}</div>
+                          <div className="text-muted text-xs">{c.official_email}</div>
+                        </td>
+                        <td>
+                          <span className={`portal-badge ${c.lead_priority_tier === 'A+' ? 'badge-success' : 'badge-primary'}`}>
+                            {c.lead_priority_tier}
+                          </span>
+                        </td>
+                        <td><strong>{c.qualification_score}</strong>/100</td>
+                        <td>{c.potential_funding_requirement || '₹5Cr - ₹10Cr'}</td>
+                        <td>
+                          <button onClick={() => setSelectedCollege(c)} className="portal-btn-sm portal-btn-outline">
+                            <Eye size={12} /> View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* College Detail Drawer */}
+              {selectedCollege && (
+                <div className="portal-drawer-backdrop" onClick={() => setSelectedCollege(null)}>
+                  <div className="portal-drawer" onClick={(e) => e.stopPropagation()}>
+                    <div className="portal-drawer-header">
+                      <div>
+                        <h3>{selectedCollege.institution_name}</h3>
+                        <span className="text-muted"><code>{selectedCollege.institution_id}</code> • {selectedCollege.city}, {selectedCollege.state}</span>
+                      </div>
+                      <button onClick={() => setSelectedCollege(null)} className="portal-btn-icon">✕</button>
+                    </div>
+
+                    <div className="portal-drawer-body">
+                      <div className="portal-card">
+                        <h4>Institutional Identity</h4>
+                        <p><strong>Category:</strong> {selectedCollege.institution_category}</p>
+                        <p><strong>Subcategory / Specialization:</strong> {selectedCollege.subcategory}</p>
+                        <p><strong>Ownership Type:</strong> {selectedCollege.ownership_type}</p>
+                        <p><strong>Parent Trust / Society:</strong> {selectedCollege.parent_trust_society || 'Self-Governing'}</p>
+                        <p><strong>Campus Address:</strong> {selectedCollege.complete_address}</p>
+                        <p><strong>Official Website:</strong> <a href={selectedCollege.website} target="_blank" rel="noreferrer">{selectedCollege.website}</a></p>
+                      </div>
+
+                      <div className="portal-card mt-3">
+                        <h4>Capital Financing Solutions</h4>
+                        <p><strong>Potential Funding Need:</strong> {selectedCollege.potential_funding_requirement}</p>
+                        <p><strong>Funding Purpose:</strong> {selectedCollege.funding_purpose || 'Hospital expansion, new engineering campus, working capital'}</p>
+                        <p><strong>Priority Tier:</strong> <span className="portal-badge badge-success">{selectedCollege.lead_priority_tier}</span> (Score: {selectedCollege.qualification_score}/100)</p>
+                        <p><strong>Verification Status:</strong> {selectedCollege.verification_status}</p>
+                      </div>
+
+                      <div className="portal-card mt-3">
+                        <h4>Consent & Outbound Protocol</h4>
+                        <p><strong>Compliance Mode:</strong> Restricted (Permission Request Required)</p>
+                        <p><strong>Target Decision Maker:</strong> Chancellor / Vice-Chancellor / Secretary / Chairman</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Backward Compatibility Education Tab */}
+          {activeTab === 'education' && (
+            <div className="portal-tab-pane">
+              <div className="portal-pane-header">
+                <div>
+                  <h2>Institutional Funding Master (80 Institutions)</h2>
+                  <p>Choose between School Funding Database (24) or College & University Database (56)</p>
+                </div>
+                <div className="flex-align gap-2">
+                  <button onClick={() => setActiveTab('schools')} className="portal-btn portal-btn-outline">
+                    <GraduationCap size={14} /> Open School Database (24)
+                  </button>
+                  <button onClick={() => setActiveTab('colleges')} className="portal-btn portal-btn-primary">
+                    <Award size={14} /> Open College Database (56)
+                  </button>
+                </div>
+              </div>
+
+              <div className="portal-table-wrap">
+                <table className="portal-table">
+                  <thead>
+                    <tr>
+                      <th>Lead ID</th>
+                      <th>Institution Name</th>
+                      <th>Database Group</th>
+                      <th>Location</th>
+                      <th>Tier</th>
+                      <th>Score</th>
+                      <th>Requirement</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredInstitutions.map((inst) => (
+                      <tr key={inst.institution_id}>
+                        <td><code>{inst.institution_id}</code></td>
+                        <td><strong>{inst.institution_name}</strong></td>
+                        <td>{inst.institution_category}</td>
+                        <td>{inst.city}, {inst.state}</td>
+                        <td><span className="portal-badge badge-success">{inst.lead_priority_tier}</span></td>
+                        <td><strong>{inst.qualification_score}</strong></td>
+                        <td>{inst.potential_funding_requirement}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
@@ -1329,15 +1824,15 @@ export default function UnifiedAdminPortal() {
                   </div>
                   <ul className="portal-report-list">
                     <li>
-                      <span>Education Institution Master</span>
-                      <a href="/api/portal/education/export" className="portal-btn-sm portal-btn-outline"><Download size={12} /> XLSX</a>
+                      <span>School Funding Database (24)</span>
+                      <a href="/api/portal/education/schools/export" className="portal-btn-sm portal-btn-outline"><Download size={12} /> XLSX</a>
                     </li>
                     <li>
-                      <span>Priority A+ Prospects (52 Leads)</span>
-                      <a href="/api/portal/education/export" className="portal-btn-sm portal-btn-outline"><Download size={12} /> XLSX</a>
+                      <span>College & Univ Database (56)</span>
+                      <a href="/api/portal/education/colleges/export" className="portal-btn-sm portal-btn-outline"><Download size={12} /> XLSX</a>
                     </li>
                     <li>
-                      <span>Consent & Suppression Register</span>
+                      <span>Combined Institution Master (80)</span>
                       <a href="/api/portal/education/export" className="portal-btn-sm portal-btn-outline"><Download size={12} /> XLSX</a>
                     </li>
                   </ul>

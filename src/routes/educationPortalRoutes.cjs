@@ -9,6 +9,7 @@ const router = express.Router();
 const db = require('../models/portalDatabase.cjs');
 const { requirePortalAuth, requirePermission } = require('../middleware/portalAuthMiddleware.cjs');
 const ExcelJS = require('exceljs');
+const { isSchool, isCollege, getCollegeSubtypes, getSchoolSubtypes } = require('../utils/educationCategoryHelper.cjs');
 
 const FUNDING_CATEGORIES = [
   'School infrastructure finance',
@@ -94,6 +95,326 @@ router.get('/institutions', requirePortalAuth, requirePermission('education:read
     totalPages: Math.ceil(total / l),
     data: paginated
   });
+});
+
+// 1.1 GET /api/portal/education/schools (Dedicated School Funding Database)
+router.get('/schools', requirePortalAuth, requirePermission('education:read'), (req, res) => {
+  const { search, city, state, tier, subview = 'all', page = 1, limit = 50 } = req.query;
+  const allInstitutions = db.getAll('education_institutions');
+  const allPipeline = db.getAll('education_pipeline');
+  const allContacts = db.getAll('education_contacts');
+
+  // Filter strictly to the 24 schools
+  let schools = allInstitutions.filter(isSchool);
+
+  // Subview counts across all 24 schools
+  const groupsCount = schools.filter(s => getSchoolSubtypes(s).includes('groups')).length;
+  const trustsCount = schools.filter(s => getSchoolSubtypes(s).includes('trusts')).length;
+  const prospectsCount = schools.filter(s => getSchoolSubtypes(s).includes('prospects')).length;
+  const schoolIdsSet = new Set(schools.map(s => s.institution_id));
+  const schoolPipelineDeals = allPipeline.filter(p => schoolIdsSet.has(p.institution_id));
+  const pipelineCount = new Set(schoolPipelineDeals.map(p => p.institution_id)).size;
+
+  const subviewCounts = {
+    all: schools.length, // 24
+    groups: groupsCount,
+    trusts: trustsCount,
+    prospects: prospectsCount,
+    pipeline: pipelineCount
+  };
+
+  // Subview filter
+  if (subview === 'groups') {
+    schools = schools.filter(s => getSchoolSubtypes(s).includes('groups'));
+  } else if (subview === 'trusts') {
+    schools = schools.filter(s => getSchoolSubtypes(s).includes('trusts'));
+  } else if (subview === 'prospects') {
+    schools = schools.filter(s => getSchoolSubtypes(s).includes('prospects'));
+  } else if (subview === 'pipeline') {
+    const activeDealInstIds = new Set(schoolPipelineDeals.map(p => p.institution_id));
+    schools = schools.filter(s => activeDealInstIds.has(s.institution_id));
+  }
+
+  // Search filter
+  if (search) {
+    const q = search.toLowerCase();
+    schools = schools.filter(s =>
+      (s.institution_name && s.institution_name.toLowerCase().includes(q)) ||
+      (s.institution_id && s.institution_id.toLowerCase().includes(q)) ||
+      (s.city && s.city.toLowerCase().includes(q)) ||
+      (s.parent_trust_society && s.parent_trust_society.toLowerCase().includes(q))
+    );
+  }
+  if (city) {
+    schools = schools.filter(s => s.city && s.city.toLowerCase() === city.toLowerCase());
+  }
+  if (state) {
+    schools = schools.filter(s => s.state && s.state.toLowerCase() === state.toLowerCase());
+  }
+  if (tier) {
+    schools = schools.filter(s => s.lead_priority_tier === tier);
+  }
+
+  // Enrich with data classification (distinguishing confirmed vs research-based estimates)
+  const enrichedSchools = schools.map(s => {
+    const sContacts = allContacts.filter(c => c.institution_id === s.institution_id);
+    const sDeal = allPipeline.find(p => p.institution_id === s.institution_id);
+
+    return {
+      ...s,
+      contacts: sContacts,
+      pipelineDeal: sDeal || null,
+      data_classification: {
+        confirmed_fields: [
+          'institution_id', 'institution_name', 'board_affiliation',
+          'ownership_type', 'parent_trust_society', 'year_established',
+          'official_email', 'official_telephone', 'complete_address', 'city', 'state'
+        ],
+        research_estimates: [
+          { field: 'student_capacity', value: s.student_capacity, note: 'Estimated from branch capacity and infrastructure disclosures' },
+          { field: 'approx_enrolment', value: s.approx_enrolment, note: 'Estimated from public student intake data' },
+          { field: 'potential_funding_requirement', value: s.potential_funding_requirement, note: 'Preliminary infrastructure assessment estimate' }
+        ],
+        is_estimate: true
+      }
+    };
+  });
+
+  const total = enrichedSchools.length;
+  const p = parseInt(page);
+  const l = parseInt(limit);
+  const startIndex = (p - 1) * l;
+  const paginated = enrichedSchools.slice(startIndex, startIndex + l);
+
+  return res.json({
+    success: true,
+    total,
+    database_type: 'SCHOOL_FUNDING_DATABASE',
+    subview,
+    subviewCounts,
+    page: p,
+    limit: l,
+    totalPages: Math.ceil(total / l),
+    data: paginated
+  });
+});
+
+// 1.2 GET /api/portal/education/schools/export (Excel Export for Schools)
+router.get('/schools/export', requirePortalAuth, requirePermission('education:export'), async (req, res) => {
+  try {
+    const allInstitutions = db.getAll('education_institutions');
+    const schools = allInstitutions.filter(isSchool);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('School Funding Database');
+
+    worksheet.columns = [
+      { header: 'School ID', key: 'institution_id', width: 22 },
+      { header: 'School / Group Name', key: 'institution_name', width: 38 },
+      { header: 'Affiliation / Category', key: 'subcategory', width: 30 },
+      { header: 'Parent Trust / Society', key: 'parent_trust', width: 32 },
+      { header: 'City', key: 'city', width: 16 },
+      { header: 'State', key: 'state', width: 16 },
+      { header: 'Official Telephone', key: 'telephone', width: 20 },
+      { header: 'Official Email', key: 'email', width: 32 },
+      { header: 'Student Capacity (Est.)', key: 'capacity', width: 22 },
+      { header: 'Approx Enrolment (Est.)', key: 'enrolment', width: 22 },
+      { header: 'Potential Funding Need', key: 'funding_req', width: 25 },
+      { header: 'Priority Tier', key: 'tier', width: 14 },
+      { header: 'Score (100-Pt)', key: 'score', width: 14 },
+      { header: 'Data Verification Note', key: 'note', width: 35 }
+    ];
+
+    schools.forEach(s => {
+      worksheet.addRow({
+        institution_id: s.institution_id,
+        institution_name: s.institution_name,
+        subcategory: s.subcategory || s.board_affiliation || 'K-12 School',
+        parent_trust: s.parent_trust_society,
+        city: s.city,
+        state: s.state,
+        telephone: s.official_telephone,
+        email: s.official_email,
+        capacity: s.student_capacity ? `${s.student_capacity} (Estimate)` : 'Verified Profile',
+        enrolment: s.approx_enrolment ? `${s.approx_enrolment} (Estimate)` : 'Verified Profile',
+        funding_req: s.potential_funding_requirement,
+        tier: s.lead_priority_tier,
+        score: s.qualification_score,
+        note: 'Capacity/enrolment values are research-based estimates'
+      });
+    });
+
+    db.logAudit(req.portalUser.userId, 'EDUCATION', 'EXPORT_SCHOOLS_DATABASE', { count: schools.length }, req.ip);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="School_Funding_Database_Master.xlsx"');
+    await workbook.xlsx.write(res);
+    return res.end();
+  } catch (err) {
+    console.error('[SchoolsExport] Error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to generate school export file.' });
+  }
+});
+
+// 1.3 GET /api/portal/education/colleges (Dedicated College & University Funding Database)
+router.get('/colleges', requirePortalAuth, requirePermission('education:read'), (req, res) => {
+  const { search, city, state, tier, subview = 'all', page = 1, limit = 50 } = req.query;
+  const allInstitutions = db.getAll('education_institutions');
+  const allPipeline = db.getAll('education_pipeline');
+  const allContacts = db.getAll('education_contacts');
+
+  // Filter strictly to the 56 colleges & universities
+  let colleges = allInstitutions.filter(isCollege);
+
+  // Subview counts across all 56 higher education institutions
+  const engineeringCount = colleges.filter(c => getCollegeSubtypes(c).includes('engineering')).length;
+  const medicalCount = colleges.filter(c => getCollegeSubtypes(c).includes('medical')).length;
+  const autonomousCount = colleges.filter(c => getCollegeSubtypes(c).includes('autonomous')).length;
+  const deemedCount = colleges.filter(c => getCollegeSubtypes(c).includes('deemed')).length;
+  const trustsCount = colleges.filter(c => getCollegeSubtypes(c).includes('trusts')).length;
+  const groupsCount = colleges.filter(c => getCollegeSubtypes(c).includes('groups')).length;
+  const prospectsCount = colleges.filter(c => getCollegeSubtypes(c).includes('prospects')).length;
+  const collegeIdsSet = new Set(colleges.map(c => c.institution_id));
+  const collegePipelineDeals = allPipeline.filter(p => collegeIdsSet.has(p.institution_id));
+  const pipelineCount = new Set(collegePipelineDeals.map(p => p.institution_id)).size;
+
+  const subviewCounts = {
+    all: colleges.length, // 56
+    engineering: engineeringCount,
+    medical: medicalCount,
+    autonomous: autonomousCount,
+    deemed: deemedCount,
+    trusts: trustsCount,
+    groups: groupsCount,
+    prospects: prospectsCount,
+    pipeline: pipelineCount
+  };
+
+  // Subview filter
+  if (subview === 'engineering') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('engineering'));
+  } else if (subview === 'medical') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('medical'));
+  } else if (subview === 'autonomous') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('autonomous'));
+  } else if (subview === 'deemed') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('deemed'));
+  } else if (subview === 'trusts') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('trusts'));
+  } else if (subview === 'groups') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('groups'));
+  } else if (subview === 'prospects') {
+    colleges = colleges.filter(c => getCollegeSubtypes(c).includes('prospects'));
+  } else if (subview === 'pipeline') {
+    const activeDealInstIds = new Set(collegePipelineDeals.map(p => p.institution_id));
+    colleges = colleges.filter(c => activeDealInstIds.has(c.institution_id));
+  }
+
+  // Search filter
+  if (search) {
+    const q = search.toLowerCase();
+    colleges = colleges.filter(c =>
+      (c.institution_name && c.institution_name.toLowerCase().includes(q)) ||
+      (c.institution_id && c.institution_id.toLowerCase().includes(q)) ||
+      (c.city && c.city.toLowerCase().includes(q)) ||
+      (c.parent_trust_society && c.parent_trust_society.toLowerCase().includes(q))
+    );
+  }
+  if (city) {
+    colleges = colleges.filter(c => c.city && c.city.toLowerCase() === city.toLowerCase());
+  }
+  if (state) {
+    colleges = colleges.filter(c => c.state && c.state.toLowerCase() === state.toLowerCase());
+  }
+  if (tier) {
+    colleges = colleges.filter(c => c.lead_priority_tier === tier);
+  }
+
+  // Enrich with contacts and deals
+  const enrichedColleges = colleges.map(c => {
+    const cContacts = allContacts.filter(ct => ct.institution_id === c.institution_id);
+    const cDeal = allPipeline.find(p => p.institution_id === c.institution_id);
+
+    return {
+      ...c,
+      contacts: cContacts,
+      pipelineDeal: cDeal || null,
+      subtypes: getCollegeSubtypes(c)
+    };
+  });
+
+  const total = enrichedColleges.length;
+  const p = parseInt(page);
+  const l = parseInt(limit);
+  const startIndex = (p - 1) * l;
+  const paginated = enrichedColleges.slice(startIndex, startIndex + l);
+
+  return res.json({
+    success: true,
+    total,
+    database_type: 'COLLEGE_UNIVERSITY_FUNDING_DATABASE',
+    subview,
+    subviewCounts,
+    page: p,
+    limit: l,
+    totalPages: Math.ceil(total / l),
+    data: paginated
+  });
+});
+
+// 1.4 GET /api/portal/education/colleges/export (Excel Export for Colleges & Universities)
+router.get('/colleges/export', requirePortalAuth, requirePermission('education:export'), async (req, res) => {
+  try {
+    const allInstitutions = db.getAll('education_institutions');
+    const colleges = allInstitutions.filter(isCollege);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('College & University Database');
+
+    worksheet.columns = [
+      { header: 'Institution ID', key: 'institution_id', width: 22 },
+      { header: 'College / University Name', key: 'institution_name', width: 42 },
+      { header: 'Category', key: 'category', width: 24 },
+      { header: 'Subcategory / Specialization', key: 'subcategory', width: 36 },
+      { header: 'Parent Trust / Society', key: 'parent_trust', width: 32 },
+      { header: 'City', key: 'city', width: 16 },
+      { header: 'State', key: 'state', width: 16 },
+      { header: 'Official Telephone', key: 'telephone', width: 20 },
+      { header: 'Official Email', key: 'email', width: 32 },
+      { header: 'Potential Funding Need', key: 'funding_req', width: 26 },
+      { header: 'Priority Tier', key: 'tier', width: 14 },
+      { header: 'Score (100-Pt)', key: 'score', width: 14 },
+      { header: 'Verification Status', key: 'status', width: 20 }
+    ];
+
+    colleges.forEach(c => {
+      worksheet.addRow({
+        institution_id: c.institution_id,
+        institution_name: c.institution_name,
+        category: c.institution_category,
+        subcategory: c.subcategory,
+        parent_trust: c.parent_trust_society,
+        city: c.city,
+        state: c.state,
+        telephone: c.official_telephone,
+        email: c.official_email,
+        funding_req: c.potential_funding_requirement,
+        tier: c.lead_priority_tier,
+        score: c.qualification_score,
+        status: c.verification_status
+      });
+    });
+
+    db.logAudit(req.portalUser.userId, 'EDUCATION', 'EXPORT_COLLEGES_DATABASE', { count: colleges.length }, req.ip);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="College_University_Funding_Master.xlsx"');
+    await workbook.xlsx.write(res);
+    return res.end();
+  } catch (err) {
+    console.error('[CollegesExport] Error:', err);
+    return res.status(500).json({ success: false, message: 'Failed to generate college export file.' });
+  }
 });
 
 // 2. GET /api/portal/education/institutions/:id

@@ -35,9 +35,10 @@ export default function Footer() {
               <li><Link to="/about">{t('about')}</Link></li>
               <li><Link to="/catalog">Loan Product Catalog</Link></li>
               <li><Link to="/loans">{t('all_loans')}</Link></li>
+              <li><Link to="/builder-partnership">Builder Partnerships</Link></li>
+              <li><Link to="/institutional-funding">Institutional Funding</Link></li>
               <li><Link to="/eligibility">{t('eligibility')}</Link></li>
               <li><Link to="/documents">{t('documents')}</Link></li>
-              <li><Link to="/download-application">{t('download_app')}</Link></li>
               <li><Link to="/calculators">Financial Calculators</Link></li>
               <li><Link to="/blog">{t('blog')}</Link></li>
             </ul>
@@ -46,12 +47,14 @@ export default function Footer() {
           <div className="footer-col">
             <h4 className="footer-heading">{t('loans')}</h4>
             <ul className="footer-links">
+              <li><Link to="/services/home-loan">{language === 'en' ? 'Home Loan' : language === 'mr' ? 'घर कर्ज' : 'घर ऋण'}</Link></li>
               <li><Link to="/services/salary-loan">{language === 'en' ? 'Salary Loan' : language === 'mr' ? 'पगार कर्ज' : 'वेतन ऋण'}</Link></li>
               <li><Link to="/services/business-loan">{language === 'en' ? 'Business Loan' : language === 'mr' ? 'व्यवसाय कर्ज' : 'व्यवसाय ऋण'}</Link></li>
               <li><Link to="/services/education-loan">{language === 'en' ? 'Education Loan' : language === 'mr' ? 'शिक्षण कर्ज' : 'शिक्षा ऋण'}</Link></li>
-              <li><Link to="/services/home-loan">{language === 'en' ? 'Home Loan' : language === 'mr' ? 'घर कर्ज' : 'घर ऋण'}</Link></li>
               <li><Link to="/services/chartered-accountant-loan">Chartered Accountant Loan</Link></li>
-               <li><Link to="/services/doctor-professional-loan">Doctor / Professional Loan</Link></li>
+              <li><Link to="/services/doctor-professional-loan">Doctor / Professional Loan</Link></li>
+              <li><Link to="/loans#school-funding">School Infrastructure Funding</Link></li>
+              <li><Link to="/loans#college-funding">College & University Funding</Link></li>
             </ul>
           </div>
 
@@ -64,11 +67,11 @@ export default function Footer() {
               </li>
               <li>
                 <Phone size={18} className="contact-icon" />
-                <span>+91-9175635165</span>
+                <a href="tel:+919175635165" className="footer-contact-link" style={{ color: 'inherit', textDecoration: 'none' }}>+91-9175635165</a>
               </li>
               <li>
                 <Mail size={18} className="contact-icon" />
-                <span>enquiry@avanifinserv.com</span>
+                <a href="mailto:enquiry@avanifinserv.com" className="footer-contact-link" style={{ color: 'inherit', textDecoration: 'none' }}>enquiry@avanifinserv.com</a>
               </li>
             </ul>
           </div>
@@ -79,6 +82,10 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} Avani Loan Services. {t('rights_reserved')}</p>
           <div className="footer-bottom-links">
             <Link to="/privacy">{language === 'en' ? 'Privacy Policy' : language === 'mr' ? 'गोपनीयता धोरण' : 'गोपनीयता नीति'}</Link>
+            <span className="footer-divider" aria-hidden="true" style={{ margin: '0 8px', color: '#475569' }}>•</span>
+            <Link to="/terms">{language === 'en' ? 'Terms & Conditions' : language === 'mr' ? 'नियम व अटी' : 'नियम और शर्तें'}</Link>
+            <span className="footer-divider" aria-hidden="true" style={{ margin: '0 8px', color: '#475569' }}>•</span>
+            <Link to="/disclaimer">{language === 'en' ? 'Disclaimer' : language === 'mr' ? 'सुचना / अस्वीकरण' : 'अस्वीकरण'}</Link>
             <span className="footer-divider" aria-hidden="true" style={{ margin: '0 8px', color: '#475569' }}>•</span>
             <Link to="/admin/login" className="admin-portal-footer-link" rel="nofollow">Admin Portal</Link>
           </div>

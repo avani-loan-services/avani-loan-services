@@ -793,3 +793,188 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── 3 DATABASES: Subview Tabs & Cards ── */
+.portal-subview-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F1F5F9;
+  padding: 6px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.portal-subview-tab {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.portal-subview-tab:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: #0F172A;
+}
+
+.portal-subview-tab.active {
+  background: #FFFFFF;
+  color: #0052CC;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.portal-subview-badge {
+  background: #E2E8F0;
+  color: #334155;
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.portal-subview-tab.active .portal-subview-badge {
+  background: #EFF6FF;
+  color: #0052CC;
+}
+
+.portal-estimate-alert {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.83rem;
+  color: #92400E;
+  margin-bottom: 16px;
+}
+
+.portal-estimate-alert strong {
+  color: #78350F;
+}
+
+.portal-three-db-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .portal-three-db-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.portal-db-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.portal-db-card:hover {
+  border-color: #0052CC;
+  box-shadow: 0 4px 12px rgba(0, 82, 204, 0.08);
+  transform: translateY(-2px);
+}
+
+.portal-db-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.portal-db-card-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portal-db-card-icon.blue {
+  background: #EFF6FF;
+  color: #0052CC;
+}
+
+.portal-db-card-icon.green {
+  background: #F0FDF4;
+  color: #16A34A;
+}
+
+.portal-db-card-icon.purple {
+  background: #FAF5FF;
+  color: #7E22CE;
+}
+
+.portal-db-card-count {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0F172A;
+  line-height: 1;
+}
+
+.portal-db-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 4px 0;
+}
+
+.portal-db-card p {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin: 0 0 14px 0;
+}
+
+.portal-db-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #0052CC;
+}
+
+.portal-tag-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.portal-tag-pill.confirmed {
+  background: #F0FDF4;
+  color: #16A34A;
+  border: 1px solid #BBF7D0;
+}
+
+.portal-tag-pill.estimate {
+  background: #FFFBEB;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+

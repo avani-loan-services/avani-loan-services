@@ -12,10 +12,51 @@ const ExcelJS = require('exceljs');
 
 // 1. GET /api/portal/builder/companies
 router.get('/companies', requirePortalAuth, requirePermission('builder:read'), (req, res) => {
-  const { search, city, verification_status, outreach_readiness, page = 1, limit = 50 } = req.query;
+  const { search, city, verification_status, outreach_readiness, subview = 'all', page = 1, limit = 50 } = req.query;
   let builders = db.getAll('builder_companies');
+  const contacts = db.getAll('builder_contacts');
+  const pipeline = db.getAll('builder_pipeline');
+  const activities = db.getAll('builder_activities');
 
-  // Filter
+  // Compute subview counts across the entire dataset
+  const residentialBuilders = builders.filter(b =>
+    (b.company_category && b.company_category.toLowerCase().includes('residential')) ||
+    (b.residential_project_count && b.residential_project_count > 0)
+  );
+
+  const contactBuilderIds = new Set(contacts.map(c => c.builder_id));
+  const dmKeywords = ['director', 'managing', 'md', 'ceo', 'promoter', 'founder', 'partner', 'chairman', 'head'];
+  const dmContacts = contacts.filter(c => {
+    const des = (c.designation || '').toLowerCase();
+    return dmKeywords.some(k => des.includes(k));
+  });
+  const dmBuilderIds = new Set(dmContacts.map(c => c.builder_id));
+  const pipelineBuilderIds = new Set(pipeline.map(d => d.builder_id));
+  const activityBuilderIds = new Set(activities.map(a => a.builder_id));
+
+  const subviewCounts = {
+    all: builders.length,
+    residential: residentialBuilders.length,
+    contacts: builders.filter(b => contactBuilderIds.has(b.builder_id)).length,
+    decision_makers: builders.filter(b => dmBuilderIds.has(b.builder_id)).length,
+    pipeline: builders.filter(b => pipelineBuilderIds.has(b.builder_id)).length,
+    tasks: builders.filter(b => activityBuilderIds.has(b.builder_id)).length
+  };
+
+  // Subview filtering
+  if (subview === 'residential') {
+    builders = residentialBuilders;
+  } else if (subview === 'contacts') {
+    builders = builders.filter(b => contactBuilderIds.has(b.builder_id));
+  } else if (subview === 'decision_makers') {
+    builders = builders.filter(b => dmBuilderIds.has(b.builder_id));
+  } else if (subview === 'pipeline') {
+    builders = builders.filter(b => pipelineBuilderIds.has(b.builder_id));
+  } else if (subview === 'tasks') {
+    builders = builders.filter(b => activityBuilderIds.has(b.builder_id));
+  }
+
+  // General Filter
   if (search) {
     const q = search.toLowerCase();
     builders = builders.filter(b =>
@@ -35,16 +76,38 @@ router.get('/companies', requirePortalAuth, requirePermission('builder:read'), (
     builders = builders.filter(b => b.outreach_readiness === outreach_readiness);
   }
 
+  // Enrich builder records with contacts and pipeline summaries for views
+  const enrichedBuilders = builders.map(b => {
+    const bContacts = contacts.filter(c => c.builder_id === b.builder_id);
+    const bPipeline = pipeline.find(p => p.builder_id === b.builder_id);
+    const bActivities = activities.filter(a => a.builder_id === b.builder_id);
+    const bDMs = bContacts.filter(c => {
+      const des = (c.designation || '').toLowerCase();
+      return dmKeywords.some(k => des.includes(k));
+    });
+
+    return {
+      ...b,
+      contactsCount: bContacts.length,
+      decisionMakers: bDMs,
+      contacts: bContacts,
+      pipelineDeal: bPipeline || null,
+      activitiesCount: bActivities.length
+    };
+  });
+
   // Pagination
-  const total = builders.length;
+  const total = enrichedBuilders.length;
   const p = parseInt(page);
   const l = parseInt(limit);
   const startIndex = (p - 1) * l;
-  const paginated = builders.slice(startIndex, startIndex + l);
+  const paginated = enrichedBuilders.slice(startIndex, startIndex + l);
 
   return res.json({
     success: true,
     total,
+    subview,
+    subviewCounts,
     page: p,
     limit: l,
     totalPages: Math.ceil(total / l),

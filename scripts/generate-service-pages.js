@@ -150,6 +150,26 @@ async function main() {
     sitemapItems.push({ loc: `${base}/mr/services/${s.slug}`, lastmod, changefreq: 'weekly', priority: '0.8' });
   }
 
+  // Institutional and Legal Pages
+  const extraPages = [
+    { path: '/builder-partnership', priority: '0.85', changefreq: 'monthly' },
+    { path: '/institutional-funding', priority: '0.85', changefreq: 'monthly' },
+    { path: '/terms', priority: '0.5', changefreq: 'monthly' },
+    { path: '/disclaimer', priority: '0.5', changefreq: 'monthly' },
+    { path: '/privacy-policy', priority: '0.5', changefreq: 'monthly' },
+    { path: '/contact', priority: '0.7', changefreq: 'monthly' },
+    { path: '/about', priority: '0.7', changefreq: 'monthly' },
+    { path: '/calculators', priority: '0.75', changefreq: 'monthly' },
+    { path: '/eligibility', priority: '0.75', changefreq: 'monthly' },
+    { path: '/cibil-check', priority: '0.75', changefreq: 'monthly' },
+    { path: '/documents', priority: '0.7', changefreq: 'monthly' },
+    { path: '/download-application', priority: '0.7', changefreq: 'monthly' }
+  ];
+
+  for (const p of extraPages) {
+    sitemapItems.push({ loc: `${base}${p.path}`, lastmod, changefreq: p.changefreq, priority: p.priority });
+  }
+
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapItems
     .map(
       (u) => `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${u.lastmod}</lastmod>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`

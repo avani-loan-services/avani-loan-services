@@ -9,6 +9,7 @@ const router = express.Router();
 const db = require('../models/portalDatabase.cjs');
 const { requirePortalAuth, requirePermission, requireRole } = require('../middleware/portalAuthMiddleware.cjs');
 const ExcelJS = require('exceljs');
+const { isSchool, isCollege, getCollegeSubtypes, getSchoolSubtypes } = require('../utils/educationCategoryHelper.cjs');
 
 // 1. GET /api/portal/dashboard/overview
 router.get('/overview', requirePortalAuth, (req, res) => {
@@ -33,7 +34,7 @@ router.get('/overview', requirePortalAuth, (req, res) => {
   const meetingsScheduled = bDeals.filter(d => d.stage === 9).length;
   const activePartnerships = bDeals.filter(d => d.stage === 16).length;
 
-  // Education Metrics
+  // Education Metrics (Schools vs Colleges)
   const totalInstitutions = institutions.length;
   const verifiedInstitutions = institutions.filter(i => i.verification_status === 'Verified').length;
   const qualifiedFundingProspects = institutions.length; // all 80 benchmark institutions
@@ -46,9 +47,30 @@ router.get('/overview', requirePortalAuth, (req, res) => {
   const sanctions = eDeals.filter(d => d.stage === 19).length;
   const disbursements = eDeals.filter(d => d.stage === 21).length;
 
+  // Specific School Funding Database Metrics (24 records)
+  const schoolRecords = institutions.filter(isSchool);
+  const totalSchools = schoolRecords.length;
+  const aPlusSchools = schoolRecords.filter(s => s.lead_priority_tier === 'A+').length;
+  const schoolGroups = schoolRecords.filter(s => getSchoolSubtypes(s).includes('groups')).length;
+
+  // Specific College & University Database Metrics (56 records)
+  const collegeRecords = institutions.filter(isCollege);
+  const totalColleges = collegeRecords.length;
+  const aPlusColleges = collegeRecords.filter(c => c.lead_priority_tier === 'A+').length;
+  const deemedUniversities = collegeRecords.filter(c => getCollegeSubtypes(c).includes('deemed')).length;
+  const engineeringColleges = collegeRecords.filter(c => getCollegeSubtypes(c).includes('engineering')).length;
+  const medicalColleges = collegeRecords.filter(c => getCollegeSubtypes(c).includes('medical')).length;
+
   return res.json({
     success: true,
     data: {
+      databases: {
+        totalDatabases: 3,
+        builderDatabase: { count: totalBuilders, description: 'Maharashtra Top Builders & Developers' },
+        schoolDatabase: { count: totalSchools, description: 'K-12 School Groups, Chains & Boards' },
+        collegeDatabase: { count: totalColleges, description: 'Colleges, Autonomous Institutes & Universities' },
+        totalInstitutionalRecords: totalBuilders + totalSchools + totalColleges // 80 + 24 + 56 = 160 records across 3 databases
+      },
       builder: {
         totalBuilders,
         verifiedBuilders,
@@ -58,6 +80,20 @@ router.get('/overview', requirePortalAuth, (req, res) => {
         activePartnerships,
         enquiriesCount: bEnquiries.length,
         activeDealsCount: bDeals.filter(d => d.status === 'Active').length
+      },
+      schools: {
+        totalSchools,
+        aPlusSchools,
+        schoolGroups,
+        verifiedSchools: schoolRecords.filter(s => s.verification_status === 'Verified').length
+      },
+      colleges: {
+        totalColleges,
+        aPlusColleges,
+        deemedUniversities,
+        engineeringColleges,
+        medicalColleges,
+        verifiedColleges: collegeRecords.filter(c => c.verification_status === 'Verified').length
       },
       education: {
         totalInstitutions,

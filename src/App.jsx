@@ -9,6 +9,8 @@ import Eligibility from './pages/Eligibility';
 import Documents from './pages/Documents';
 import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Disclaimer from './pages/Disclaimer';
 import Blog from './pages/Blog';
 import CibilCheck from './pages/CibilCheck';
 import AIAssistant from './pages/AIAssistant';
@@ -84,6 +86,8 @@ export default function App() {
               <Route path="/cibil-check" element={<CibilCheck />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/services" element={<ServicesList />} />
               <Route path="/services/:slug" element={<Service />} />
