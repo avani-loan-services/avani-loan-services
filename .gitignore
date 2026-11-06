@@ -70,3 +70,4 @@ config/*.json
 service-account*.json
 avani-loan-service-*.json
 *.secret
+.vercel
