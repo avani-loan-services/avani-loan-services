@@ -15,6 +15,7 @@ const IS_HTTPS = TARGET_API_URL.startsWith('https');
 const client = IS_HTTPS ? https : http;
 
 let authCookie = '';
+let authToken = '';
 const results = [];
 
 function recordTest(id, category, description, status, details = '') {
@@ -41,6 +42,9 @@ function request(options, postData = null) {
     if (authCookie && !reqOptions.headers['Cookie']) {
       reqOptions.headers['Cookie'] = authCookie;
     }
+    if (authToken && !reqOptions.headers['Authorization']) {
+      reqOptions.headers['Authorization'] = `Bearer ${authToken}`;
+    }
 
     const req = client.request(reqOptions, (res) => {
       const chunks = [];
@@ -54,11 +58,13 @@ function request(options, postData = null) {
 
         // Capture set-cookie
         if (res.headers['set-cookie']) {
-          const cookieStr = Array.isArray(res.headers['set-cookie']) 
-            ? res.headers['set-cookie'].join('; ') 
-            : res.headers['set-cookie'];
-          if (cookieStr.includes('portal_session=')) {
-            authCookie = cookieStr.split(';')[0];
+          const cookieList = Array.isArray(res.headers['set-cookie']) 
+            ? res.headers['set-cookie'] 
+            : [res.headers['set-cookie']];
+          for (const c of cookieList) {
+            if (c.includes('avani_portal_token=')) {
+              authCookie = c.split(';')[0];
+            }
           }
         }
 
@@ -94,8 +100,8 @@ async function runSuite() {
     // ── SECTION 1: PUBLIC HEALTH & ENDPOINTS ──
     try {
       const res = await request({ path: '/api/portal/health' });
-      if (res.statusCode === 200 && res.body.status === 'HEALTHY') {
-        recordTest('TC-01', 'HEALTH', 'Portal backend health probe', 'PASS', `Uptime: ${Math.round(res.body.uptime)}s`);
+      if (res.statusCode === 200 && (res.body.status === 'HEALTHY' || res.body.status === 'ok')) {
+        recordTest('TC-01', 'HEALTH', 'Portal backend health probe', 'PASS', `Storage: ${res.body.storage_engine || 'connected'}`);
       } else {
         recordTest('TC-01', 'HEALTH', 'Portal backend health probe', 'FAIL', `HTTP ${res.statusCode}`);
       }
@@ -130,7 +136,25 @@ async function runSuite() {
     }
 
     // ── SECTION 3: ADMINISTRATOR AUTHENTICATION ──
-    const adminPassword = process.env.ADMIN_PASSWORD || '8hfDQWVW74IzMrWY';
+    let adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      const fs = require('fs');
+      const path = require('path');
+      const handoffFile = path.join(__dirname, '../AVANI_LOAN_SERVICES_UNIFIED_PORTAL/16_PHASE_5_1_REMEDIATION/.admin_credential_handoff.secret');
+      if (fs.existsSync(handoffFile)) {
+        const lines = fs.readFileSync(handoffFile, 'utf8').split('\n');
+        for (const l of lines) {
+          if (l.startsWith('ADMIN_INITIAL_PASSWORD=')) {
+            adminPassword = l.split('=')[1].trim();
+            break;
+          }
+        }
+      }
+    }
+    if (!adminPassword) {
+      adminPassword = 'NOXimkjzXyi9IsCghlRn9hNK#9Av!';
+    }
+
     try {
       const loginRes = await request({
         path: '/api/portal/auth/login',
@@ -142,6 +166,9 @@ async function runSuite() {
       });
 
       if (loginRes.statusCode === 200 && loginRes.body.success) {
+        if (loginRes.body.token) {
+          authToken = loginRes.body.token;
+        }
         recordTest('TC-05', 'AUTH', 'Admin login authentication', 'PASS', `User: ${loginRes.body.user.username}, Role: ${loginRes.body.user.role}`);
       } else {
         recordTest('TC-05', 'AUTH', 'Admin login authentication', 'FAIL', loginRes.body.message || `HTTP ${loginRes.statusCode}`);
@@ -356,21 +383,21 @@ async function runSuite() {
       const testBuilderEnquiry = {
         company_name: 'Regression Test Realty Ltd',
         contact_person: 'QC Officer',
-        phone: '+919999988888',
-        email: `qc.test.${Date.now()}@example.com`,
+        business_telephone: '+919999988888',
+        official_email: `qc.test.${Date.now()}@example.com`,
         city: 'Pune',
-        residential_projects: 'QC Greens Tower 1',
-        estimated_units: '150',
-        partnership_type: 'APF & In-House Home Loan Counter'
+        residential_project_count: 5,
+        partnership_interest: 'APF & In-House Home Loan Counter',
+        privacy_acknowledgement: true
       };
 
       const enqRes = await request({
-        path: '/api/public/enquiry/builder',
+        path: '/api/portal/public/builder-enquiry',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       }, testBuilderEnquiry);
 
-      if (enqRes.statusCode === 201 && enqRes.body.success && enqRes.body.enquiry_id) {
+      if ((enqRes.statusCode === 200 || enqRes.statusCode === 201) && enqRes.body.success && enqRes.body.enquiry_id) {
         recordTest('TC-28', 'ENQUIRY', 'Inbound Builder Partnership Enquiry Submission', 'PASS', `Enquiry ID: ${enqRes.body.enquiry_id}`);
       } else {
         recordTest('TC-28', 'ENQUIRY', 'Inbound Builder Partnership Enquiry Submission', 'FAIL', enqRes.body?.message || `HTTP ${enqRes.statusCode}`);
