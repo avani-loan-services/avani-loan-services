@@ -82,6 +82,15 @@ app.use('/api/portal/education', educationPortalRouter);
 const unifiedPortalRouter = require('./routes/unifiedPortalRoutes.cjs');
 app.use('/api/portal/dashboard', unifiedPortalRouter);
 
+const portalTemplatesRouter = require('./routes/portalTemplatesRoutes.cjs');
+app.use('/api/portal/templates', portalTemplatesRouter);
+
+const portalCampaignsRouter = require('./routes/portalCampaignsRoutes.cjs');
+app.use('/api/portal/campaigns', portalCampaignsRouter);
+
+const portalLeadsRouter = require('./routes/portalLeadsRoutes.cjs');
+app.use('/api/portal/leads', portalLeadsRouter);
+
 const publicEnquiryRouter = require('./routes/publicEnquiryRoutes.cjs');
 app.use('/api/portal/public', publicEnquiryRouter);
 
