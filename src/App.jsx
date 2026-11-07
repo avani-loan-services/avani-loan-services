@@ -96,6 +96,16 @@ export default function App() {
               <Route path="/admin" element={<UnifiedAdminPortal />} />
               <Route path="/admin/login" element={<UnifiedAdminPortal />} />
               <Route path="/admin/dashboard" element={<UnifiedAdminPortal />} />
+              <Route path="/admin/leads" element={<UnifiedAdminPortal initialTab="leads" />} />
+              <Route path="/admin/builder" element={<UnifiedAdminPortal initialTab="builder" />} />
+              <Route path="/admin/schools" element={<UnifiedAdminPortal initialTab="schools" />} />
+              <Route path="/admin/colleges" element={<UnifiedAdminPortal initialTab="colleges" />} />
+              <Route path="/admin/templates" element={<UnifiedAdminPortal initialTab="templates" />} />
+              <Route path="/admin/campaigns" element={<UnifiedAdminPortal initialTab="campaigns" />} />
+              <Route path="/admin/analytics" element={<UnifiedAdminPortal initialTab="analytics" />} />
+              <Route path="/admin/settings" element={<UnifiedAdminPortal initialTab="settings" />} />
+              <Route path="/templates" element={<UnifiedAdminPortal initialTab="templates" />} />
+              <Route path="/campaigns" element={<UnifiedAdminPortal initialTab="campaigns" />} />
               <Route path="/builder-partnership" element={<BuilderPartnershipPage />} />
               <Route path="/institutional-funding" element={<InstitutionalFundingPage />} />
               <Route path="/admin-eligibility" element={<PasswordGate pageTitle="Eligibility Admin Panel"><AdminEligibility /></PasswordGate>} />

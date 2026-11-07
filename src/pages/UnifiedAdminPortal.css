@@ -978,3 +978,267 @@
   border: 1px solid #FDE68A;
 }
 
+/* Responsive Mobile Drawer & Hamburger */
+.portal-mobile-toggle {
+  display: none;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  color: #1E293B;
+}
+
+@media (max-width: 900px) {
+  .portal-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portal-sidebar {
+    position: fixed;
+    top: 60px;
+    left: -280px;
+    bottom: 0;
+    width: 260px;
+    background: #FFFFFF;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+    z-index: 99;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+  }
+
+  .portal-sidebar.mobile-open {
+    left: 0;
+  }
+
+  .portal-module-pills {
+    display: none;
+  }
+}
+
+/* WABA Status Banner */
+.portal-waba-banner {
+  background: linear-gradient(135deg, #0F5132 0%, #198754 100%);
+  color: #FFFFFF;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.portal-waba-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.portal-waba-chip {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Templates & Campaigns Grids */
+.portal-templates-grid,
+.portal-campaigns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.portal-template-card,
+.portal-campaign-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.portal-template-card:hover,
+.portal-campaign-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.portal-template-body-preview {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: #334155;
+  line-height: 1.45;
+  margin: 10px 0;
+  max-height: 120px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.portal-variables-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.portal-var-badge {
+  background: #EFF6FF;
+  color: #0052CC;
+  border: 1px solid #BFDBFE;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+}
+
+/* WhatsApp Phone Preview Mockup */
+.portal-phone-mockup {
+  background: #EFEAE2;
+  border-radius: 16px;
+  padding: 20px 16px;
+  max-width: 360px;
+  margin: 0 auto;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.portal-wa-bubble {
+  background: #FFFFFF;
+  border-radius: 8px 8px 8px 0;
+  padding: 12px 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-size: 0.86rem;
+  color: #111827;
+  line-height: 1.4;
+  position: relative;
+}
+
+.portal-wa-header {
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 6px;
+}
+
+.portal-wa-footer {
+  font-size: 0.72rem;
+  color: #64748B;
+  margin-top: 8px;
+  border-top: 1px dashed #E2E8F0;
+  padding-top: 4px;
+}
+
+.portal-wa-time {
+  text-align: right;
+  font-size: 0.65rem;
+  color: #94A3B8;
+  margin-top: 4px;
+}
+
+/* Dry Run Summary Card */
+.portal-dryrun-summary {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.portal-dryrun-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.portal-dryrun-stat {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+
+.portal-dryrun-stat .num {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.portal-dryrun-stat .lbl {
+  font-size: 0.72rem;
+  color: #64748B;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Analytics Metric Bars */
+.portal-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .portal-analytics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.portal-funnel-bar-wrap {
+  margin-top: 12px;
+}
+
+.portal-funnel-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.portal-funnel-lbl {
+  width: 140px;
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.portal-funnel-bar-bg {
+  flex: 1;
+  background: #F1F5F9;
+  border-radius: 6px;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.portal-funnel-bar-fill {
+  background: linear-gradient(90deg, #0052CC 0%, #2563EB 100%);
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.portal-funnel-val {
+  width: 60px;
+  text-align: right;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+

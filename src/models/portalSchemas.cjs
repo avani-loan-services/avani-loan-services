@@ -110,7 +110,34 @@ const Schemas = {
     user_id: { type: String, default: 'SYSTEM', index: true },
     module: { type: String, required: true, index: true },
     timestamp: { type: Date, default: Date.now, index: true }
-  }, { collection: 'portal_admin_audit_logs', strict: false })
+  }, { collection: 'portal_admin_audit_logs', strict: false }),
+
+  PortalTemplate: new mongoose.Schema({
+    template_id: { type: String, required: true, unique: true, index: true },
+    channel: { type: String, required: true, index: true },
+    category: { type: String, default: 'MARKETING', index: true },
+    name: { type: String, required: true },
+    display_name: { type: String, default: '' },
+    language: { type: String, default: 'en' },
+    meta_approval_status: { type: String, default: 'APPROVED', index: true },
+    body: { type: String, required: true }
+  }, { collection: 'portal_templates', strict: false }),
+
+  PortalCampaign: new mongoose.Schema({
+    campaign_id: { type: String, required: true, unique: true, index: true },
+    name: { type: String, required: true },
+    channel: { type: String, required: true, index: true },
+    target_segment: { type: String, required: true, index: true },
+    status: { type: String, required: true, index: true }
+  }, { collection: 'portal_campaigns', strict: false }),
+
+  PortalLead: new mongoose.Schema({
+    lead_id: { type: String, required: true, unique: true, index: true },
+    name: { type: String, required: true },
+    phone: { type: String, required: true, index: true },
+    loan_type: { type: String, required: true, index: true },
+    status: { type: String, default: 'qualified', index: true }
+  }, { collection: 'portal_leads', strict: false })
 };
 
 function getPortalModels() {
