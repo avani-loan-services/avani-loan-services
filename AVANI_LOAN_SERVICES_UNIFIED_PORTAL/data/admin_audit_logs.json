@@ -1,5 +1,18 @@
 [
   {
+    "log_id": "LOG-1794039718250-R8U24M",
+    "user_id": "USR-ADMIN-001",
+    "module": "SYSTEM",
+    "action": "LOGIN_FAILED_BAD_PASSWORD",
+    "details": {
+      "identifier": "admin",
+      "attemptsRemaining": 4
+    },
+    "ip_address": "127.0.0.1",
+    "user_agent": "",
+    "timestamp": "2026-11-07T08:21:58.250Z"
+  },
+  {
     "log_id": "LOG-1793692684514-DYULFC",
     "user_id": "USR-ADMIN-001",
     "module": "AUTOMATION",
