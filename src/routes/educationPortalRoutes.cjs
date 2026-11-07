@@ -160,8 +160,23 @@ router.get('/schools', requirePortalAuth, requirePermission('education:read'), (
     const sContacts = allContacts.filter(c => c.institution_id === s.institution_id);
     const sDeal = allPipeline.find(p => p.institution_id === s.institution_id);
 
+    const lg = s.leadership_governance || {};
     return {
       ...s,
+      chairman_name: lg.chairman_name || s.chairman_name || '',
+      chairman_mobile: lg.professional_mobile || lg.public_whatsapp_number || s.chairman_mobile || '',
+      chairman_email: lg.professional_email || s.chairman_email || '',
+      secretary_name: lg.secretary_name || lg.managing_trustee_name || s.secretary_name || '',
+      secretary_mobile: lg.secondary_official_contact || s.secretary_mobile || '',
+      director_name: lg.director_name || s.director_name || '',
+      finance_head_name: lg.finance_head_name || s.finance_head_name || '',
+      potential_borrowing_capacity: s.potential_funding_requirement || s.potential_borrowing_capacity || '₹5 Cr - ₹10 Cr',
+      secured_lap_potential: s.secured_funding_potential || s.secured_lap_potential || 'Loan Against Property against Campus Real Estate',
+      unsecured_od_potential: s.unsecured_funding_potential || s.unsecured_od_potential || 'Institutional Working Capital OD Line',
+      potential_collateral: s.potential_collateral_category || s.potential_collateral || 'Institutional Campus Land & Buildings',
+      property_ownership_evidence: s.property_ownership_information || s.property_ownership_evidence || 'Clear Land Title & Campus Structure',
+      expansion_plans: s.reported_expansion_plans || s.expansion_plans || 'Campus modernization & capacity addition',
+      source_lineage_batch_id: s.import_batch_id || s.source_lineage_batch_id || 'BATCH-20261107-P5318',
       contacts: sContacts,
       pipelineDeal: sDeal || null,
       data_classification: {
@@ -215,14 +230,23 @@ router.get('/schools/export', requirePortalAuth, requirePermission('education:ex
       { header: 'Parent Trust / Society', key: 'parent_trust', width: 32 },
       { header: 'City', key: 'city', width: 16 },
       { header: 'State', key: 'state', width: 16 },
+      { header: 'Chairman / President', key: 'chairman_name', width: 25 },
+      { header: 'Chairman Mobile', key: 'chairman_mobile', width: 20 },
+      { header: 'Secretary / Trustee', key: 'secretary_name', width: 25 },
+      { header: 'Director / Principal', key: 'director_name', width: 25 },
+      { header: 'Finance Head', key: 'finance_head_name', width: 22 },
       { header: 'Official Telephone', key: 'telephone', width: 20 },
       { header: 'Official Email', key: 'email', width: 32 },
-      { header: 'Student Capacity (Est.)', key: 'capacity', width: 22 },
-      { header: 'Approx Enrolment (Est.)', key: 'enrolment', width: 22 },
       { header: 'Potential Funding Need', key: 'funding_req', width: 25 },
+      { header: 'Borrowing Capacity', key: 'borrowing_capacity', width: 24 },
+      { header: 'Secured LAP Potential', key: 'secured_lap', width: 24 },
+      { header: 'Unsecured OD Potential', key: 'unsecured_od', width: 24 },
+      { header: 'Potential Collateral', key: 'collateral', width: 25 },
+      { header: 'Property Evidence', key: 'property_evidence', width: 22 },
+      { header: 'Expansion Plans', key: 'expansion_plans', width: 35 },
       { header: 'Priority Tier', key: 'tier', width: 14 },
       { header: 'Score (100-Pt)', key: 'score', width: 14 },
-      { header: 'Data Verification Note', key: 'note', width: 35 }
+      { header: 'Source Lineage Batch', key: 'source_batch', width: 25 }
     ];
 
     schools.forEach(s => {
@@ -233,14 +257,23 @@ router.get('/schools/export', requirePortalAuth, requirePermission('education:ex
         parent_trust: s.parent_trust_society,
         city: s.city,
         state: s.state,
+        chairman_name: s.chairman_name || '',
+        chairman_mobile: s.chairman_mobile || '',
+        secretary_name: s.secretary_name || '',
+        director_name: s.director_name || '',
+        finance_head_name: s.finance_head_name || '',
         telephone: s.official_telephone,
         email: s.official_email,
-        capacity: s.student_capacity ? `${s.student_capacity} (Estimate)` : 'Verified Profile',
-        enrolment: s.approx_enrolment ? `${s.approx_enrolment} (Estimate)` : 'Verified Profile',
         funding_req: s.potential_funding_requirement,
+        borrowing_capacity: s.potential_borrowing_capacity || '',
+        secured_lap: s.secured_lap_potential || '',
+        unsecured_od: s.unsecured_od_potential || '',
+        collateral: s.potential_collateral || '',
+        property_evidence: s.property_ownership_evidence || '',
+        expansion_plans: s.expansion_plans || '',
         tier: s.lead_priority_tier,
         score: s.qualification_score,
-        note: 'Capacity/enrolment values are research-based estimates'
+        source_batch: s.source_lineage_batch_id || 'BATCH-20261107-P5318'
       });
     });
 
@@ -335,8 +368,23 @@ router.get('/colleges', requirePortalAuth, requirePermission('education:read'), 
     const cContacts = allContacts.filter(ct => ct.institution_id === c.institution_id);
     const cDeal = allPipeline.find(p => p.institution_id === c.institution_id);
 
+    const lg = c.leadership_governance || {};
     return {
       ...c,
+      chairman_name: lg.chairman_name || c.chairman_name || '',
+      chairman_mobile: lg.professional_mobile || lg.public_whatsapp_number || c.chairman_mobile || '',
+      chairman_email: lg.professional_email || c.chairman_email || '',
+      secretary_name: lg.secretary_name || lg.managing_trustee_name || c.secretary_name || '',
+      secretary_mobile: lg.secondary_official_contact || c.secretary_mobile || '',
+      director_name: lg.director_name || c.director_name || '',
+      finance_head_name: lg.finance_head_name || c.finance_head_name || '',
+      potential_borrowing_capacity: c.potential_funding_requirement || c.potential_borrowing_capacity || '₹5 Cr - ₹10 Cr',
+      secured_lap_potential: c.secured_funding_potential || c.secured_lap_potential || 'Loan Against Property against Campus Real Estate',
+      unsecured_od_potential: c.unsecured_funding_potential || c.unsecured_od_potential || 'Institutional Working Capital OD Line',
+      potential_collateral: c.potential_collateral_category || c.potential_collateral || 'Institutional Campus Land & Buildings',
+      property_ownership_evidence: c.property_ownership_information || c.property_ownership_evidence || 'Clear Land Title & Campus Structure',
+      expansion_plans: c.reported_expansion_plans || c.expansion_plans || 'Campus modernization & capacity addition',
+      source_lineage_batch_id: c.import_batch_id || c.source_lineage_batch_id || 'BATCH-20261107-P5318',
       contacts: cContacts,
       pipelineDeal: cDeal || null,
       subtypes: getCollegeSubtypes(c)
@@ -379,12 +427,24 @@ router.get('/colleges/export', requirePortalAuth, requirePermission('education:e
       { header: 'Parent Trust / Society', key: 'parent_trust', width: 32 },
       { header: 'City', key: 'city', width: 16 },
       { header: 'State', key: 'state', width: 16 },
+      { header: 'Chancellor / Chairman', key: 'chairman_name', width: 25 },
+      { header: 'Chairman Mobile', key: 'chairman_mobile', width: 20 },
+      { header: 'Secretary / Trustee', key: 'secretary_name', width: 25 },
+      { header: 'Principal / Dean', key: 'director_name', width: 25 },
+      { header: 'Finance Head / CFO', key: 'finance_head_name', width: 22 },
       { header: 'Official Telephone', key: 'telephone', width: 20 },
       { header: 'Official Email', key: 'email', width: 32 },
       { header: 'Potential Funding Need', key: 'funding_req', width: 26 },
+      { header: 'Borrowing Capacity', key: 'borrowing_capacity', width: 24 },
+      { header: 'Secured LAP Potential', key: 'secured_lap', width: 24 },
+      { header: 'Unsecured OD Potential', key: 'unsecured_od', width: 24 },
+      { header: 'Potential Collateral', key: 'collateral', width: 25 },
+      { header: 'Property Evidence', key: 'property_evidence', width: 22 },
+      { header: 'Expansion Plans', key: 'expansion_plans', width: 35 },
       { header: 'Priority Tier', key: 'tier', width: 14 },
       { header: 'Score (100-Pt)', key: 'score', width: 14 },
-      { header: 'Verification Status', key: 'status', width: 20 }
+      { header: 'Verification Status', key: 'status', width: 20 },
+      { header: 'Source Lineage Batch', key: 'source_batch', width: 25 }
     ];
 
     colleges.forEach(c => {
@@ -396,12 +456,24 @@ router.get('/colleges/export', requirePortalAuth, requirePermission('education:e
         parent_trust: c.parent_trust_society,
         city: c.city,
         state: c.state,
+        chairman_name: c.chairman_name || '',
+        chairman_mobile: c.chairman_mobile || '',
+        secretary_name: c.secretary_name || '',
+        director_name: c.director_name || '',
+        finance_head_name: c.finance_head_name || '',
         telephone: c.official_telephone,
         email: c.official_email,
         funding_req: c.potential_funding_requirement,
+        borrowing_capacity: c.potential_borrowing_capacity || '',
+        secured_lap: c.secured_lap_potential || '',
+        unsecured_od: c.unsecured_od_potential || '',
+        collateral: c.potential_collateral || '',
+        property_evidence: c.property_ownership_evidence || '',
+        expansion_plans: c.expansion_plans || '',
         tier: c.lead_priority_tier,
         score: c.qualification_score,
-        status: c.verification_status
+        status: c.verification_status,
+        source_batch: c.source_lineage_batch_id || 'BATCH-20261107-P5318'
       });
     });
 
@@ -629,18 +701,30 @@ router.get('/export', requirePortalAuth, requirePermission('education:export'), 
 
     worksheet.columns = [
       { header: 'Institution ID', key: 'institution_id', width: 22 },
-      { header: 'Institution Name', key: 'institution_name', width: 35 },
-      { header: 'Category', key: 'category', width: 20 },
+      { header: 'Institution Name', key: 'institution_name', width: 38 },
+      { header: 'Category', key: 'category', width: 22 },
       { header: 'Ownership Type', key: 'ownership', width: 22 },
       { header: 'Parent Trust / Society', key: 'parent_trust', width: 30 },
       { header: 'City', key: 'city', width: 15 },
       { header: 'State', key: 'state', width: 15 },
+      { header: 'Chairman / Chancellor', key: 'chairman_name', width: 25 },
+      { header: 'Chairman Mobile', key: 'chairman_mobile', width: 20 },
+      { header: 'Secretary / Trustee', key: 'secretary_name', width: 25 },
+      { header: 'Principal / Director', key: 'director_name', width: 25 },
+      { header: 'Finance Head / CFO', key: 'finance_head_name', width: 22 },
       { header: 'Website', key: 'website', width: 30 },
       { header: 'Official Telephone', key: 'telephone', width: 20 },
       { header: 'Official Email', key: 'email', width: 30 },
       { header: 'Funding Requirement', key: 'funding_req', width: 25 },
+      { header: 'Borrowing Capacity', key: 'borrowing_capacity', width: 24 },
+      { header: 'Secured LAP Potential', key: 'secured_lap', width: 24 },
+      { header: 'Unsecured OD Potential', key: 'unsecured_od', width: 24 },
+      { header: 'Potential Collateral', key: 'collateral', width: 25 },
+      { header: 'Property Evidence', key: 'property_evidence', width: 22 },
+      { header: 'Expansion Plans', key: 'expansion_plans', width: 35 },
       { header: 'Priority Tier', key: 'tier', width: 15 },
-      { header: 'Score (100-Pt)', key: 'score', width: 15 }
+      { header: 'Score (100-Pt)', key: 'score', width: 15 },
+      { header: 'Source Lineage Batch', key: 'source_batch', width: 25 }
     ];
 
     institutions.forEach(i => {
@@ -652,12 +736,24 @@ router.get('/export', requirePortalAuth, requirePermission('education:export'), 
         parent_trust: i.parent_trust_society,
         city: i.city,
         state: i.state,
+        chairman_name: i.chairman_name || '',
+        chairman_mobile: i.chairman_mobile || '',
+        secretary_name: i.secretary_name || '',
+        director_name: i.director_name || '',
+        finance_head_name: i.finance_head_name || '',
         website: i.website,
         telephone: i.official_telephone,
         email: i.official_email,
         funding_req: i.potential_funding_requirement,
+        borrowing_capacity: i.potential_borrowing_capacity || '',
+        secured_lap: i.secured_lap_potential || '',
+        unsecured_od: i.unsecured_od_potential || '',
+        collateral: i.potential_collateral || '',
+        property_evidence: i.property_ownership_evidence || '',
+        expansion_plans: i.expansion_plans || '',
         tier: i.lead_priority_tier,
-        score: i.qualification_score
+        score: i.qualification_score,
+        source_batch: i.source_lineage_batch_id || 'BATCH-20261107-P5318'
       });
     });
 

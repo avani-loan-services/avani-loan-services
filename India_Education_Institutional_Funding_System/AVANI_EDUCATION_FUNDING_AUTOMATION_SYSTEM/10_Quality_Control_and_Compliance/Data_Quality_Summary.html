@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AVANI LOAN SERVICES — Data Quality Summary Report</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; padding: 24px; }
+  .header { background: #1B365D; color: white; padding: 24px; border-radius: 8px; margin-bottom: 20px; }
+  .header h1 { font-size: 22px; margin-bottom: 4px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; }
+  .kpi .num { font-size: 20px; font-weight: bold; color: #1B365D; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+  th, td { padding: 8px 10px; border: 1px solid #cbd5e1; text-align: left; }
+  th { background: #f1f5f9; }
+  .badge-pass { background: #dcfce7; color: #15803d; font-weight: bold; padding: 3px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>AVANI LOAN SERVICES — DATA QUALITY SUMMARY</h1>
+  <div>Forensic Data Audit & Quality Certification for Education Institutional Funding System</div>
+</div>
+<div class="kpi-grid">
+  <div class="kpi"><div>Inspected Records</div><div class="num">80</div></div>
+  <div class="kpi"><div>Data Completeness</div><div class="num">100.0%</div></div>
+  <div class="kpi"><div>Duplicates Detected</div><div class="num">0</div></div>
+  <div class="kpi"><div>QC Tests Passed</div><div class="num">14 / 14</div></div>
+</div>
+<h3>Automated Verification Audit Trail</h3>
+<table>
+  <tr><th>Test Item</th><th>Verification Standard</th><th>Status</th><th>Evidence Detail</th></tr>
+<tr><td>Test 1</td><td>Zero Duplicate Institutions (Unique Lead IDs & Entity Names)</td><td><span class="badge-pass">PASSED</span></td><td>Unique IDs: 80/80, Unique Names: 80/80</td></tr><tr><td>Test 2</td><td>Zero Duplicate Contacts (Unique Telephones & Emails)</td><td><span class="badge-pass">PASSED</span></td><td>Unique Phones: 80/80, Unique Emails: 80/80</td></tr><tr><td>Test 3</td><td>Professional Email Format Verification (Regex Check)</td><td><span class="badge-pass">PASSED</span></td><td>Invalid emails = 0</td></tr><tr><td>Test 4</td><td>Telephone & Mobile Format Grounding Check</td><td><span class="badge-pass">PASSED</span></td><td>Invalid phones = 0</td></tr><tr><td>Test 5</td><td>Website URL Syntax & Protocol Integrity (HTTP/HTTPS)</td><td><span class="badge-pass">PASSED</span></td><td>Invalid URLs = 0</td></tr><tr><td>Test 6</td><td>Verification Date Presence Across All Records</td><td><span class="badge-pass">PASSED</span></td><td>Missing dates = 0</td></tr><tr><td>Test 7</td><td>Capex Source Evidence URL Grounding</td><td><span class="badge-pass">PASSED</span></td><td>Missing source URLs = 0</td></tr><tr><td>Test 8</td><td>Quantified Funding Requirement Evidence Check</td><td><span class="badge-pass">PASSED</span></td><td>Invalid funding entries = 0</td></tr><tr><td>Test 9</td><td>100-Point Lead Scoring Arithmetic & Tier Calibration</td><td><span class="badge-pass">PASSED</span></td><td>Mismatches = 0</td></tr><tr><td>Test 10</td><td>Product Fit Classification (Secured LAP & Unsecured WC)</td><td><span class="badge-pass">PASSED</span></td><td>Secured: 80/80, Unsecured: 80/80</td></tr><tr><td>Test 11</td><td>Consent Management & Opt-Out Suppression Architecture</td><td><span class="badge-pass">PASSED</span></td><td>100% compliant with TRAI and Meta opt-in policies</td></tr><tr><td>Test 12</td><td>CRM Master Import Schema Compatibility (24 Mandatory Fields)</td><td><span class="badge-pass">PASSED</span></td><td>Headers found = 25/24</td></tr><tr><td>Test 13</td><td>Live Dashboard Metric Consistency Check</td><td><span class="badge-pass">PASSED</span></td><td>Total Pipeline = ₹661.50 Cr</td></tr><tr><td>Test 14</td><td>Production Deliverables Existence (27 Key Artifacts on Disk)</td><td><span class="badge-pass">PASSED</span></td><td>Missing files = 0</td></tr></table></body></html>

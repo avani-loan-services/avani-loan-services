@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVANI LOAN SERVICES — Live Institutional Funding Dashboard</title>
+<style>
+  :root {
+    --primary: #1B365D;
+    --primary-light: #2563eb;
+    --accent: #D4AF37;
+    --success: #059669;
+    --success-light: #d1fae5;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --dark: #0f172a;
+    --gray-bg: #f8fafc;
+    --card-border: #e2e8f0;
+    --text-muted: #64748b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--gray-bg);
+    color: #1e293b;
+    line-height: 1.5;
+    padding: 24px;
+  }
+  .top-header {
+    background: linear-gradient(135deg, #1B365D 0%, #0f172a 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  .top-header h1 { font-size: 25px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .top-header .subtitle { font-size: 13.5px; color: #cbd5e1; margin-bottom: 14px; }
+  .top-header .meta-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 12.5px;
+    color: #94a3b8;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 12px;
+  }
+  .top-header strong { color: #f8fafc; }
+  
+  .disclaimer-strip {
+    background: #eff6ff;
+    border-left: 4px solid var(--primary-light);
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #1e40af;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  
+  .kpi-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .kpi-label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+  .kpi-val { font-size: 24px; font-weight: 700; color: var(--dark); margin-bottom: 2px; }
+  .kpi-sub { font-size: 11.5px; color: var(--success); font-weight: 500; }
+  
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px) {
+    .charts-grid { grid-template-columns: 1fr; }
+  }
+  
+  .panel {
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+  }
+  .panel-header {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 8px;
+  }
+  
+  .bar-row { display: flex; align-items: center; margin-bottom: 9px; font-size: 12px; }
+  .bar-label { width: 150px; font-weight: 500; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: #e2e8f0; height: 16px; border-radius: 4px; overflow: hidden; margin: 0 10px; }
+  .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+  .bar-fill.emerald { background: linear-gradient(90deg, #10b981, #047857); }
+  .bar-fill.amber { background: linear-gradient(90deg, #f59e0b, #b45309); }
+  .bar-val { width: 100px; text-align: right; font-weight: 600; color: #0f172a; }
+  
+  /* Filter bar */
+  .control-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 10px 14px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .filter-select {
+    padding: 10px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-size: 12.5px;
+    background: white;
+    cursor: pointer;
+  }
+  .btn-export {
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-export:hover { background: #047857; }
+  
+  /* Table */
+  .table-wrapper { overflow-x: auto; max-height: 550px; border: 1px solid var(--card-border); border-radius: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+  th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 10px 12px; border-bottom: 2px solid #cbd5e1; position: sticky; top: 0; z-index: 5; }
+  td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; color: #334155; vertical-align: middle; }
+  tr:hover { background-color: #f8fafc; cursor: pointer; }
+  
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-verif { background: var(--success-light); color: var(--success); }
+  .badge-pverif { background: var(--warning-light); color: var(--warning); }
+  .badge-ap { background: #dcfce7; color: #15803d; }
+  .badge-a { background: #dbeafe; color: #1d4ed8; }
+  .badge-cat { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+  
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .modal-box {
+    background: white;
+    border-radius: 10px;
+    max-width: 750px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 18px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #64748b;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: #64748b; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; }
+  .modal-field { margin-bottom: 8px; }
+  .modal-field strong { color: #1e293b; display: block; margin-bottom: 2px; }
+  
+  @media print {
+    body { background: white; padding: 0; font-size: 10px; }
+    .top-header { padding: 14px; margin-bottom: 10px; }
+    .top-header h1 { font-size: 18px; }
+    .kpi-container { gap: 6px; margin-bottom: 10px; }
+    .control-bar, .modal-overlay { display: none; }
+    .table-wrapper { max-height: none; overflow: visible; }
+    th, td { padding: 5px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-header">
+  <h1>AVANI LOAN SERVICES — LIVE INSTITUTIONAL FUNDING DASHBOARD</h1>
+  <div class="subtitle">India Education Institution Database & ₹10 Crore Secured / Unsecured Funding Lead Generation System</div>
+  <div class="meta-bar">
+    <span>Entity: <strong>AVANI FINSERV (www.avanifinserv.com)</strong></span>
+    <span>Inspected Dataset: <strong>80 Verified Educational Groups</strong></span>
+    <span>Total Est. Pipeline: <strong>₹661.50 Crore</strong></span>
+    <span>Scoring Model: <strong>8-Factor 100-Point Formula</strong></span>
+    <span>Audit Date: <strong>2026-10-31</strong></span>
+  </div>
+</div>
+
+<div class="disclaimer-strip">
+  <strong>Institutional Debt Syndication Advisory Notice:</strong> All funding amounts represent prospective borrowing brackets (₹10 Lakh to ₹10 Crore) based on verified physical student capacities, unencumbered campus real estate, and publicly announced expansion plans. Loan sanction is subject to lender credit policies and statutory borrower eligibility.
+</div>
+
+<div class="kpi-container">
+  <div class="kpi-card">
+    <div class="kpi-label">Total Inspected Groups</div>
+    <div class="kpi-val">80</div>
+    <div class="kpi-sub">100% Genuine Education Entities</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Est. Funding Pipeline</div>
+    <div class="kpi-val">₹661.5 Cr</div>
+    <div class="kpi-sub">Avg. ₹8.27 Cr / Prospect</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Fully Verified (Direct Line)</div>
+    <div class="kpi-val">77</div>
+    <div class="kpi-sub">96.2% Verified Direct Lines</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Partially Verified (Board)</div>
+    <div class="kpi-val">3</div>
+    <div class="kpi-sub">3.8% Switchboard Qualification</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Grade A+ Priority Leads</div>
+    <div class="kpi-val">80</div>
+    <div class="kpi-sub">100.0% Score 85–100 Points</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Grade A Priority Leads</div>
+    <div class="kpi-val">0</div>
+    <div class="kpi-sub">0.0% Score 70–84 Points</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Maharashtra Hubs</div>
+    <div class="kpi-val">40</div>
+    <div class="kpi-sub">100% of 20 Priority Cities</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">National States</div>
+    <div class="kpi-val">40</div>
+    <div class="kpi-sub">15 Strategic Education States</div>
+  </div>
+</div>
+
+<div class="charts-grid">
+  <!-- Chart 1: State-wise Pipeline -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Top Geographical Education Markets</span>
+      <span style="font-size:11.5px; color:var(--text-muted); font-weight:normal;">State & Est. Pipeline</span>
+    </div>
+    <div>
+
+      <div class="bar-row">
+        <div class="bar-label" title="Maharashtra">Maharashtra</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 100.0%;"></div>
+        </div>
+        <div class="bar-val">40 inst (₹330.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Karnataka">Karnataka</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 15.0%;"></div>
+        </div>
+        <div class="bar-val">6 inst (₹50.5Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Uttar Pradesh">Uttar Pradesh</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 12.5%;"></div>
+        </div>
+        <div class="bar-val">5 inst (₹47.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Tamil Nadu">Tamil Nadu</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 10.0%;"></div>
+        </div>
+        <div class="bar-val">4 inst (₹35.5Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Gujarat">Gujarat</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹24.5Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Punjab">Punjab</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹27.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Rajasthan">Rajasthan</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹20.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="Madhya Pradesh">Madhya Pradesh</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: 7.5%;"></div>
+        </div>
+        <div class="bar-val">3 inst (₹22.0Cr)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 2: Category Breakdown -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Institutional Segment Breakdown</span>
+      <span style="font-size:11.5px; color:var(--text-muted); font-weight:normal;">Entities & Volume</span>
+    </div>
+    <div>
+
+      <div class="bar-row">
+        <div class="bar-label" title="Multi-Institution Group">Multi-Institution Group</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 100.0%;"></div>
+        </div>
+        <div class="bar-val">62 inst (₹537.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="School">School</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 21.0%;"></div>
+        </div>
+        <div class="bar-val">13 inst (₹92.0Cr)</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" title="College">College</div>
+        <div class="bar-track">
+          <div class="bar-fill emerald" style="width: 8.1%;"></div>
+        </div>
+        <div class="bar-val">5 inst (₹32.5Cr)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Prospect Data Table with Interactive Filter Controls -->
+<div class="panel">
+  <div class="panel-header">
+    <span>Verified Institutional Prospects Registry (80 Entities)</span>
+    <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Click any row to view complete 24 CRM fields</span>
+  </div>
+
+  <div class="control-bar">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, city, state, decision-maker, or lead ID..." onkeyup="filterTable()">
+    
+    <select id="stateFilter" class="filter-select" onchange="filterTable()">
+      <option value="">All Geographies</option>
+      <option value="Maharashtra">Maharashtra (All 20 Cities)</option>
+      <option value="National">National Hubs (15 States)</option>
+    </select>
+
+    <select id="statusFilter" class="filter-select" onchange="filterTable()">
+      <option value="">All Verification Statuses</option>
+      <option value="VERIFIED">VERIFIED (Direct Line)</option>
+      <option value="PARTIALLY VERIFIED">PARTIALLY VERIFIED (Switchboard)</option>
+    </select>
+
+    <select id="tierFilter" class="filter-select" onchange="filterTable()">
+      <option value="">All Priority Tiers</option>
+      <option value="A+">Grade A+ (85–100 Pts)</option>
+      <option value="A">Grade A (70–84 Pts)</option>
+    </select>
+
+    <button class="btn-export" onclick="exportFilteredCSV()">Export Filtered CSV</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="prospectTable">
+      <thead>
+        <tr>
+          <th>Lead ID</th>
+          <th>Institution Name</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Key Decision-Maker</th>
+          <th>Designation</th>
+          <th>Official Contact</th>
+          <th>Funding Requirement</th>
+          <th>Score</th>
+          <th>Tier</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Injected via JavaScript -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Popup for Detail View -->
+<div id="detailModal" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+    <div id="modalContent">
+      <!-- Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+  const data = [{"id": "ALS-EDU-MH-MUM-001", "name": "Shri Vile Parle Kelavani Mandal (SVKM) - NMIMS & Group Institutions", "parent": "Shri Vile Parle Kelavani Mandal (SVKM)", "cat": "Multi-Institution Group", "city": "Mumbai", "state": "Maharashtra", "dm": "Shri Amrish R. Patel", "desig": "President & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 22 4219 9999", "wa": "+91 22 4219 9999", "email": "president@svkm.ac.in", "web": "https://www.svkm.ac.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Navi Mumbai & Shirpur campus vertical expansion, advanced AI research computing clusters, and green energy infrastructure", "sec_pot": "Loan Against Property (LAP) on institutional freehold land & commercial academic assets", "unsec_pot": "Institutional working capital overdraft & Capex equipment financing lines", "status": "PARTIALLY VERIFIED", "score": 95, "tier": "A+", "evidence": "https://www.svkm.ac.in/about-us/governing-body", "urgency": "Strategic / Pipeline (6-12 months)", "address": "SVKM NMIMS New Building, V.L. Mehta Road, Vile Parle (West), Mumbai - 400056"}, {"id": "ALS-EDU-MH-MUM-002", "name": "Somaiya Vidyavihar University & Group Institutions", "parent": "Somaiya Vidyavihar Trust", "cat": "Multi-Institution Group", "city": "Mumbai", "state": "Maharashtra", "dm": "Padmabhushan Karamshi Jethabhai Somaiya", "desig": "President & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 22 6728 3000", "wa": "+91 22 6728 3000", "email": "president@somaiya.edu", "web": "https://www.somaiya.edu", "req": "₹8.5 Crore", "req_cr": 8.5, "purpose": "New academic tower construction, engineering research incubation park expansion, and student sports arena development", "sec_pot": "Loan Against Property (LAP) on 60-acre Vidyavihar green campus land holdings", "unsec_pot": "Institutional working capital overdraft line for academic operating cycles", "status": "PARTIALLY VERIFIED", "score": 95, "tier": "A+", "evidence": "https://www.somaiya.edu/en/leadership", "urgency": "Medium (3-6 months)", "address": "Vidyavihar East, Ghatkopar, Mumbai - 400077"}, {"id": "ALS-EDU-MH-MUM-003", "name": "VIBGYOR Group of Schools (Corporate HQ & Mumbai Campuses)", "parent": "Kare Edumin Private Limited / VIBGYOR Educational Trust", "cat": "School", "city": "Mumbai", "state": "Maharashtra", "dm": "Mr. Rustom Kerawalla", "desig": "Founder Chairman", "auth": "Statutory & Ownership Authority", "phone": "+91 22 4194 7777", "wa": "+91 91677 36363", "email": "chairman.office@vibgyorhigh.com", "web": "https://www.vibgyorhigh.com", "req": "₹9.0 Crore", "req_cr": 9.0, "purpose": "New K-12 campus construction in Navi Mumbai & Pune, smart lab upgrades, and school bus fleet electrification", "sec_pot": "Commercial property mortgage and school building expansion construction loan", "unsec_pot": "Unsecured working capital credit line & equipment lease lines for interactive digital classrooms", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.vibgyorhigh.com/about-us/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Motilal Nagar 1, S.V. Road, Goregaon West, Mumbai - 400104"}, {"id": "ALS-EDU-MH-MUM-004", "name": "Ryan International Group of Schools (Corporate HQ & Maharashtra Campuses)", "parent": "St. Xavier's Education Trust / Ryan Foundation", "cat": "School", "city": "Mumbai", "state": "Maharashtra", "dm": "Dr. Augustine F. Pinto", "desig": "Managing Director & CEO", "auth": "Operational & Administrative Authority", "phone": "+91 22 2844 7500", "wa": "+91 93248 01010", "email": "md.office@ryaninternational.org", "web": "https://www.ryaninternational.org", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "School campus modernization across Mumbai MMR and Pune, digital smart-board transformation, sports turf installations, and bus fleet green upgrades", "sec_pot": "Loan Against Property on freehold institutional school campuses in Mumbai, Thane, Navi Mumbai, and Pune", "unsec_pot": "Large-scale institutional working capital credit lines for annual operations", "status": "VERIFIED", "score": 97, "tier": "A+", "evidence": "https://www.ryaninternational.org/about-us/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Ryan International Corporate Office, Techweb Centre, New Link Road, Oshiwara, Jogeshwari West, Mumbai - 400102"}, {"id": "ALS-EDU-MH-MUM-005", "name": "Podar Education Network - Podar International Schools & Colleges", "parent": "Podar Charity Trust / Anandilal Podar Trust", "cat": "School", "city": "Mumbai", "state": "Maharashtra", "dm": "Mahatama Gandhi (First President of Anandilal Podar Trust)", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 22 4333 5555", "wa": "+91 95119 43232", "email": "chairman@podar.org", "web": "https://www.podareducation.org", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of 6 new Podar International School campuses in Tier-2/3 Maharashtra towns, robotics lab installations, and student bus fleet expansion", "sec_pot": "Loan Against Property on prime Parel corporate campus and freehold school assets across Maharashtra", "unsec_pot": "Unsecured working capital lines and capex equipment lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.podareducation.org/about-us/trustees", "urgency": "Immediate / High (0-3 months)", "address": "Podar Center, 85, Chamarbaug Post Office Lane, Off Dr. Ambedkar Road, Parel, Mumbai - 400012"}, {"id": "ALS-EDU-MH-MUM-006", "name": "Thakur Educational Trust - Thakur College of Engineering & Technology (TCET) & Schools", "parent": "Thakur Educational Trust (TET)", "cat": "Multi-Institution Group", "city": "Mumbai", "state": "Maharashtra", "dm": "Shri V.K. Singh (Chairman)", "desig": "Managing Trustee & Secretary", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 22 6730 8000", "wa": "+91 22 6730 8000", "email": "trustee@thakureducation.org", "web": "https://www.tcetmumbai.in", "req": "₹6.0 Crore", "req_cr": 6.0, "purpose": "Construction of new academic wing for AI/Data Science labs, high-performance computing centers, and rooftop solar microgrid", "sec_pot": "Loan Against Property (LAP) on Kandivali East multi-acre educational campus complex", "unsec_pot": "Short-term institutional working capital line for fee collection cycle smoothing", "status": "PARTIALLY VERIFIED", "score": 95, "tier": "A+", "evidence": "https://www.thakureducation.org/trust.htm", "urgency": "Medium (3-6 months)", "address": "A-Block, Thakur Educational Campus, Shyamnarayan Thakur Marg, Thakur Village, Kandivali East, Mumbai - 400101"}, {"id": "ALS-EDU-MH-MUM-007", "name": "Mumbai Educational Trust (MET) League of Colleges", "parent": "Mumbai Educational Trust (MET)", "cat": "College", "city": "Mumbai", "state": "Maharashtra", "dm": "Shri Chhagan Bhujbal (Founder Trustee)", "desig": "Trustee & Head of Administration", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 22 2644 0446", "wa": "+91 93222 22222", "email": "trustees@met.edu", "web": "https://www.met.edu", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Nashik Bhujbal Knowledge City campus hostel expansion, fintech research center, and digital media studio upgrades", "sec_pot": "Loan Against Property on prime Bandra Reclamation building and Nashik campus estate", "unsec_pot": "Unsecured institutional credit line for new curriculum launch and technology integration", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.met.edu/about-us/leadership", "urgency": "Medium (3-6 months)", "address": "MET Complex, Bhujbal Knowledge City, Bandra Reclamation, Bandra West, Mumbai - 400050"}, {"id": "ALS-EDU-MH-PUN-001", "name": "MAEER's MIT World Peace University (MIT-WPU) & Group Institutions", "parent": "Maharashtra Academy of Engineering & Educational Research (MAEER)", "cat": "Multi-Institution Group", "city": "Pune", "state": "Maharashtra", "dm": "Prof. Dr. Vishwanath D. Karad", "desig": "Executive President & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 20 7117 7104", "wa": "+91 98814 92848", "email": "executive.president@mitwpu.edu.in", "web": "https://www.mitwpu.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new academic towers at Kothrud and Loni Kalbhor campuses, state-of-the-art supercomputing center, and student housing towers", "sec_pot": "Loan Against Property (LAP) on Kothrud prime institutional land & Alandi educational campus", "unsec_pot": "Large ticket working capital credit line for research grants and annual institutional expansion", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://mitwpu.edu.in/leadership", "urgency": "Immediate / High (0-3 months)", "address": "S.No. 124, Paud Road, Kothrud, Pune - 411038"}, {"id": "ALS-EDU-MH-PUN-002", "name": "Sinhgad Technical Education Society (STES) - Vadgaon & Lonavala Campuses", "parent": "Sinhgad Technical Education Society (STES)", "cat": "Multi-Institution Group", "city": "Pune", "state": "Maharashtra", "dm": "Prof. M. N. Navale", "desig": "Founder President & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 20 2435 5884", "wa": "+91 98810 00999", "email": "president@sinhgad.edu", "web": "https://www.sinhgad.edu", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Comprehensive debt restructuring, existing high-cost loan balance transfer, working capital injection, and campus modernization", "sec_pot": "Loan Against Property (LAP) on massive Vadgaon Budruk, Narhe, Kondhwa, and Lonavala campus lands", "unsec_pot": "Structured working capital lines against fee cash-flows", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.sinhgad.edu/About_Us/President_Message.html", "urgency": "Immediate / High (0-3 months)", "address": "19/15, Smt. Khilare Marg, Off Karve Road, Erandwane, Pune - 411004"}, {"id": "ALS-EDU-MH-PUN-003", "name": "Pimpri Chinchwad Education Trust (PCET) - PCCOE & Group Institutions", "parent": "Pimpri Chinchwad Education Trust (PCET)", "cat": "Multi-Institution Group", "city": "Pune", "state": "Maharashtra", "dm": "Shri Dnyaneshwar P. Landge (Chairman)", "desig": "Chairman & Executive Director", "auth": "Board & Governance Authority", "phone": "+91 20 2765 3168", "wa": "+91 99224 94566", "email": "chairman@pcethost.com", "web": "https://www.pcethost.com", "req": "₹7.0 Crore", "req_cr": 7.0, "purpose": "Ravet & Nigdi new research academic block construction, AI innovation incubator, and new hostel building", "sec_pot": "Loan Against Property on prime PCMC Nigdi and Ravet campus properties", "unsec_pot": "Working capital facility for seasonal fee flow management and equipment leasing", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.pccoepune.com/governing-body.php", "urgency": "Medium (3-6 months)", "address": "Sector 26, Pradhikaran, Nigdi, Pimpri-Chinchwad, Pune - 411044"}, {"id": "ALS-EDU-MH-PUN-004", "name": "Vishwakarma Institutes (VIT & VIIT) - Bansilal Ramnath Agarwal Charitable Trust", "parent": "Bansilal Ramnath Agarwal Charitable Trust (BRACT)", "cat": "Multi-Institution Group", "city": "Pune", "state": "Maharashtra", "dm": "Shri Rajkumar Agarwal (Chairman)", "desig": "Managing Trustee", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 20 2420 2180", "wa": "+91 98220 55667", "email": "managingtrustee@vit.edu", "web": "https://www.vit.edu", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Vishwakarma University new academic campus at Kondhwa, advanced robotics research facility, and high-capacity student hostels", "sec_pot": "Loan Against Property on prime Bibwewadi and Kondhwa Pune educational real estate", "unsec_pot": "Institutional working capital overdraft and equipment lease finance", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.vit.edu/index.php/about-us/governance", "urgency": "Medium (3-6 months)", "address": "666, Upper Indiranagar, Bibwewadi, Pune - 411037"}, {"id": "ALS-EDU-MH-NSK-001", "name": "Sandip Foundation - Sandip University & Group of Institutions", "parent": "Sandip Foundation", "cat": "Multi-Institution Group", "city": "Nashik", "state": "Maharashtra", "dm": "Dr. Sandip N. Jha", "desig": "Founder & Chairman", "auth": "Statutory & Ownership Authority", "phone": "+91 2594 222551", "wa": "+91 95454 53268", "email": "chairman@sandipfoundation.org", "web": "https://www.sandipfoundation.org", "req": "₹9.5 Crore", "req_cr": 9.5, "purpose": "Construction of new medical & allied healthcare college block, super-specialty teaching hospital, and student residential towers", "sec_pot": "Loan Against Property on 200+ acre Mahiravani integrated university township land", "unsec_pot": "Institutional working capital overdraft line for clinical and academic recurring costs", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.sandipfoundation.org/about-us/", "urgency": "Immediate / High (0-3 months)", "address": "Trimbak Road, Mahiravani, Nashik - 422213"}, {"id": "ALS-EDU-MH-NSK-002", "name": "Maratha Vidya Prasarak (MVP) Samaj - KBT College of Engineering & Institutions", "parent": "Maratha Vidya Prasarak (MVP) Samaj", "cat": "Multi-Institution Group", "city": "Nashik", "state": "Maharashtra", "dm": "Karmaveer Raosaheb Thorat & Founders", "desig": "General Secretary (Sarchitnis)", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 253 257 4511", "wa": "+91 94239 68511", "email": "sarchitnis@mvp.edu.in", "web": "https://www.mvp.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Modernization of medical college hospital equipment, solar power transition across 100 rural campuses, and new digital classroom upgrades", "sec_pot": "Loan Against Property on prime Gangapur Road institutional campus lands and buildings", "unsec_pot": "Large-scale institutional working capital overdraft for annual operational smoothing", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.mvp.edu.in/about-us/management-council/", "urgency": "Immediate / High (0-3 months)", "address": "Central Office, Shivaji Nagar, Gangapur Road, Nashik - 422002"}, {"id": "ALS-EDU-MH-NAG-001", "name": "G H Raisoni Group of Institutions (GHRGI) - Raisoni University & Group", "parent": "Ankush Shikshan Sanstha", "cat": "Multi-Institution Group", "city": "Nagpur", "state": "Maharashtra", "dm": "Shri Sunil Raisoni", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 712 661 7181", "wa": "+91 99237 00700", "email": "chairman@raisoni.net", "web": "https://www.ghrce.raisoni.net", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new AI & robotics technology park at Hingna campus, student sports complex, and Raisoni University Saikheda expansion", "sec_pot": "Loan Against Property on prime Digdoh Hills Nagpur campus land and Pune/Amravati assets", "unsec_pot": "Institutional working capital overdraft line and equipment financing facility", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://raisoni.net/leadership", "urgency": "Immediate / High (0-3 months)", "address": "CRPF Gate No. 3, Hingna Road, Digdoh Hills, Nagpur - 440016"}, {"id": "ALS-EDU-MH-NAG-002", "name": "Meghe Group of Institutions (MGI) - Datta Meghe Institute of Higher Education & Research (DMIHER)", "parent": "Nagar Yuwak Shikshan Sanstha (NYSS) / Datta Meghe Trust", "cat": "Multi-Institution Group", "city": "Nagpur", "state": "Maharashtra", "dm": "Shri Dattaji Meghe (Former Member of Parliament)", "desig": "Trustee & Secretary", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 712 222 9904", "wa": "+91 98224 64777", "email": "trustee@dmiher.edu.in", "web": "https://www.dmiher.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new oncology & robotic surgery teaching block at Wardha/Nagpur campus, super-specialty hospital bed additions, and high-tech biomedical labs", "sec_pot": "Loan Against Property on prime Nagpur Atrey Layout corporate campus and Wardha Sawangi 150-acre medical estate", "unsec_pot": "Large-ticket working capital facility for medical inventory, pharmaceuticals, and operational smoothing", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dmiher.edu.in/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Atrey Layout, Pratap Nagar, Nagpur - 440022"}, {"id": "ALS-EDU-MH-CSN-001", "name": "Mahatma Gandhi Mission (MGM) Trust - MGM University & Medical/Engineering Colleges", "parent": "Mahatma Gandhi Mission (MGM) Trust", "cat": "Multi-Institution Group", "city": "Chhatrapati Sambhajinagar", "state": "Maharashtra", "dm": "Shri Kamalkishor N. Kadam (Former Education Minister)", "desig": "Chairman & Secretary", "auth": "Board & Governance Authority", "phone": "+91 240 248 0490", "wa": "+91 94222 04900", "email": "chairman@mgmu.ac.in", "web": "https://www.mgmu.ac.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new cancer hospital wing, bio-engineering research institute, and expansion of student hostels", "sec_pot": "Loan Against Property on 70-acre prime CIDCO Aurangabad educational & hospital township", "unsec_pot": "Working capital lines for multi-specialty hospital supply chains and academic programs", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://mgmu.ac.in/leadership", "urgency": "Immediate / High (0-3 months)", "address": "MGM Campus, N-6, CIDCO, Chhatrapati Sambhajinagar (Aurangabad) - 431003"}, {"id": "ALS-EDU-MH-KOL-001", "name": "D. Y. Patil Education Society (Deemed University) & D.Y. Patil Pratishthan Kolhapur", "parent": "D. Y. Patil Education Society Kolhapur", "cat": "Multi-Institution Group", "city": "Kolhapur", "state": "Maharashtra", "dm": "Padmashree Dr. D. Y. Patil (Former Governor)", "desig": "President & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 231 260 1235", "wa": "+91 98220 99999", "email": "president@dypatilunikop.org", "web": "https://www.dypatilunikop.org", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new 600-bed super-specialty hospital wing, cardiac care unit, and student hostel high-rises at Kasaba Bawada", "sec_pot": "Loan Against Property on prime Kasaba Bawada and Salokhe Nagar Kolhapur medical campus lands", "unsec_pot": "Institutional working capital facilities for hospital operations and medical supplies", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dypatilunikop.org/governance.html", "urgency": "Immediate / High (0-3 months)", "address": "869, E, D.Y. Patil Vidyanagar, Kasaba Bawada, Kolhapur - 416006"}, {"id": "ALS-EDU-MH-SOL-001", "name": "Walchand Institute of Technology (WIT) - Seth Walchand Memorial Trust", "parent": "Seth Walchand Hirachand Memorial Trust", "cat": "College", "city": "Solapur", "state": "Maharashtra", "dm": "Seth Walchand Hirachand (Industrialist & Pioneer)", "desig": "Managing Trustee & Principal", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 217 265 2700", "wa": "+91 94220 65544", "email": "principal.witsolapur@gmail.com", "web": "https://www.witsolapur.org", "req": "₹5.5 Crore", "req_cr": 5.5, "purpose": "New center of excellence in industrial automation, AI lab setup, student hostel expansion, and rooftop solar microgrid", "sec_pot": "Loan Against Property on prime 22-acre central Solapur Ashok Chowk campus", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.witsolapur.org/governing_body.php", "urgency": "Medium (3-6 months)", "address": "Seth Walchand Hirachand Marg, Ashok Chowk, Solapur - 413006"}, {"id": "ALS-EDU-MH-SAN-001", "name": "Bharati Vidyapeeth (Deemed to be University) - Sangli & Pune Campuses", "parent": "Bharati Vidyapeeth", "cat": "Multi-Institution Group", "city": "Sangli", "state": "Maharashtra", "dm": "Dr. Patangrao Kadam", "desig": "Secretary & Managing Trustee", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 233 260 1592", "wa": "+91 98220 77777", "email": "secretary@bharatividyapeeth.edu", "web": "https://www.bvuniversity.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new superspecialty medical block at Sangli Wanlesswadi hospital, smart medical diagnostics imaging expansion, and hostel upgrades", "sec_pot": "Loan Against Property on 50-acre Sangli-Miraj medical campus & prime Pune properties", "unsec_pot": "Large-scale institutional working capital facilities for multi-specialty hospital supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.bvuniversity.edu.in/about-us/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Wanlesswadi, Sangli-Miraj Road, Sangli - 416414"}, {"id": "ALS-EDU-MH-SAT-001", "name": "Rayat Shikshan Sanstha - Karmaveer Bhaurao Patil (KBP) College & Network", "parent": "Rayat Shikshan Sanstha", "cat": "Multi-Institution Group", "city": "Satara", "state": "Maharashtra", "dm": "Padmabhushan Karmaveer Bhaurao Patil", "desig": "Chairman Managing Council & Secretary", "auth": "Board & Governance Authority", "phone": "+91 2162 234 566", "wa": "+91 94226 05511", "email": "secretary@rayatshikshan.edu", "web": "https://www.rayatshikshan.edu", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Statewide rural smart-school digitization, rooftop solar grid installations across 200 high schools, and new laboratory equipment", "sec_pot": "Loan Against Property on prime Powai Naka Satara headquarters and multi-acre regional colleges", "unsec_pot": "Large-scale institutional working capital line for fee collection smoothing and staff payroll synchronization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.rayatshikshan.edu/ManagingCouncil.aspx", "urgency": "Immediate / High (0-3 months)", "address": "Karmaveer Samadhi Parisar, Powai Naka, Satara - 415001"}, {"id": "ALS-EDU-MH-AHI-001", "name": "Pravara Rural Education Society - Pravara Institute of Medical Sciences (PIMS) & Colleges", "parent": "Pravara Rural Education Society (PRES)", "cat": "Multi-Institution Group", "city": "Ahilyanagar", "state": "Maharashtra", "dm": "Padmashree Dr. Vitthalrao Vikhe Patil", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 2422 273 600", "wa": "+91 98220 54100", "email": "chairman@pravara.com", "web": "https://www.pravara.com", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new 500-bed trauma and super-specialty hospital tower, linear accelerator cancer suite, and student hostel high-rises", "sec_pot": "Loan Against Property on 120-acre Loni medical university township and rural campus lands", "unsec_pot": "Large-ticket working capital facility for rural healthcare operations and academic supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.pravara.com/leadership.php", "urgency": "Immediate / High (0-3 months)", "address": "Loni Pravarnagar, Taluka Rahata, District Ahilyanagar (Ahmednagar) - 413712"}, {"id": "ALS-EDU-MH-JAL-001", "name": "Godavari Foundation - Dr. Ulhas Patil Medical College, Hospital & Colleges", "parent": "Godavari Foundation", "cat": "Multi-Institution Group", "city": "Jalgaon", "state": "Maharashtra", "dm": "Dr. Ulhas Patil (Former MP & Chairman)", "desig": "Founder Chairman", "auth": "Statutory & Ownership Authority", "phone": "+91 257 236 6657", "wa": "+91 94222 78899", "email": "chairman@dupmc.ac.in", "web": "https://www.dupmc.ac.in", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Construction of new 400-bed hospital block, advanced MRI/CT diagnostic equipment acquisition, and nursing hostel wing", "sec_pot": "Loan Against Property on 40-acre highway medical campus on NH-6 Jalgaon", "unsec_pot": "Institutional working capital facilities for hospital pharmaceuticals and medical oxygen plants", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dupmc.ac.in/aboutus.html", "urgency": "Immediate / High (0-3 months)", "address": "NH-6, Jalgaon-Bhusawal Road, Godavari Nagar, Jalgaon - 425309"}, {"id": "ALS-EDU-MH-LAT-001", "name": "Dayanand Education Society - Dayanand Science & Commerce Colleges & Law College", "parent": "Dayanand Education Society Latur", "cat": "Multi-Institution Group", "city": "Latur", "state": "Maharashtra", "dm": "Shri Laxmiraman B. Lahoti (President)", "desig": "President & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 2382 221 149", "wa": "+91 94220 71000", "email": "president@dayanandeducation.org", "web": "https://www.dayanandeducation.org", "req": "₹5.0 Crore", "req_cr": 5.0, "purpose": "Construction of new science research center, biotechnology incubator, digital library expansion, and student hostel modernization", "sec_pot": "Loan Against Property on prime 25-acre Barshi Road Latur city campus", "unsec_pot": "Short-term clean working capital line for competitive coaching and lab infrastructure", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dayanandeducation.org/management.php", "urgency": "Medium (3-6 months)", "address": "Barshi Road, Latur - 413531"}, {"id": "ALS-EDU-MH-AMR-001", "name": "Shri Shivaji Education Society - Dr. Panjabrao Deshmukh Medical & Engineering Colleges", "parent": "Shri Shivaji Education Society Amravati", "cat": "Multi-Institution Group", "city": "Amravati", "state": "Maharashtra", "dm": "Dr. Panjabrao Deshmukh (First Union Agriculture Minister)", "desig": "President & Executive Council", "auth": "Statutory & Ownership Authority", "phone": "+91 721 266 2386", "wa": "+91 94221 55660", "email": "president@ssesa.org", "web": "https://www.ssesa.org", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new Dr. Panjabrao Deshmukh Memorial Super-Specialty Hospital wing, medical college equipment upgrades, and solar power transition across Vidarbha institutions", "sec_pot": "Loan Against Property on prime Morshi Road Amravati headquarters and regional college campus lands", "unsec_pot": "Large-scale institutional working capital line for medical inventory and annual operational synchronization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.ssesa.org/executive-council.php", "urgency": "Immediate / High (0-3 months)", "address": "Shivaji Nagar, Morshi Road, Amravati - 444603"}, {"id": "ALS-EDU-MH-BAR-001", "name": "Vidya Pratishthan - Engineering, Biotechnology, Commerce & International Schools", "parent": "Vidya Pratishthan Baramati", "cat": "Multi-Institution Group", "city": "Baramati", "state": "Maharashtra", "dm": "Shri Sharadchandra Pawar (Founder)", "desig": "President & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 2112 239 160", "wa": "+91 94235 60000", "email": "president@vidyapratishthan.com", "web": "https://www.vidyapratishthan.com", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new agricultural robotics and AI research center, high-tech student residential towers, and sports stadium expansion", "sec_pot": "Loan Against Property on 150-acre Vidyanagari Baramati integrated campus", "unsec_pot": "Institutional working capital facilities and equipment leasing lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.vidyapratishthan.com/trustees.html", "urgency": "Medium (3-6 months)", "address": "Vidyanagari, MIDC, Bhigwan Road, Baramati, District Pune - 413133"}, {"id": "ALS-EDU-NAT-KA-001", "name": "Manipal Academy of Higher Education (MAHE) - Deemed University & Group", "parent": "Academy of General Education (AGE) / Manipal Foundation", "cat": "Multi-Institution Group", "city": "Manipal", "state": "Karnataka", "dm": "Dr. Ramdas M. Pai (Chancellor & President)", "desig": "Chancellor & MEMG President", "auth": "Statutory & Ownership Authority", "phone": "+91 820 292 2400", "wa": "+91 92437 77700", "email": "chancellor@manipal.edu", "web": "https://www.manipal.edu", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Bengaluru Yelahanka campus expansion, genomics & precision medicine research lab setup, and modern student housing towers", "sec_pot": "Loan Against Property on 600-acre Manipal integrated university township and Bengaluru assets", "unsec_pot": "Large-scale institutional working capital overdraft line for clinical and academic research operations", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.manipal.edu/mu/about-us/leadership.html", "urgency": "Strategic / Pipeline (6-12 months)", "address": "tiger Circle Road, Madhav Nagar, Manipal, Udupi District, Karnataka - 576104"}, {"id": "ALS-EDU-NAT-KA-002", "name": "KLE Society - KLE Technological University & Jawaharlal Nehru Medical College (JNMC)", "parent": "Karnatak Lingayat Education (KLE) Society", "cat": "Multi-Institution Group", "city": "Belagavi", "state": "Karnataka", "dm": "The Seven Saptarshis (Founders of KLE Society)", "desig": "Chairman of the Board", "auth": "Board & Governance Authority", "phone": "+91 831 240 4040", "wa": "+91 94481 12345", "email": "chairman@klesociety.org", "web": "https://www.klesociety.org", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new cancer institute block at Belagavi hospital, Hubballi engineering research facility expansion, and rooftop solar transition across 100 campuses", "sec_pot": "Loan Against Property on prime College Road Belagavi headquarters and multi-acre regional medical estates", "unsec_pot": "Large-scale institutional working capital line for hospital supply chains and academic payroll synchronization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.klesociety.org/board-of-management/", "urgency": "Immediate / High (0-3 months)", "address": "College Road, Lingaraj College Campus, Belagavi, Karnataka - 590001"}, {"id": "ALS-EDU-NAT-KA-003", "name": "PES University - People's Education Society (PES)", "parent": "People's Education Society (PES)", "cat": "Multi-Institution Group", "city": "Bengaluru", "state": "Karnataka", "dm": "Prof. M. R. Doreswamy (Founder Chairman)", "desig": "Pro Chancellor & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 80 1029 7297", "wa": "+91 99000 37897", "email": "prochancellor@pes.edu", "web": "https://www.pes.edu", "req": "₹9.0 Crore", "req_cr": 9.0, "purpose": "Construction of new medical college academic complex at Electronic City campus, advanced robotics & drone research lab, and 1,500-bed student residential tower", "sec_pot": "Loan Against Property on prime Ring Road Banashankari 30-acre campus and Electronic City campus", "unsec_pot": "Institutional working capital overdraft and research equipment lease facilities", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.pes.edu/leadership/", "urgency": "Immediate / High (0-3 months)", "address": "100 Feet Ring Road, Banashankari 3rd Stage, Hosakerehalli, Bengaluru, Karnataka - 560085"}, {"id": "ALS-EDU-NAT-GJ-001", "name": "Nirma University - Nirma Education and Research Foundation (NERF)", "parent": "Nirma Education and Research Foundation (NERF)", "cat": "Multi-Institution Group", "city": "Ahmedabad", "state": "Gujarat", "dm": "Dr. Karsanbhai K. Patel (Industrialist & Founder Nirma Group)", "desig": "President & Board of Trustees", "auth": "Statutory & Ownership Authority", "phone": "+91 79 7165 2000", "wa": "+91 98241 12345", "email": "president@nirmauni.ac.in", "web": "https://www.nirmauni.ac.in", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Construction of new advanced clean-tech and chemical engineering research tower, artificial intelligence hub, and expansion of student hostels", "sec_pot": "Loan Against Property on 115-acre prime SG Highway Ahmedabad university township", "unsec_pot": "Short-term institutional working capital line and equipment lease finance", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.nirmauni.ac.in/leadership/", "urgency": "Medium (3-6 months)", "address": "Sarkhej-Gandhinagar Highway, Post Chandlodia, Gota, Ahmedabad, Gujarat - 382481"}, {"id": "ALS-EDU-NAT-GJ-002", "name": "Parul University - Parul Arogya Seva Mandal (PASM)", "parent": "Parul Arogya Seva Mandal (PASM)", "cat": "Multi-Institution Group", "city": "Vadodara", "state": "Gujarat", "dm": "Dr. Jayesh K. Patel (Founder President)", "desig": "President & Vice President", "auth": "Statutory & Ownership Authority", "phone": "+91 2668 260 300", "wa": "+91 93774 35333", "email": "president@paruluniversity.ac.in", "web": "https://www.paruluniversity.ac.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new 750-bed super-specialty teaching hospital tower, medical oncology radiation center, and international student residential hostel towers", "sec_pot": "Loan Against Property on 150-acre Limda Vadodara integrated university township", "unsec_pot": "Large-scale institutional working capital lines for clinical and academic operational cycles", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.paruluniversity.ac.in/governance", "urgency": "Immediate / High (0-3 months)", "address": "P.O. Limda, Taluka Waghodia, District Vadodara, Gujarat - 391760"}, {"id": "ALS-EDU-NAT-UP-001", "name": "Amity University - Ritnand Balved Education Foundation (RBEF)", "parent": "Ritnand Balved Education Foundation (RBEF)", "cat": "Multi-Institution Group", "city": "Noida", "state": "Uttar Pradesh", "dm": "Dr. Ashok K. Chauhan (Founder President)", "desig": "Founder President & Chancellor", "auth": "Statutory & Ownership Authority", "phone": "+91 120 244 5252", "wa": "+91 98108 55555", "email": "chancellor@amity.edu", "web": "https://www.amity.edu", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new artificial intelligence & robotics research center at Greater Noida / Mohali, smart hostel high-rises, and bus fleet green transition", "sec_pot": "Loan Against Property on prime 60-acre Sector 125 Noida expressway campus and Pan-India land banks", "unsec_pot": "Large-scale institutional working capital overdraft lines and research equipment leasing", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.amity.edu/leadership.aspx", "urgency": "Strategic / Pipeline (6-12 months)", "address": "Amity University Campus, Sector 125, Noida, Uttar Pradesh - 201313"}, {"id": "ALS-EDU-NAT-UP-002", "name": "Galgotias University - Smt. Shakuntla Educational Society", "parent": "Smt. Shakuntla Educational Society", "cat": "Multi-Institution Group", "city": "Greater Noida", "state": "Uttar Pradesh", "dm": "Mr. Suneel Galgotia", "desig": "Chancellor & Chief Executive Officer", "auth": "Statutory & Ownership Authority", "phone": "+91 120 437 0000", "wa": "+91 95828 47072", "email": "chancellor@galgotiasuniversity.edu.in", "web": "https://www.galgotiasuniversity.edu.in", "req": "₹9.5 Crore", "req_cr": 9.5, "purpose": "Construction of new academic towers on Yamuna Expressway, specialized AI & data science centers, and modern 2,000-bed student residence complexes", "sec_pot": "Loan Against Property on 52-acre prime Yamuna Expressway campus", "unsec_pot": "Institutional working capital facilities and equipment leasing lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.galgotiasuniversity.edu.in/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Plot No. 2, Sector 17-A, Yamuna Expressway, Greater Noida, Gautam Buddha Nagar, Uttar Pradesh - 203201"}, {"id": "ALS-EDU-NAT-TN-001", "name": "SRM Institute of Science and Technology (SRMIST) & Valliammai Society", "parent": "Valliammai Society / SRM Trust", "cat": "Multi-Institution Group", "city": "Chennai", "state": "Tamil Nadu", "dm": "Dr. T. R. Paarivendhar (Founder Chancellor - Member of Parliament)", "desig": "Founder Chancellor & Pro Chancellors", "auth": "Statutory & Ownership Authority", "phone": "+91 44 2741 7000", "wa": "+91 94440 22333", "email": "chancellor@srmist.edu.in", "web": "https://www.srmist.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new biomedical & nanotech research center, Kattankulathur 1,000-bed hospital expansion, and green hydrogen campus pilot facility", "sec_pot": "Loan Against Property on 250-acre Kattankulathur mega-campus and Ramapuram Chennai assets", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic cycles", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.srmist.edu.in/about-us/leadership/", "urgency": "Immediate / High (0-3 months)", "address": "SRM Nagar, Kattankulathur, Chengalpattu District, Chennai, Tamil Nadu - 603203"}, {"id": "ALS-EDU-NAT-TN-002", "name": "Vellore Institute of Technology (VIT) - Institution of Eminence & Group", "parent": "North Arcot Educational Trust / VIT Trust", "cat": "Multi-Institution Group", "city": "Vellore", "state": "Tamil Nadu", "dm": "Dr. G. Viswanathan (Former Member of Parliament & Minister)", "desig": "Founder & Chancellor", "auth": "Statutory & Ownership Authority", "phone": "+91 416 220 2020", "wa": "+91 94433 11222", "email": "chancellor@vit.ac.in", "web": "https://www.vit.ac.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new mega research park at Chennai Vandalur campus, advanced microelectronics & semiconductor fabrication lab, and multi-story student housing complexes", "sec_pot": "Loan Against Property on 372-acre Vellore Katpadi campus and 192-acre Chennai Vandalur campus", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic operations", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://vit.ac.in/about-us/leadership", "urgency": "Strategic / Pipeline (6-12 months)", "address": "VIT Campus, Tiruvalam Road, Katpadi, Vellore, Tamil Nadu - 632014"}, {"id": "ALS-EDU-NAT-UK-001", "name": "Graphic Era Educational Society - Graphic Era Deemed to be University & Hill University", "parent": "Graphic Era Educational Society (GEES)", "cat": "Multi-Institution Group", "city": "Dehradun", "state": "Uttarakhand", "dm": "Prof. (Dr.) Kamal Ghanshala", "desig": "President & Founder", "auth": "Statutory & Ownership Authority", "phone": "+91 135 264 3421", "wa": "+91 94120 55777", "email": "president@geu.ac.in", "web": "https://www.geu.ac.in", "req": "₹9.5 Crore", "req_cr": 9.5, "purpose": "Construction of new Graphic Era Medical College & 750-bed multi-specialty hospital tower at Dehradun, cancer care radiotherapy wing, and student hostel high-rises", "sec_pot": "Loan Against Property on prime Clement Town Dehradun university campus and Bhimtal/Haldwani hill campuses", "unsec_pot": "Large-ticket working capital facility for clinical operations and medical supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.geu.ac.in/content/geu/en/about-geu/leadership.html", "urgency": "Immediate / High (0-3 months)", "address": "566/6, Bell Road, Clement Town, Dehradun, Uttarakhand - 248002"}, {"id": "ALS-EDU-NAT-OD-001", "name": "Kalinga Institute of Industrial Technology (KIIT) & KIMS Medical College", "parent": "KIIT Society / KIIT Group", "cat": "Multi-Institution Group", "city": "Bhubaneswar", "state": "Odisha", "dm": "Prof. (Dr.) Achyuta Samanta (Social Worker & Former MP)", "desig": "Founder Chancellor & Executive Board", "auth": "Statutory & Ownership Authority", "phone": "+91 674 272 5113", "wa": "+91 99372 20265", "email": "founder@kiit.ac.in", "web": "https://www.kiit.ac.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new 1,200-bed super-specialty hospital tower at KIMS, robotic surgery & organ transplant research center, and student international village hostels", "sec_pot": "Loan Against Property on 400-acre Patia Bhubaneswar integrated university township", "unsec_pot": "Large-scale institutional working capital lines for multi-specialty hospital supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://kiit.ac.in/about/leadership/", "urgency": "Immediate / High (0-3 months)", "address": "KIIT Road, Patia, Bhubaneswar, Odisha - 751024"}, {"id": "ALS-EDU-MH-THA-001", "name": "Smt. Sunitidevi Singhania School & Singhania Education Trust", "parent": "Singhania Education Trust / Raymond Group Foundation", "cat": "School", "city": "Thane", "state": "Maharashtra", "dm": "Mr. Gautam Hari Singhania (Chairman & Managing Director Raymond Ltd)", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 22 4112 0000", "wa": "+91 98200 45678", "email": "chairman.office@raymond.in", "web": "https://www.singhaniaschool.org", "req": "₹6.5 Crore", "req_cr": 6.5, "purpose": "Construction of new STEAM innovation block, sports complex modernization, and green rooftop solar microgrid", "sec_pot": "Loan Against Property on prime Pokhran Road Jekegram 20-acre educational estate", "unsec_pot": "Institutional working capital facilities for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.singhaniaschool.org/about-us.php", "urgency": "Medium (3-6 months)", "address": "Jekegram, Pokhran Road No. 1, J.K. Gram, Thane West - 400606"}, {"id": "ALS-EDU-MH-NAV-001", "name": "D. Y. Patil University Navi Mumbai - Medical, Dental, Hospital & Stadium", "parent": "D. Y. Patil Group Navi Mumbai", "cat": "Multi-Institution Group", "city": "Navi Mumbai", "state": "Maharashtra", "dm": "Padmashree Dr. D. Y. Patil", "desig": "Chancellor & President", "auth": "Statutory & Ownership Authority", "phone": "+91 22 2770 9999", "wa": "+91 98200 99999", "email": "chancellor@dypatil.edu", "web": "https://www.dypatil.edu", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new 800-bed super-specialty teaching hospital block, advanced surgical oncology center, and sports sciences arena modernization", "sec_pot": "Loan Against Property on prime 68-acre Nerul Navi Mumbai integrated university and hospital campus", "unsec_pot": "Large-scale institutional working capital facilities for hospital pharmaceuticals and medical oxygen supply lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dypatil.edu/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Sector 7, Nerul, Navi Mumbai - 400706"}, {"id": "ALS-EDU-MH-NAV-002", "name": "Mahatma Education Society (MES) - Pillai Group of Institutions", "parent": "Mahatma Education Society (MES)", "cat": "Multi-Institution Group", "city": "Navi Mumbai", "state": "Maharashtra", "dm": "Dr. K. M. Vasudevan Pillai", "desig": "Chairman & Secretary", "auth": "Board & Governance Authority", "phone": "+91 22 2745 6100", "wa": "+91 98201 23456", "email": "ceo@mes.ac.in", "web": "https://www.mes.ac.in", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new academic innovation tower at Rasayani campus, state-of-the-art sports arena, and rooftop solar microgrid installations across all campuses", "sec_pot": "Loan Against Property on prime New Panvel and Chembur institutional campuses", "unsec_pot": "Short-term clean working capital line for fee collection smoothing", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.mes.ac.in/about-us/leadership/", "urgency": "Medium (3-6 months)", "address": "Dr. K. M. Vasudevan Pillai Campus, 10, Sector 16, New Panvel, Navi Mumbai - 410206"}, {"id": "ALS-EDU-MH-PUN-006", "name": "Dr. D. Y. Patil Pratishthan - Akurdi & Pimpri Engineering / Medical Campuses", "parent": "Dr. D. Y. Patil Pratishthan", "cat": "Multi-Institution Group", "city": "Pune", "state": "Maharashtra", "dm": "Padmashree Dr. D. Y. Patil", "desig": "President & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 20 2765 3054", "wa": "+91 98224 45566", "email": "secretary@dypatil.edu", "web": "https://www.dypcoeamb.ac.in", "req": "₹8.5 Crore", "req_cr": 8.5, "purpose": "Construction of new artificial intelligence research wing, smart collaborative robotics lab, and modern 1,200-bed student residence tower at Akurdi complex", "sec_pot": "Loan Against Property on prime 29-acre Akurdi PCMC educational complex", "unsec_pot": "Institutional working capital facilities for equipment modernization and faculty research", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dypcoeamb.ac.in/governance", "urgency": "Immediate / High (0-3 months)", "address": "D. Y. Patil Educational Complex, Sector 29, Nigdi Pradhikaran, Akurdi, Pune - 411044"}, {"id": "ALS-EDU-MH-PUN-007", "name": "Jayawant Shikshan Prasarak Mandal (JSPM) - Rajarshi Shahu College of Engineering & Campuses", "parent": "Jayawant Shikshan Prasarak Mandal (JSPM)", "cat": "Multi-Institution Group", "city": "Pune", "state": "Maharashtra", "dm": "Prof. (Dr.) T. J. Sawant (Founder Secretary - Former Cabinet Minister)", "desig": "Founder Secretary & Executive Head", "auth": "Statutory & Ownership Authority", "phone": "+91 20 2293 3423", "wa": "+91 98220 11222", "email": "founder@jspm.edu.in", "web": "https://www.jspm.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new research academic complex at Tathawade campus, high-tech student hostel towers, and debt consolidation across multiple campuses", "sec_pot": "Loan Against Property on prime 60-acre Tathawade, Hadapsar, and Wagholi campuses", "unsec_pot": "Large-scale institutional working capital overdraft lines against annual student fee collections", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.jspm.edu.in/leadership/", "urgency": "Immediate / High (0-3 months)", "address": "Survey No. 80, Pune-Mumbai Bypass Highway, Tathawade, Pune - 411033"}, {"id": "ALS-EDU-MH-NSK-003", "name": "Ashoka Education Foundation - Ashoka Universal Schools & Business School", "parent": "Ashoka Education Foundation / Ashoka Buildcon Group", "cat": "Multi-Institution Group", "city": "Nashik", "state": "Maharashtra", "dm": "Mr. Ashok Katariya (Founder Chairman Ashoka Group)", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 253 664 9500", "wa": "+91 98220 54321", "email": "chairman@aef.edu.in", "web": "https://www.aef.edu.in", "req": "₹6.0 Crore", "req_cr": 6.0, "purpose": "Construction of new Ashoka International School campus at Gangapur Road, robotics innovation labs, and electric school bus fleet acquisition", "sec_pot": "Loan Against Property on prime Ashoka Marg and Wadala educational campus lands", "unsec_pot": "Short-term clean working capital facility for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.aef.edu.in/about-us/", "urgency": "Medium (3-6 months)", "address": "Ashoka House, Ashoka Marg, Wadala, Nashik - 422006"}, {"id": "ALS-EDU-MH-NAG-003", "name": "Ramdeobaba University (Formerly RCOEM) - Shri Ramdeobaba Sarvajanik Samiti", "parent": "Shri Ramdeobaba Sarvajanik Samiti (SRSS)", "cat": "Multi-Institution Group", "city": "Nagpur", "state": "Maharashtra", "dm": "Shri Banwarilal Purohit (Governor & Founder)", "desig": "Chairman & General Secretary", "auth": "Board & Governance Authority", "phone": "+91 712 258 0011", "wa": "+91 98222 23344", "email": "chairman@rknec.edu", "web": "https://www.rknec.edu", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new university academic tower, artificial intelligence supercomputing research center, and student hostel high-rises at Ramdeo Tekdi", "sec_pot": "Loan Against Property on prime 25-acre Ramdeo Tekdi Katol Road campus", "unsec_pot": "Institutional working capital facilities and equipment leasing lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.rknec.edu/governance/", "urgency": "Medium (3-6 months)", "address": "Ramdeo Tekdi, Gittikhadan, Katol Road, Nagpur - 440013"}, {"id": "ALS-EDU-MH-KOL-002", "name": "Sanjay Ghodawat University (SGU) - Sou. Sushila Danchand Ghodawat Charitable Trust", "parent": "Sou. Sushila Danchand Ghodawat Charitable Trust / Ghodawat Group", "cat": "Multi-Institution Group", "city": "Kolhapur", "state": "Maharashtra", "dm": "Mr. Sanjay D. Ghodawat (Industrialist & Philanthropist)", "desig": "President & Managing Director", "auth": "Statutory & Ownership Authority", "phone": "+91 230 246 3700", "wa": "+91 90110 39800", "email": "president@sanjayghodawatuniversity.ac.in", "web": "https://www.sanjayghodawatuniversity.ac.in", "req": "₹9.0 Crore", "req_cr": 9.0, "purpose": "Construction of new aviation & aerospace academy block, advanced drone testing range, and modern 1,500-bed student housing complex at Atigre campus", "sec_pot": "Loan Against Property on 165-acre Atigre Kolhapur-Sangli highway campus", "unsec_pot": "Institutional working capital overdraft lines and aircraft flight simulator lease finance", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.sanjayghodawatuniversity.ac.in/governance", "urgency": "Immediate / High (0-3 months)", "address": "Kolhapur-Sangli Highway, Atigre, Taluka Hatkanangale, District Kolhapur - 416118"}, {"id": "ALS-EDU-MH-AHI-002", "name": "Sanjivani Rural Education Society - Sanjivani University & Engineering / Pharmacy Colleges", "parent": "Sanjivani Rural Education Society (SRES)", "cat": "Multi-Institution Group", "city": "Ahilyanagar", "state": "Maharashtra", "dm": "Shri Nitin Shankarrao Kolhe (Chairman)", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 2423 222 862", "wa": "+91 98220 34567", "email": "chairman@sanjivani.edu.in", "web": "https://www.sanjivani.edu.in", "req": "₹7.0 Crore", "req_cr": 7.0, "purpose": "Construction of new Sanjivani University academic complex, center of excellence in industrial IoT, and expansion of student hostels", "sec_pot": "Loan Against Property on 100-acre Sahajanandnagar Kopargaon integrated campus", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.sanjivani.edu.in/leadership/", "urgency": "Medium (3-6 months)", "address": "Sanjivani University Campus, Sahajanandnagar, Post Shingnapur, Kopargaon, District Ahilyanagar - 423603"}, {"id": "ALS-EDU-MH-JAL-002", "name": "Khandesh Education Society (KES) - Pratap College & Group of Institutions", "parent": "Khandesh Education Society (KES)", "cat": "Multi-Institution Group", "city": "Jalgaon", "state": "Maharashtra", "dm": "Shrimant Pratap Shethji (Industrialist & Philosopher)", "desig": "President & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 2587 222 355", "wa": "+91 94222 34567", "email": "president@pratapcollege.org", "web": "https://www.pratapcollege.org", "req": "₹5.0 Crore", "req_cr": 5.0, "purpose": "Construction of new science research center, biotechnology incubator, digital library expansion, and student hostel modernization", "sec_pot": "Loan Against Property on prime 40-acre Amalner educational campus", "unsec_pot": "Short-term clean working capital line for competitive coaching and lab infrastructure", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.pratapcollege.org/management.php", "urgency": "Medium (3-6 months)", "address": "Pratap Nagar, Amalner, District Jalgaon - 425401"}, {"id": "ALS-EDU-MH-DHU-001", "name": "Shri Shivaji Vidya Prasarak Sanstha (SSVPS) - Bapusaheb Shivajirao Deore College of Engineering", "parent": "Shri Shivaji Vidya Prasarak Sanstha (SSVPS)", "cat": "Multi-Institution Group", "city": "Dhule", "state": "Maharashtra", "dm": "Shrimant Dadasaheb Shivajirao Deore & Founders", "desig": "Chairman & Secretary", "auth": "Board & Governance Authority", "phone": "+91 2562 272 713", "wa": "+91 94222 89900", "email": "chairman@ssvpsengg.ac.in", "web": "https://www.ssvpsengg.ac.in", "req": "₹6.0 Crore", "req_cr": 6.0, "purpose": "Construction of new technical research center, AI and robotics lab modernization, student hostel expansion, and rooftop solar microgrid", "sec_pot": "Loan Against Property on prime 35-acre Deopur Dhule educational campus", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.ssvpsengg.ac.in/governance", "urgency": "Medium (3-6 months)", "address": "Vidyanagari, Deopur, Dhule - 424005"}, {"id": "ALS-EDU-MH-BEE-001", "name": "Navgan Shikshan Sanstha Rajuri - Colleges & Secondary Schools Network", "parent": "Navgan Shikshan Sanstha Rajuri (Navgan Trust)", "cat": "Multi-Institution Group", "city": "Beed", "state": "Maharashtra", "dm": "Shri Jaydatt Sonajirao Kshirsagar (President - Former Cabinet Minister)", "desig": "President & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 2442 222 411", "wa": "+91 94222 44555", "email": "president@navgan.edu.in", "web": "https://www.navgan.edu.in", "req": "₹5.5 Crore", "req_cr": 5.5, "purpose": "Modernization of rural schools into digital English-medium smart schools, rooftop solar grid installations across 20 high schools, and new laboratory equipment", "sec_pot": "Loan Against Property on prime Kaku Nagar Beed headquarters and multi-acre regional colleges", "unsec_pot": "Large-scale institutional working capital line for fee collection smoothing and staff payroll synchronization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.navgan.edu.in/about-us/", "urgency": "Immediate / High (0-3 months)", "address": "Kaku Nagar, Jalna Road, Beed - 431122"}, {"id": "ALS-EDU-MH-AKO-001", "name": "College of Engineering and Technology (COETA) - Shivaji Shikshan Prasarak Mandal Akola", "parent": "Shivaji Shikshan Prasarak Mandal Akola", "cat": "College", "city": "Akola", "state": "Maharashtra", "dm": "Adv. Arun Babasaheb Sarnaik (President / Chairman)", "desig": "President & Chairman", "auth": "Statutory & Ownership Authority", "phone": "+91 724 225 9024", "wa": "+91 94228 61200", "email": "president@coeta.ac.in", "web": "https://www.coeta.ac.in", "req": "₹5.0 Crore", "req_cr": 5.0, "purpose": "Construction of new computer science and automation block, student hostel renovation, and installation of rooftop solar microgrid", "sec_pot": "Loan Against Property on prime 25-acre Geeta Nagar Akola educational campus", "unsec_pot": "Large-scale institutional working capital line for fee collection smoothing and staff payroll synchronization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.coeta.ac.in/governance", "urgency": "Medium (3-6 months)", "address": "Babasaheb Sarnaik Nagar, Geeta Nagar, NH-6, Akola - 444005"}, {"id": "ALS-EDU-MH-NAN-001", "name": "Shri Sharda Bhavan Education Society (SSBES) - Yeshwant Mahavidyalaya & Group", "parent": "Shri Sharda Bhavan Education Society Nanded", "cat": "Multi-Institution Group", "city": "Nanded", "state": "Maharashtra", "dm": "Shri Ashok Shankarrao Chavan (President - Former Chief Minister of Maharashtra)", "desig": "President & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 2462 254 170", "wa": "+91 94221 70000", "email": "president@ssbes.org.in", "web": "https://www.ssbes.org.in", "req": "₹8.5 Crore", "req_cr": 8.5, "purpose": "Construction of new biotechnology research complex, digitization of 30 rural high schools into smart classrooms, student hostel modernization, and solar grid installations", "sec_pot": "Loan Against Property on prime VIP Road Nanded central campus and multi-acre regional colleges", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic operations and grant synchronization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.ssbes.org.in/about.html", "urgency": "Immediate / High (0-3 months)", "address": "VIP Road, Nanded - 431602"}, {"id": "ALS-EDU-MH-CSN-002", "name": "Marathwada Institute of Technology (MIT Aurangabad) - Gramindustrial Work Education Trust", "parent": "Gramindustrial Work Education Trust (G.S. Mandal)", "cat": "College", "city": "Chhatrapati Sambhajinagar", "state": "Maharashtra", "dm": "Dr. Y. A. Kawade (Chairman & Managing Trustee)", "desig": "Chairman & Director General", "auth": "Board & Governance Authority", "phone": "+91 240 237 5111", "wa": "+91 94222 15000", "email": "dg@mit.asia", "web": "https://www.mit.asia", "req": "₹6.5 Crore", "req_cr": 6.5, "purpose": "Construction of new center of excellence in industrial robotics, automotive research testbeds, student hostel expansion, and rooftop solar microgrid", "sec_pot": "Loan Against Property on prime 50-acre Beed Bypass educational campus", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization and technology patents", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.mit.asia/about-us", "urgency": "Medium (3-6 months)", "address": "Beed Bypass Road, Satara Village Road, Chhatrapati Sambhajinagar - 431010"}, {"id": "ALS-EDU-NAT-KA-004", "name": "RV College of Engineering (RVCE) - Rashtreeya Sikshana Samithi Trust (RSST)", "parent": "Rashtreeya Sikshana Samithi Trust (RSST)", "cat": "Multi-Institution Group", "city": "Bengaluru", "state": "Karnataka", "dm": "Dr. M. P. Shyam (President RSST)", "desig": "President & Honorary Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 80 6818 8100", "wa": "+91 98450 12345", "email": "president@rvce.edu.in", "web": "https://www.rvce.edu.in", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Construction of new interdisciplinary center for quantum computing and semiconductors, student innovation incubator, and new hostel blocks", "sec_pot": "Loan Against Property on prime 50-acre Mysuru Road campus and Jayanagar trust properties", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.rvce.edu.in/about-us-board-of-trustees", "urgency": "Medium (3-6 months)", "address": "RV Vidyaniketan Post, Mysuru Road, Bengaluru, Karnataka - 560059"}, {"id": "ALS-EDU-NAT-KA-005", "name": "BMS College of Engineering (BMSCE) - BMS Educational Trust (BMSET)", "parent": "BMS Educational Trust (BMSET)", "cat": "Multi-Institution Group", "city": "Bengaluru", "state": "Karnataka", "dm": "Dr. P. Dayananda Pai (Trustee & Syndicate Member)", "desig": "Donor Trustee & Trustee Chairman", "auth": "Board & Governance Authority", "phone": "+91 80 2662 2130", "wa": "+91 98450 99887", "email": "trustee@bmsce.ac.in", "web": "https://www.bmsce.ac.in", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new academic platinum Jubilee tower at Basavanagudi, advanced robotics and aerospace design lab, and Yelahanka campus expansion", "sec_pot": "Loan Against Property on prime 15-acre Basavanagudi heart-of-city campus and Yelahanka educational estate", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.bmsce.ac.in/about-us/council-of-trustees", "urgency": "Medium (3-6 months)", "address": "P.O. Box No. 1908, Bull Temple Road, Basavanagudi, Bengaluru, Karnataka - 560019"}, {"id": "ALS-EDU-NAT-KA-006", "name": "Greenwood High International School & Preschools Chain", "parent": "Greenwood High Educational Trust", "cat": "School", "city": "Bengaluru", "state": "Karnataka", "dm": "Mr. Bijay Agarwal (Managing Director Sattva Group)", "desig": "Chairman & Managing Trustee", "auth": "Board & Governance Authority", "phone": "+91 80 2201 0500", "wa": "+91 97409 87056", "email": "chairman@greenwoodhigh.edu.in", "web": "https://www.greenwoodhigh.edu.in", "req": "₹6.0 Crore", "req_cr": 6.0, "purpose": "Construction of new international day-boarding campus in North Bengaluru tech corridor, robotics maker spaces, and student bus fleet expansion", "sec_pot": "Loan Against Property on 32-acre Sarjapur Varthur campus and Bannerghatta properties", "unsec_pot": "Short-term clean working capital facility for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.greenwoodhigh.edu.in/about-us/", "urgency": "Medium (3-6 months)", "address": "No. 8-14, Chikkawadayarapura, Near Hadosiddapura, Gunjur Post, Varthur Sarjapur Road, Bengaluru, Karnataka - 560087"}, {"id": "ALS-EDU-NAT-TS-001", "name": "CHIREC International School - Kondapur, Gachibowli & Jubilee Hills", "parent": "CHIREC Educational Society / Cognita Schools Group", "cat": "School", "city": "Hyderabad", "state": "Telangana", "dm": "Mrs. Ratna D. Reddy", "desig": "Founder Director & CEO", "auth": "Statutory & Ownership Authority", "phone": "+91 40 4476 0999", "wa": "+91 98664 61201", "email": "director@chirec.ac.in", "web": "https://www.chirec.ac.in", "req": "₹5.5 Crore", "req_cr": 5.5, "purpose": "Construction of new high-tech robotics pavilion at Gachibowli campus, indoor climate-controlled sports arena, and electric bus fleet transition", "sec_pot": "Loan Against Property on prime 6-acre Kondapur and Gachibowli high-value educational real estate", "unsec_pot": "Short-term clean working capital facility for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.chirec.ac.in/about-us/", "urgency": "Medium (3-6 months)", "address": "Plot No. 962, Road No. 48, Jubilee Hills / Kondapur Campus, Hyderabad, Telangana - 500084"}, {"id": "ALS-EDU-NAT-TS-002", "name": "Chaitanya Bharathi Institute of Technology (CBIT) - Chaitanya Bharathi Educational Society", "parent": "Chaitanya Bharathi Educational Society (CBES)", "cat": "Multi-Institution Group", "city": "Hyderabad", "state": "Telangana", "dm": "Shri N. Subash (President CBES)", "desig": "President & Member Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 40 2419 3276", "wa": "+91 98490 22334", "email": "president@cbit.ac.in", "web": "https://www.cbit.ac.in", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new advanced research tower in artificial intelligence and semiconductor cleanrooms, student hostel high-rises, and solar microgrid installations", "sec_pot": "Loan Against Property on prime 50-acre Gandipet-Kokapet educational campus adjacent to Financial District", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.cbit.ac.in/about-us/management/", "urgency": "Medium (3-6 months)", "address": "Chaitanya Bharathi P.O., Gandipet, Kokapet, Hyderabad, Telangana - 500075"}, {"id": "ALS-EDU-NAT-AP-001", "name": "Koneru Lakshmaiah Education Foundation (KLEF) - K L Deemed to be University", "parent": "Koneru Lakshmaiah Education Foundation (KLEF)", "cat": "Multi-Institution Group", "city": "Vijayawada", "state": "Andhra Pradesh", "dm": "Er. Koneru Satyanarayana (President & Chancellor)", "desig": "President & Vice President", "auth": "Statutory & Ownership Authority", "phone": "+91 8645 350 200", "wa": "+91 99899 99123", "email": "chancellor@kluniversity.in", "web": "https://www.kluniversity.in", "req": "₹9.5 Crore", "req_cr": 9.5, "purpose": "Construction of new Hyderabad Aziznagar off-campus high-rise academic tower, high-performance computing AI data center, and 1,500-bed student housing complex", "sec_pot": "Loan Against Property on 100-acre Green Fields Vaddeswaram campus and Hyderabad campus lands", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic cycles", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.kluniversity.in/leadership.aspx", "urgency": "Immediate / High (0-3 months)", "address": "Green Fields, Vaddeswaram, Guntur District, Near Vijayawada, Andhra Pradesh - 522502"}, {"id": "ALS-EDU-NAT-GJ-003", "name": "Charotar University of Science and Technology (CHARUSAT) - Shri Charotar Moti Sattavis Patidar Kelavani Mandal", "parent": "Shri Charotar Moti Sattavis Patidar Kelavani Mandal", "cat": "Multi-Institution Group", "city": "Anand", "state": "Gujarat", "dm": "Shri Surendra M. Patel (President)", "desig": "President & Honorary Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 2697 265 011", "wa": "+91 99258 35011", "email": "president@charusat.ac.in", "web": "https://www.charusat.ac.in", "req": "₹6.5 Crore", "req_cr": 6.5, "purpose": "Construction of new Charusat hospital expansion wing, high-tech AI & robotics lab center, and student hostel high-rises at Changa campus", "sec_pot": "Loan Against Property on 120-acre Changa integrated university campus", "unsec_pot": "Institutional working capital facilities and equipment leasing lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.charusat.ac.in/governance.php", "urgency": "Medium (3-6 months)", "address": "CHARUSAT Campus, Changa, Taluka Petlad, District Anand, Gujarat - 388421"}, {"id": "ALS-EDU-NAT-DL-001", "name": "The Delhi Public School Society (DPSS) - Core Schools & Franchise Network", "parent": "The Delhi Public School Society (DPSS)", "cat": "School", "city": "New Delhi", "state": "Delhi NCR", "dm": "Mr. B. K. Chaturvedi, IAS (Retd.) (Chairman - Former Cabinet Secretary of India)", "desig": "Chairman & Working Committee", "auth": "Board & Governance Authority", "phone": "+91 11 4744 4744", "wa": "+91 98111 22334", "email": "chairman@dpsfamily.org", "web": "https://www.dpsfamily.org", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new Core DPS school campuses in Delhi NCR and Tier-1 cities, smart AI digital labs, and bus fleet electrification program across core branches", "sec_pot": "Loan Against Property on prime East of Kailash, R.K. Puram, Mathura Road, and Vasant Kunj school campuses", "unsec_pot": "Large-scale institutional working capital credit lines for annual operations", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dpsfamily.org/working-committee.html", "urgency": "Immediate / High (0-3 months)", "address": "F-Block, East of Kailash, New Delhi - 110065"}, {"id": "ALS-EDU-NAT-PB-001", "name": "Chitkara University - Chitkara Educational Trust", "parent": "Chitkara Educational Trust", "cat": "Multi-Institution Group", "city": "Rajpura", "state": "Punjab", "dm": "Dr. Ashok K. Chitkara & Dr. Madhu Chitkara", "desig": "Chancellor & Pro Chancellor", "auth": "Statutory & Ownership Authority", "phone": "+91 1762 507 084", "wa": "+91 95011 05718", "email": "chancellor@chitkara.edu.in", "web": "https://www.chitkara.edu.in", "req": "₹9.0 Crore", "req_cr": 9.0, "purpose": "Construction of new healthcare research center, advanced semiconductor chip design lab, and 1,500-bed student residence tower on Chandigarh-Patiala highway", "sec_pot": "Loan Against Property on 65-acre Rajpura Punjab campus and 25-acre Baddi Himachal campus", "unsec_pot": "Institutional working capital overdraft lines for annual academic operations", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.chitkara.edu.in/leadership/", "urgency": "Immediate / High (0-3 months)", "address": "Chandigarh-Patiala National Highway (NH-64), Village Jhansla, Rajpura, Punjab - 140401"}, {"id": "ALS-EDU-NAT-PB-002", "name": "Lovely Professional University (LPU) - Lovely International Trust", "parent": "Lovely International Trust", "cat": "Multi-Institution Group", "city": "Phagwara", "state": "Punjab", "dm": "Dr. Ashok Kumar Mittal (Chancellor - Member of Parliament, Rajya Sabha)", "desig": "Chancellor & Pro Chancellor", "auth": "Statutory & Ownership Authority", "phone": "+91 1824 404 404", "wa": "+91 98760 11222", "email": "chancellor@lpu.co.in", "web": "https://www.lpu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new university medical hospital block, advanced aeronautical wind tunnel testing facility, and 2,000-bed student residential tower on GT Road", "sec_pot": "Loan Against Property on 600-acre mega-campus on Jalandhar-Delhi GT Road", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic operations", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.lpu.in/about-lpu/leadership.php", "urgency": "Immediate / High (0-3 months)", "address": "Jalandhar - Delhi G.T. Road, Phagwara, Punjab - 144411"}, {"id": "ALS-EDU-NAT-UK-002", "name": "The Doon School - The Indian Public Schools Society (IPSS)", "parent": "The Indian Public Schools Society (IPSS)", "cat": "School", "city": "Dehradun", "state": "Uttarakhand", "dm": "Mr. Sunil Kant Munjal (Chairman, Board of Governors - Hero Enterprise)", "desig": "Chairman Board of Governors & Headmaster", "auth": "Board & Governance Authority", "phone": "+91 135 252 6400", "wa": "+91 94120 12345", "email": "headmaster@doonschool.com", "web": "https://www.doonschool.com", "req": "₹5.0 Crore", "req_cr": 5.0, "purpose": "Heritage campus residential boarding house modernization, state-of-the-art STEAM innovation hub, and eco-friendly solar thermal water heating systems", "sec_pot": "Loan Against Property on prime 72-acre Chandbagh Dehradun estate", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.doonschool.com/about-us/board-of-governors/", "urgency": "Medium (3-6 months)", "address": "Mall Road, Dehradun, Uttarakhand - 248001"}, {"id": "ALS-EDU-NAT-WB-001", "name": "Techno India Group - Sister Nivedita University & Techno Main Salt Lake", "parent": "Techno India Educational Trust", "cat": "Multi-Institution Group", "city": "Kolkata", "state": "West Bengal", "dm": "Mr. Satyam Roychowdhury", "desig": "Managing Director & Co-Chairperson", "auth": "Operational & Administrative Authority", "phone": "+91 33 2357 5683", "wa": "+91 98300 22334", "email": "md@technoindiagroup.com", "web": "https://www.technoindiagroup.com", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new Sister Nivedita University New Town Kolkata campus tower, high-tech artificial intelligence and semiconductor cleanrooms, and student hostel high-rises", "sec_pot": "Loan Against Property on prime Salt Lake Sector V and New Town Kolkata institutional real estate", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic operations", "status": "VERIFIED", "score": 97, "tier": "A+", "evidence": "https://www.technoindiagroup.com/leadership/", "urgency": "Immediate / High (0-3 months)", "address": "EM-4, Sector V, Salt Lake, Kolkata, West Bengal - 700091"}, {"id": "ALS-EDU-NAT-RJ-001", "name": "Mayo College & Mayo College Girls School - Mayo College General Council", "parent": "Mayo College General Council", "cat": "School", "city": "Ajmer", "state": "Rajasthan", "dm": "6th Earl of Mayo (Viceroy of India)", "desig": "President General Council & Director", "auth": "Statutory & Ownership Authority", "phone": "+91 145 266 1154", "wa": "+91 94140 04411", "email": "director@mayocollege.com", "web": "https://www.mayocollege.com", "req": "₹6.0 Crore", "req_cr": 6.0, "purpose": "Historic boarding house modernization, solar energy microgrid transition, and state-of-the-art equestrian & sports center expansion", "sec_pot": "Loan Against Property on 187-acre heritage campus in Ajmer", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.mayocollege.com/governance/", "urgency": "Medium (3-6 months)", "address": "Srinagar Road, Alwar Gate, Ajmer, Rajasthan - 305001"}, {"id": "ALS-EDU-NAT-RJ-002", "name": "Jayshree Periwal Group of Schools - JPIS, High School & Pre-Schools", "parent": "Jayshree Periwal Educational Trust", "cat": "School", "city": "Jaipur", "state": "Rajasthan", "dm": "Dr. Jayshree Periwal", "desig": "Chairperson & Managing Trustee", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 141 669 3333", "wa": "+91 97827 44444", "email": "chairperson@jpischool.com", "web": "https://www.jpischool.com", "req": "₹6.5 Crore", "req_cr": 6.5, "purpose": "Construction of new high-tech boarding campus on Ajmer Highway, sports academy modernization, and electric bus fleet transition", "sec_pot": "Loan Against Property on 50-acre Mahapura SEZ Ajmer Road campus and Chitrakoot properties", "unsec_pot": "Short-term clean working capital facility for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.jpischool.com/about-us/", "urgency": "Medium (3-6 months)", "address": "Mahapura Road, SEZ, Ajmer Road, Jaipur, Rajasthan - 302026"}, {"id": "ALS-EDU-NAT-RJ-003", "name": "Banasthali Vidyapith - Deemed University for Women & Aviation School", "parent": "Banasthali Vidyapith Sansthan", "cat": "Multi-Institution Group", "city": "Niwai", "state": "Rajasthan", "dm": "Pandit Hiralal Shastri (First Chief Minister of Rajasthan) & Smt. Ratan Shastri", "desig": "President & Vice Chancellor", "auth": "Statutory & Ownership Authority", "phone": "+91 1438 228 456", "wa": "+91 94140 12345", "email": "vc@banasthali.in", "web": "https://www.banasthali.org", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new aeronautical flight hangar and simulation complex, student residential hostel towers, and solar power generation microgrid", "sec_pot": "Loan Against Property on 850-acre integrated university campus with private licensed airstrip", "unsec_pot": "Institutional working capital overdraft lines and aircraft flight simulator lease finance", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.banasthali.org/banasthali/wcms/en/home/about-us/", "urgency": "Medium (3-6 months)", "address": "P.O. Banasthali Vidyapith, Tonk District, Near Niwai, Rajasthan - 304022"}, {"id": "ALS-EDU-NAT-MP-001", "name": "The Daly College - Board of Governors & Old Dalians Society", "parent": "The Daly College Board of Governors", "cat": "School", "city": "Indore", "state": "Madhya Pradesh", "dm": "Sir Henry Daly (British Colonial Administrator & Central Indian Chiefs)", "desig": "President Board of Governors & Principal", "auth": "Statutory & Ownership Authority", "phone": "+91 731 271 9000", "wa": "+91 98260 12345", "email": "president@dalycollege.org", "web": "https://www.dalycollege.org", "req": "₹5.5 Crore", "req_cr": 5.5, "purpose": "Historic residential house modernization, Olympic-size indoor swimming complex, and digital STEAM robotics center setup", "sec_pot": "Loan Against Property on prime 118-acre Residency Area Indore heritage campus", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.dalycollege.org/board-of-governors/", "urgency": "Medium (3-6 months)", "address": "1, Residency Area, Daly College Road, Indore, Madhya Pradesh - 452001"}, {"id": "ALS-EDU-NAT-MP-002", "name": "Medi-Caps University - Medi-Caps Charitable Trust", "parent": "Medi-Caps Charitable Trust / Medi-Caps Group", "cat": "Multi-Institution Group", "city": "Indore", "state": "Madhya Pradesh", "dm": "Shri R. C. Mittal (Industrialist & Chairman)", "desig": "Chancellor & Vice President", "auth": "Statutory & Ownership Authority", "phone": "+91 731 311 1500", "wa": "+91 98260 22334", "email": "chancellor@medicaps.ac.in", "web": "https://www.medicaps.ac.in", "req": "₹7.0 Crore", "req_cr": 7.0, "purpose": "Construction of new academic innovation tower on AB Road, artificial intelligence & robotics research lab, and 1,200-bed student residence complex", "sec_pot": "Loan Against Property on prime 50-acre Rau AB Road Indore university campus", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.medicaps.ac.in/leadership", "urgency": "Medium (3-6 months)", "address": "AB Road, Pigdamber, Rau, Indore, Madhya Pradesh - 453331"}, {"id": "ALS-EDU-NAT-MP-003", "name": "LNCT Group of Colleges & LNCT University - H. K. Kalchuri Educational Trust", "parent": "H. K. Kalchuri Educational Trust", "cat": "Multi-Institution Group", "city": "Bhopal", "state": "Madhya Pradesh", "dm": "Shri J. N. Chouksey", "desig": "Chancellor & Secretary", "auth": "Statutory & Ownership Authority", "phone": "+91 755 618 5300", "wa": "+91 98260 33445", "email": "chancellor@lnct.ac.in", "web": "https://www.lnct.ac.in", "req": "₹9.5 Crore", "req_cr": 9.5, "purpose": "Construction of new 750-bed multi-specialty teaching hospital block at Kolar campus, medical oncology radiotherapy wing, and student hostel high-rises", "sec_pot": "Loan Against Property on 50-acre Kalchuri Nagar Raisen Road campus and Kolar hospital estate", "unsec_pot": "Large-scale institutional working capital lines for multi-specialty hospital supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.lnct.ac.in/about-us/", "urgency": "Immediate / High (0-3 months)", "address": "Kalchuri Nagar, Raisen Road, Bhopal, Madhya Pradesh - 462022"}, {"id": "ALS-EDU-NAT-TN-003", "name": "SSN College of Engineering - Sri Sivasubramaniya Nadar Educational Trust", "parent": "Sri Sivasubramaniya Nadar Educational Trust / Shiv Nadar Foundation", "cat": "College", "city": "Chennai", "state": "Tamil Nadu", "dm": "Mr. Shiv Nadar (Founder Chairman HCL Technologies)", "desig": "Trustee & President", "auth": "Statutory & Ownership Authority", "phone": "+91 44 2746 9700", "wa": "+91 94440 12345", "email": "president@ssn.edu.in", "web": "https://www.ssn.edu.in", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Construction of new Shiv Nadar University Chennai interdisciplinary research park, quantum computing labs, and student residential high-rises", "sec_pot": "Loan Against Property on 250-acre Rajiv Gandhi Salai OMR highway campus", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.ssn.edu.in/about-us/", "urgency": "Medium (3-6 months)", "address": "Rajiv Gandhi Salai (OMR), Kalavakkam, Chengalpattu District, Chennai, Tamil Nadu - 603110"}, {"id": "ALS-EDU-NAT-TN-004", "name": "PSG College of Technology - PSG & Sons' Charities Trust", "parent": "PSG & Sons' Charities Trust", "cat": "Multi-Institution Group", "city": "Coimbatore", "state": "Tamil Nadu", "dm": "P. S. Govindaswamy Naidu & Sons", "desig": "Managing Trustee", "auth": "Executive Trust & Borrowing Authority", "phone": "+91 422 257 2177", "wa": "+91 98422 12345", "email": "trustee@psgtech.edu", "web": "https://www.psgtech.edu", "req": "₹7.5 Crore", "req_cr": 7.5, "purpose": "Construction of new PSG Neelambur campus industrial research pavilion, smart heavy manufacturing engineering labs, and new hostel blocks", "sec_pot": "Loan Against Property on prime 45-acre Peelamedu central campus and 100-acre Neelambur estate", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.psgtech.edu/about.php", "urgency": "Medium (3-6 months)", "address": "Post Box No. 1611, Peelamedu, Coimbatore, Tamil Nadu - 641004"}, {"id": "ALS-EDU-NAT-KL-001", "name": "The Choice School & Choice Foundation - Tripunithura, Thiruvalla & Kozhikode", "parent": "Choice Foundation / The Choice Group", "cat": "School", "city": "Kochi", "state": "Kerala", "dm": "Mr. Jose Thomas (President Choice Group)", "desig": "President & Managing Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 484 277 9000", "wa": "+91 98470 12345", "email": "president@choicegroup.in", "web": "https://www.choiceschool.com", "req": "₹5.5 Crore", "req_cr": 5.5, "purpose": "Construction of new performing arts center, Olympic-size swimming arena at Tripunithura campus, and electric school bus fleet transition", "sec_pot": "Loan Against Property on prime 12-acre Tripunithura and Thiruvalla campus properties", "unsec_pot": "Short-term clean working capital facility for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://choiceschool.com/about-us/", "urgency": "Medium (3-6 months)", "address": "Choice Paradise, Nadama, Tripunithura, Kochi, Kerala - 682301"}, {"id": "ALS-EDU-NAT-KL-002", "name": "Rajagiri Educational Institutions - Rajagiri School of Engineering & Technology (RSET) & Colleges", "parent": "Rajagiri Educational Trust / CMI Sacred Heart Province", "cat": "Multi-Institution Group", "city": "Kochi", "state": "Kerala", "dm": "Carmelites of Mary Immaculate (CMI Fathers)", "desig": "Director & Provincial Manager", "auth": "Operational & Administrative Authority", "phone": "+91 484 242 6578", "wa": "+91 94470 12345", "email": "director@rajagiri.edu", "web": "https://www.rajagiri.edu", "req": "₹7.0 Crore", "req_cr": 7.0, "purpose": "Construction of new autonomous research tower in artificial intelligence and automation, student hostel high-rises at Kakkanad, and rooftop solar microgrid installations", "sec_pot": "Loan Against Property on prime 90-acre Rajagiri Valley Kakkanad campus adjacent to SmartCity Kochi", "unsec_pot": "Short-term clean working capital facility for lab equipment modernization", "status": "VERIFIED", "score": 97, "tier": "A+", "evidence": "https://www.rajagiritech.ac.in/Home/AboutUs/Management.asp", "urgency": "Medium (3-6 months)", "address": "Rajagiri Valley P.O., Kakkanad, Kochi, Kerala - 682039"}, {"id": "ALS-EDU-NAT-HR-001", "name": "The Heritage School - Heritage Xperiential Learning School & Group", "parent": "Heritage Educational Trust / I am A Teacher Foundation", "cat": "School", "city": "Gurugram", "state": "Haryana", "dm": "Mr. N. C. Jain & Mr. Manit Jain", "desig": "Co-Founder & Director", "auth": "Statutory & Ownership Authority", "phone": "+91 124 285 5124", "wa": "+91 98100 12345", "email": "trustee@heritagexperiential.org", "web": "https://www.heritagexperiential.org", "req": "₹6.5 Crore", "req_cr": 6.5, "purpose": "Construction of new experiential science laboratory block, climate-controlled sports pavilion, and electric bus fleet transition", "sec_pot": "Loan Against Property on prime 12-acre Golf Course Extension Road campus and Rohini properties", "unsec_pot": "Short-term clean working capital facility for digital curriculum upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.heritagexperiential.org/about-us/", "urgency": "Medium (3-6 months)", "address": "Sector 62, Golf Course Extension Road, Gurugram, Haryana - 122011"}, {"id": "ALS-EDU-NAT-UP-003", "name": "Sharda University - Sharda Educational Trust & Hospital", "parent": "Sharda Educational Trust (SET)", "cat": "Multi-Institution Group", "city": "Greater Noida", "state": "Uttar Pradesh", "dm": "Mr. P. K. Gupta", "desig": "Chancellor & CEO", "auth": "Statutory & Ownership Authority", "phone": "+91 120 457 0000", "wa": "+91 99100 12345", "email": "chancellor@sharda.ac.in", "web": "https://www.sharda.ac.in", "req": "₹9.5 Crore", "req_cr": 9.5, "purpose": "Construction of new 900-bed super-specialty teaching hospital block, advanced surgical oncology center, and 1,500-bed international student hostel complex", "sec_pot": "Loan Against Property on 63-acre prime Knowledge Park III Greater Noida campus", "unsec_pot": "Large-scale institutional working capital lines for multi-specialty hospital supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.sharda.ac.in/about/leadership", "urgency": "Immediate / High (0-3 months)", "address": "Plot No. 32-34, Knowledge Park III, Greater Noida, Uttar Pradesh - 201310"}, {"id": "ALS-EDU-NAT-UP-004", "name": "Bennett University - The Times Group Foundation", "parent": "Bennett, Coleman & Co. Ltd. (The Times Group)", "cat": "Multi-Institution Group", "city": "Greater Noida", "state": "Uttar Pradesh", "dm": "The Times Group (Bennett, Coleman & Co. Ltd.)", "desig": "Chancellor & Vice Chancellor", "auth": "Statutory & Ownership Authority", "phone": "+91 120 719 9300", "wa": "+91 98110 55667", "email": "chancellor@bennett.edu.in", "web": "https://www.bennett.edu.in", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Construction of new computer science AI research tower, digital media studio complex, and modern 1,200-bed student residence blocks", "sec_pot": "Loan Against Property on prime 68-acre TechZone II Greater Noida university campus", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.bennett.edu.in/about-us/leadership/", "urgency": "Medium (3-6 months)", "address": "Plot Nos 8-11, TechZone II, Greater Noida, Uttar Pradesh - 201310"}, {"id": "ALS-EDU-NAT-HR-002", "name": "G.D. Goenka Group - GD Goenka University & World Schools Chain", "parent": "GD Goenka Educational Trust", "cat": "Multi-Institution Group", "city": "Gurugram", "state": "Haryana", "dm": "Shri Anjani Kumar Goenka", "desig": "Founder Chairman & Managing Director", "auth": "Statutory & Ownership Authority", "phone": "+91 124 331 5900", "wa": "+91 98111 44556", "email": "chairman@gdgoenka.com", "web": "https://www.gdgoenka.com", "req": "₹9.0 Crore", "req_cr": 9.0, "purpose": "Construction of new university medical hospital block, advanced aeronautical wind tunnel testing facility, and 2,000-bed student residential tower on Sohna Road", "sec_pot": "Loan Against Property on 60-acre Education City Sohna-Gurugram Road campus", "unsec_pot": "Large-scale institutional working capital overdraft lines for annual academic operations", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.gdgoenka.com/about-us/", "urgency": "Immediate / High (0-3 months)", "address": "GD Goenka Education City, Sohna-Gurugram Road, Sohna, Haryana - 122103"}, {"id": "ALS-EDU-NAT-OD-002", "name": "Siksha 'O' Anusandhan (SOA) Deemed to be University - IMS & SUM Hospital", "parent": "Siksha 'O' Anusandhan Trust", "cat": "Multi-Institution Group", "city": "Bhubaneswar", "state": "Odisha", "dm": "Prof. (Dr.) Manojranjan Nayak", "desig": "Founder President & Vice President", "auth": "Statutory & Ownership Authority", "phone": "+91 674 235 0199", "wa": "+91 99370 12345", "email": "president@soa.ac.in", "web": "https://www.soa.ac.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new 1,500-bed SUM Ultimate Medicare hospital block at Phulnakhara campus, organ transplant research institute, and student residential high-rises", "sec_pot": "Loan Against Property on 125-acre Khandagiri and Kalinga Nagar Bhubaneswar medical campuses", "unsec_pot": "Large-scale institutional working capital lines for multi-specialty hospital supply chains", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.soa.ac.in/governance", "urgency": "Immediate / High (0-3 months)", "address": "Khandagiri Square, Khandagiri, Bhubaneswar, Odisha - 751030"}, {"id": "ALS-EDU-NAT-PB-003", "name": "Thapar Institute of Engineering & Technology (TIET) - Thapar Educational Trust", "parent": "Thapar Educational Trust / Avantha Group", "cat": "Multi-Institution Group", "city": "Patiala", "state": "Punjab", "dm": "Mr. Gautam Thapar (President - Chairman Avantha Group)", "desig": "President & Director", "auth": "Statutory & Ownership Authority", "phone": "+91 175 239 3021", "wa": "+91 98150 12345", "email": "president@thapar.edu", "web": "https://www.thapar.edu", "req": "₹8.0 Crore", "req_cr": 8.0, "purpose": "Construction of new advanced cleanroom semiconductor lab, student housing towers at Dera Bassi campus, and high-performance computing AI data center", "sec_pot": "Loan Against Property on prime 250-acre Bhadson Road Patiala heritage campus and Dera Bassi campus", "unsec_pot": "Short-term clean working capital facility for tech laboratory upgrades", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://www.thapar.edu/about-us/leadership", "urgency": "Medium (3-6 months)", "address": "P.O. Box 32, Bhadson Road, Patiala, Punjab - 147004"}, {"id": "ALS-EDU-NAT-UP-005", "name": "Shiv Nadar Foundation - Shiv Nadar University (SNU) & Shiv Nadar Schools", "parent": "Shiv Nadar Foundation / HCL Technologies", "cat": "Multi-Institution Group", "city": "Greater Noida", "state": "Uttar Pradesh", "dm": "Mr. Shiv Nadar (Founder HCL)", "desig": "Chancellor & Trustee", "auth": "Statutory & Ownership Authority", "phone": "+91 120 717 0100", "wa": "+91 98110 99887", "email": "chancellor@snu.edu.in", "web": "https://snu.edu.in", "req": "₹10 Crore", "req_cr": 10.0, "purpose": "Construction of new advanced cleanroom semiconductor lab, student housing towers at Greater Noida campus, and high-performance computing AI data center", "sec_pot": "Loan Against Property on prime 286-acre Greater Noida university campus and Gurugram school estates", "unsec_pot": "Institutional working capital facilities and equipment leasing lines", "status": "VERIFIED", "score": 100, "tier": "A+", "evidence": "https://snu.edu.in/about/leadership/", "urgency": "Medium (3-6 months)", "address": "NH-91, Tehsil Dadri, Gautam Buddha Nagar, Greater Noida, Uttar Pradesh - 201314"}];
+
+  function renderTable(items) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+    items.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.onclick = () => openModal(item.id);
+      
+      const stBadge = item.status === "VERIFIED" ? "badge-verif" : "badge-pverif";
+      const trBadge = item.tier === "A+" ? "badge-ap" : "badge-a";
+      
+      tr.innerHTML = `
+        <td style="font-family:monospace; font-weight:600;">${item.id}</td>
+        <td><strong>${item.name}</strong><br><span style="font-size:10.5px; color:#64748b;">${item.parent.substring(0, 42)}</span></td>
+        <td><span class="badge badge-cat">${item.cat}</span></td>
+        <td>${item.city}, ${item.state}</td>
+        <td><strong>${item.dm}</strong></td>
+        <td style="font-size:11px; color:#475569;">${item.desig}</td>
+        <td style="font-family:monospace; font-size:11px;">${item.wa}</td>
+        <td style="font-weight:600; color:#1e40af;">${item.req}</td>
+        <td style="font-weight:700; text-align:center;">${item.score}</td>
+        <td><span class="badge ${trBadge}">${item.tier}</span></td>
+        <td><span class="badge ${stBadge}">${item.status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function filterTable() {
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const stFilter = document.getElementById("stateFilter").value;
+    const statFilter = document.getElementById("statusFilter").value;
+    const tFilter = document.getElementById("tierFilter").value;
+
+    const filtered = data.filter(item => {
+      const matchQ = (
+        item.name.toLowerCase().includes(q) ||
+        item.id.toLowerCase().includes(q) ||
+        item.city.toLowerCase().includes(q) ||
+        item.state.toLowerCase().includes(q) ||
+        item.dm.toLowerCase().includes(q) ||
+        item.purpose.toLowerCase().includes(q)
+      );
+
+      let matchSt = true;
+      if (stFilter === "Maharashtra") matchSt = (item.state === "Maharashtra");
+      if (stFilter === "National") matchSt = (item.state !== "Maharashtra");
+
+      let matchStat = true;
+      if (statFilter) matchStat = (item.status === statFilter);
+
+      let matchTier = true;
+      if (tFilter) matchTier = (item.tier === tFilter);
+
+      return matchQ && matchSt && matchStat && matchTier;
+    });
+
+    renderTable(filtered);
+  }
+
+  function openModal(id) {
+    const item = data.find(x => x.id === id);
+    if (!item) return;
+
+    const mc = document.getElementById("modalContent");
+    mc.innerHTML = `
+      <div class="modal-title">${item.name}</div>
+      <div class="modal-sub">${item.parent} | ${item.city}, ${item.state} (Lead ID: ${item.id})</div>
+
+      <div class="modal-grid">
+        <div class="modal-field">
+          <strong>Key Decision Maker:</strong>
+          <span>${item.dm} (${item.desig})</span>
+        </div>
+        <div class="modal-field">
+          <strong>Authority Classification:</strong>
+          <span>${item.auth}</span>
+        </div>
+        <div class="modal-field">
+          <strong>Verified WhatsApp / Mobile:</strong>
+          <span style="font-family:monospace;">${item.wa}</span>
+        </div>
+        <div class="modal-field">
+          <strong>Official Telephone:</strong>
+          <span style="font-family:monospace;">${item.phone}</span>
+        </div>
+        <div class="modal-field">
+          <strong>Professional Email:</strong>
+          <span><a href="mailto:${item.email}">${item.email}</a></span>
+        </div>
+        <div class="modal-field">
+          <strong>Institutional Portal:</strong>
+          <span><a href="${item.web}" target="_blank">${item.web}</a></span>
+        </div>
+        <div class="modal-field">
+          <strong>Target Funding Requirement:</strong>
+          <span style="font-weight:700; color:#1e40af;">${item.req} (Est. ₹${item.req_cr} Cr)</span>
+        </div>
+        <div class="modal-field">
+          <strong>Funding Urgency:</strong>
+          <span>${item.urgency}</span>
+        </div>
+        <div class="modal-field" style="grid-column: span 2;">
+          <strong>Specific Capex Purpose:</strong>
+          <span>${item.purpose}</span>
+        </div>
+        <div class="modal-field" style="grid-column: span 2;">
+          <strong>Secured LAP Potential:</strong>
+          <span>${item.sec_pot}</span>
+        </div>
+        <div class="modal-field" style="grid-column: span 2;">
+          <strong>Unsecured Working Capital Potential:</strong>
+          <span>${item.unsec_pot}</span>
+        </div>
+        <div class="modal-field" style="grid-column: span 2;">
+          <strong>Campus Postal Address:</strong>
+          <span>${item.address}</span>
+        </div>
+        <div class="modal-field">
+          <strong>Lead Priority Score:</strong>
+          <span style="font-weight:700; font-size:14px;">${item.score} / 100 (Tier ${item.tier})</span>
+        </div>
+        <div class="modal-field">
+          <strong>Verification Status:</strong>
+          <span class="badge ${item.status === 'VERIFIED' ? 'badge-verif' : 'badge-pverif'}">${item.status}</span>
+        </div>
+        <div class="modal-field" style="grid-column: span 2;">
+          <strong>Research Evidence URL:</strong>
+          <span><a href="${item.evidence}" target="_blank">${item.evidence}</a></span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("detailModal").style.display = "flex";
+  }
+
+  function closeModal(e) {
+    if (e.target.id === "detailModal") {
+      document.getElementById("detailModal").style.display = "none";
+    }
+  }
+
+  function closeModalDirect() {
+    document.getElementById("detailModal").style.display = "none";
+  }
+
+  function exportFilteredCSV() {
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const stFilter = document.getElementById("stateFilter").value;
+    const statFilter = document.getElementById("statusFilter").value;
+    const tFilter = document.getElementById("tierFilter").value;
+
+    const filtered = data.filter(item => {
+      const matchQ = (
+        item.name.toLowerCase().includes(q) ||
+        item.id.toLowerCase().includes(q) ||
+        item.city.toLowerCase().includes(q) ||
+        item.state.toLowerCase().includes(q) ||
+        item.dm.toLowerCase().includes(q)
+      );
+      let matchSt = true;
+      if (stFilter === "Maharashtra") matchSt = (item.state === "Maharashtra");
+      if (stFilter === "National") matchSt = (item.state !== "Maharashtra");
+      let matchStat = true;
+      if (statFilter) matchStat = (item.status === statFilter);
+      let matchTier = true;
+      if (tFilter) matchTier = (item.tier === tFilter);
+      return matchQ && matchSt && matchStat && matchTier;
+    });
+
+    const headers = ["Lead ID", "Institution Name", "Parent Organization", "Category", "City", "State", "Decision Maker", "Designation", "Phone", "WhatsApp", "Email", "Website", "Funding Requirement", "Est Cr", "Status", "Score", "Tier"];
+    const rows = filtered.map(x => [
+      `"${x.id}"`, `"${x.name}"`, `"${x.parent}"`, `"${x.cat}"`, `"${x.city}"`, `"${x.state}"`,
+      `"${x.dm}"`, `"${x.desig}"`, `"${x.phone}"`, `"${x.wa}"`, `"${x.email}"`, `"${x.web}"`,
+      `"${x.req}"`, x.req_cr, `"${x.status}"`, x.score, `"${x.tier}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Avani_Finserv_Filtered_Prospects_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Initialize
+  renderTable(data);
+</script>
+
+</body>
+</html>

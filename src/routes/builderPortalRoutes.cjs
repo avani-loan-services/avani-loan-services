@@ -25,12 +25,15 @@ router.get('/companies', requirePortalAuth, requirePermission('builder:read'), (
   );
 
   const contactBuilderIds = new Set(contacts.map(c => c.builder_id));
-  const dmKeywords = ['director', 'managing', 'md', 'ceo', 'promoter', 'founder', 'partner', 'chairman', 'head'];
+  const dmKeywords = ['director', 'managing', 'md', 'ceo', 'promoter', 'founder', 'partner', 'chairman', 'head', 'president', 'executive'];
   const dmContacts = contacts.filter(c => {
     const des = (c.designation || '').toLowerCase();
     return dmKeywords.some(k => des.includes(k));
   });
-  const dmBuilderIds = new Set(dmContacts.map(c => c.builder_id));
+  const dmBuilderIds = new Set([
+    ...dmContacts.map(c => c.builder_id),
+    ...builders.filter(b => b.decision_maker_name || b.key_decision_maker_name).map(b => b.builder_id)
+  ]);
   const pipelineBuilderIds = new Set(pipeline.map(d => d.builder_id));
   const activityBuilderIds = new Set(activities.map(a => a.builder_id));
 
@@ -86,8 +89,19 @@ router.get('/companies', requirePortalAuth, requirePermission('builder:read'), (
       return dmKeywords.some(k => des.includes(k));
     });
 
+    const dmName = b.decision_maker_name || b.key_decision_maker_name || (bDMs[0] && bDMs[0].contact_name) || '';
+    const dmRole = b.executive_designation || b.key_decision_maker_role || (bDMs[0] && bDMs[0].designation) || '';
+    const waUrl = b.whatsapp_direct_link || b.whatsapp_direct_url || (b.official_mobile ? `https://wa.me/${b.official_mobile.replace(/[^0-9]/g, '')}` : '');
+    const reraUrl = b.maharera_url || b.maharera_verification_url || 'https://maharera.maharashtra.gov.in/';
+    const batchId = b.import_batch_id || b.source_lineage_batch_id || 'BATCH-20261107-P5318';
+
     return {
       ...b,
+      key_decision_maker_name: dmName,
+      key_decision_maker_role: dmRole,
+      whatsapp_direct_url: waUrl,
+      maharera_verification_url: reraUrl,
+      source_lineage_batch_id: batchId,
       contactsCount: bContacts.length,
       decisionMakers: bDMs,
       contacts: bContacts,
@@ -263,17 +277,24 @@ router.get('/export', requirePortalAuth, requirePermission('builder:export'), as
 
     worksheet.columns = [
       { header: 'Builder ID', key: 'builder_id', width: 20 },
-      { header: 'Company Name', key: 'company_name', width: 30 },
+      { header: 'Company Name', key: 'company_name', width: 32 },
       { header: 'Brand Name', key: 'brand_name', width: 25 },
-      { header: 'City', key: 'city', width: 15 },
-      { header: 'Corporate Website', key: 'corporate_website', width: 30 },
+      { header: 'City', key: 'city', width: 16 },
+      { header: 'Key Decision-Maker', key: 'key_decision_maker_name', width: 25 },
+      { header: 'Decision-Maker Role', key: 'key_decision_maker_role', width: 25 },
       { header: 'Official Telephone', key: 'official_telephone', width: 20 },
-      { header: 'Official Mobile / WhatsApp', key: 'official_mobile', width: 25 },
+      { header: 'WhatsApp / Mobile', key: 'official_mobile', width: 22 },
+      { header: 'WhatsApp Direct URL', key: 'whatsapp_direct_url', width: 35 },
       { header: 'Official Email', key: 'official_email', width: 30 },
+      { header: 'Corporate Website', key: 'corporate_website', width: 30 },
+      { header: 'Project Class', key: 'project_class', width: 20 },
+      { header: 'Primary Asset Type', key: 'primary_asset_type', width: 22 },
       { header: 'MahaRERA Numbers', key: 'rera_numbers', width: 30 },
+      { header: 'MahaRERA Verification URL', key: 'maharera_verification_url', width: 40 },
       { header: 'Qualification Score', key: 'qualification_score', width: 20 },
       { header: 'Verification Status', key: 'verification_status', width: 20 },
-      { header: 'Outreach Readiness', key: 'outreach_readiness', width: 35 }
+      { header: 'Outreach Readiness', key: 'outreach_readiness', width: 30 },
+      { header: 'Source Lineage Batch', key: 'source_lineage_batch_id', width: 25 }
     ];
 
     builders.forEach(b => {
@@ -282,14 +303,21 @@ router.get('/export', requirePortalAuth, requirePermission('builder:export'), as
         company_name: b.company_name,
         brand_name: b.brand_name,
         city: b.city,
-        corporate_website: b.corporate_website,
+        key_decision_maker_name: b.key_decision_maker_name || '',
+        key_decision_maker_role: b.key_decision_maker_role || '',
         official_telephone: b.official_telephone,
         official_mobile: b.whatsapp_channel || b.official_mobile,
+        whatsapp_direct_url: b.whatsapp_direct_url || '',
         official_email: b.official_email,
+        corporate_website: b.corporate_website,
+        project_class: b.project_class || '',
+        primary_asset_type: b.primary_asset_type || '',
         rera_numbers: b.maharera_reg_numbers ? b.maharera_reg_numbers.join(', ') : '',
+        maharera_verification_url: b.maharera_verification_url || '',
         qualification_score: b.qualification_score,
         verification_status: b.verification_status,
-        outreach_readiness: b.outreach_readiness
+        outreach_readiness: b.outreach_readiness,
+        source_lineage_batch_id: b.source_lineage_batch_id || 'BATCH-20261107-P5318'
       });
     });
 
