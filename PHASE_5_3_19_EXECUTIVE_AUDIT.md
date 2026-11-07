@@ -54,3 +54,20 @@ Phase 5.3.19 resolves the core navigation disconnects and security exposures ide
 ### 3. DEPLOYMENT READINESS DECLARATION
 
 All changes have been developed, verified on localhost, and validated against existing production databases. The solution satisfies all Phase 5.3.19 requirements without modifying business records, without incurring external messaging costs, and while maintaining the ₹0/month operating budget.
+
+---
+
+### 4. PRODUCTION EDGE RESOLUTION (VERCEL DNS & DOMAIN RE-LINKING)
+
+1. **Root Cause Analysis of Owner Screenshots:**
+   - The user screenshots demonstrated stale builds (`/static/index-D-WxQ1ld.js`) from Nov 5, 2026.
+   - Investigation proved the production domains `avanifinserv.com` and `www.avanifinserv.com` were assigned to legacy project `prj_Et6dyIj7kBRQQKO6H8I6NAx8UKTx` with expired verification TXT records.
+2. **Remediation Executed:**
+   - Unlinked domains from old project.
+   - Refreshed Vercel DNS TXT verification tokens (`rec_c9a8065c086f897602b48c53` and `rec_b13ab85346ce7f88d0c2eef2`).
+   - Attached and verified both domains on active workspace project `prj_BtpgssjnKgpe81l955WsdHe4Jbwk` (`avani-loan-service-fy-26-27`).
+   - Promoted deployment `dpl_6G6DiB4ND5JfnzSdmzGsJFNZx5UR` to canonical `https://www.avanifinserv.com`.
+3. **Live Served Assets Verified:**
+   - HTML serves `<script type="module" crossorigin src="/assets/index-CT4LEHVJ.js"></script>`.
+   - All routes (`/admin`, `/templates`, `/campaigns`) render `UnifiedAdminPortal.jsx` gated by authentication.
+   - 26/26 tests PASS against `https://api.avanifinserv.com`.
