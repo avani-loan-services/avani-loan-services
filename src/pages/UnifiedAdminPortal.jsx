@@ -261,6 +261,12 @@ export default function UnifiedAdminPortal({ initialTab }) {
       return;
     }
 
+    if (cleanUsername.includes(' ') && !cleanUsername.includes('@')) {
+      setLoginError('Invalid username format. Please use "admin" or your administrator email (without spaces).');
+      setLoginSubmitting(false);
+      return;
+    }
+
     try {
       const res = await portalFetch('/api/portal/auth/login', {
         method: 'POST',

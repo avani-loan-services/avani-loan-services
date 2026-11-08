@@ -71,3 +71,8 @@ service-account*.json
 avani-loan-service-*.json
 *.secret
 .vercel
+
+# Portal Admin User Credentials & Session State
+AVANI_LOAN_SERVICES_UNIFIED_PORTAL/data/admin_users.json
+AVANI_LOAN_SERVICES_UNIFIED_PORTAL/data/admin_sessions.json
+AVANI_LOAN_SERVICES_UNIFIED_PORTAL/data/admin_audit_logs.json

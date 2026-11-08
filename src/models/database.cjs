@@ -31,6 +31,12 @@ async function connectDB() {
     });
     isConnected = true;
     console.log(`[Database] Connected to MongoDB: ${mongoUri.replace(/:([^@]+)@/, ':****@')}`);
+    try {
+      const portalDb = require('./portalDatabase.cjs');
+      if (portalDb && typeof portalDb.syncFromAtlas === 'function') {
+        portalDb.syncFromAtlas().catch(() => {});
+      }
+    } catch (_) {}
     return mongoose.connection;
   } catch (err) {
     console.warn(`[Database] MongoDB connection failed (${err.message}). Utilizing Isolated In-Memory Storage.`);

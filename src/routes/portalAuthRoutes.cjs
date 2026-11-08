@@ -41,6 +41,7 @@ router.post('/login', loginLimiter, async (req, res) => {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
+      path: '/',
       maxAge: 8 * 3600 * 1000 // 8 hours
     });
 
@@ -53,7 +54,10 @@ router.post('/login', loginLimiter, async (req, res) => {
 
 // GET /api/portal/auth/me
 router.get('/me', requirePortalAuth, (req, res) => {
-  const user = db.getById('admin_users', req.portalUser.userId);
+  let user = db.getById('admin_users', req.portalUser.userId);
+  if (!user && db.tables && db.tables.admin_users) {
+    user = db.tables.admin_users.get(req.portalUser.userId);
+  }
   if (!user || !user.is_active) {
     return res.status(401).json({ success: false, authenticated: false, message: 'User not found or inactive.' });
   }
@@ -94,12 +98,23 @@ router.post('/change-password', requirePortalAuth, async (req, res) => {
         username: updatedUser.username,
         email: updatedUser.email,
         role: updatedUser.role,
+        sessionId: req.portalUser.sessionId,
         mustChangePassword: false
       },
       JWT_SECRET,
       { expiresIn: '8h' }
     );
     result.token = refreshedToken;
+
+    // Refresh cookie
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.cookie('avani_portal_token', refreshedToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 8 * 3600 * 1000
+    });
 
     return res.json(result);
   } catch (err) {
@@ -109,11 +124,18 @@ router.post('/change-password', requirePortalAuth, async (req, res) => {
 });
 
 // POST /api/portal/auth/logout
-router.post('/logout', requirePortalAuth, (req, res) => {
+router.post('/logout', requirePortalAuth, async (req, res) => {
   const ip = req.ip || '127.0.0.1';
-  db.logAudit(req.portalUser.userId, 'SYSTEM', 'LOGOUT', {}, ip);
+  const sessionId = req.portalUser?.sessionId;
 
-  res.clearCookie('avani_portal_token');
+  if (sessionId) {
+    const { revokeSession } = require('../services/portalAuthService.cjs');
+    await revokeSession(sessionId);
+  }
+
+  db.logAudit(req.portalUser.userId, 'SYSTEM', 'LOGOUT', { sessionId }, ip);
+
+  res.clearCookie('avani_portal_token', { path: '/' });
   return res.json({ success: true, message: 'Logged out successfully.' });
 });
 

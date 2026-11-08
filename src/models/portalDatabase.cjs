@@ -14,6 +14,7 @@ const DATA_DIR = path.join(__dirname, '../../AVANI_LOAN_SERVICES_UNIFIED_PORTAL/
 
 const modelMap = {
   admin_users: 'PortalAdminUser',
+  admin_sessions: 'PortalAdminSession',
   builder_companies: 'PortalBuilderCompany',
   builder_contacts: 'PortalBuilderContact',
   builder_maharera: 'PortalBuilderMahaRera',
@@ -714,12 +715,63 @@ const db = {
   // Direct persistence trigger
   persist: persistTable,
   init: initDatabase,
+  syncFromAtlas,
+  tables,
   get isMongoConnected() {
     return typeof isConnected === 'function' ? isConnected() : Boolean(isConnected);
   }
 };
 
+async function syncFromAtlas() {
+  if (!isConnected || !isConnected()) return false;
+  try {
+    const models = getPortalModels();
+    
+    // 1. Authoritative Admin Users Sync
+    if (models.PortalAdminUser) {
+      const users = await models.PortalAdminUser.find({}).lean();
+      if (users && users.length > 0) {
+        tables.admin_users.clear();
+        for (const u of users) {
+          tables.admin_users.set(u.user_id, u);
+        }
+        persistTable('admin_users');
+        console.log(`[PortalDB] Synchronized ${users.length} authoritative admin user(s) from MongoDB Atlas.`);
+      } else if (tables.admin_users.size > 0) {
+        for (const u of tables.admin_users.values()) {
+          await models.PortalAdminUser.findOneAndUpdate({ user_id: u.user_id }, { $set: u }, { upsert: true });
+        }
+        console.log('[PortalDB] Initialized MongoDB Atlas portal_admin_users from local store.');
+      }
+    }
+
+    // 2. Active Sessions Sync
+    if (models.PortalAdminSession) {
+      const now = new Date();
+      const sessions = await models.PortalAdminSession.find({ is_revoked: { $ne: true }, expires_at: { $gt: now } }).lean();
+      tables.admin_sessions.clear();
+      for (const s of sessions) {
+        tables.admin_sessions.set(s.session_id, s);
+      }
+    }
+
+    // 3. Automation State Sync
+    if (models.PortalAutomationState) {
+      const state = await models.PortalAutomationState.findOne({ state_id: 'GLOBAL_CONFIG' }).lean();
+      if (state) {
+        tables.system_automation_state = { ...tables.system_automation_state, ...state };
+      }
+    }
+
+    return true;
+  } catch (err) {
+    console.warn('[PortalDB] Atlas synchronization warning:', err.message);
+    return false;
+  }
+}
+
 // Initialize right away
 initDatabase();
 
 module.exports = db;
+

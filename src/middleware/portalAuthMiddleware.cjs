@@ -3,25 +3,27 @@
 // AVANI LOAN SERVICES — UNIFIED PORTAL AUTHENTICATION MIDDLEWARE
 // ─────────────────────────────────────────────────────────────────────────────
 
-const { verifyToken, hasPermission } = require('../services/portalAuthService.cjs');
+const { verifyToken, isSessionActive, hasPermission } = require('../services/portalAuthService.cjs');
 
-function requirePortalAuth(req, res, next) {
+async function requirePortalAuth(req, res, next) {
   let token = null;
 
-  // 1. Authorization header (Bearer <token>)
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.substring(7);
-  }
-
-  // 2. Cookie fallback
-  if (!token && req.headers.cookie) {
+  // 1. Check HttpOnly Cookie first
+  if (req.headers.cookie) {
     const cookies = req.headers.cookie.split(';').reduce((acc, c) => {
-      const [k, v] = c.trim().split('=');
-      acc[k] = v;
+      const parts = c.trim().split('=');
+      if (parts[0] && parts[1]) acc[parts[0]] = parts.slice(1).join('=');
       return acc;
     }, {});
     token = cookies['avani_portal_token'];
+  }
+
+  // 2. Authorization header fallback (Bearer <token>)
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    }
   }
 
   if (!token) {
@@ -41,7 +43,37 @@ function requirePortalAuth(req, res, next) {
     });
   }
 
+  // 3. Server-side session verification (if token contains sessionId)
+  if (decoded.sessionId) {
+    const active = await isSessionActive(decoded.sessionId);
+    if (!active) {
+      return res.status(401).json({
+        success: false,
+        authenticated: false,
+        message: 'Session has been revoked or expired. Please log in again.'
+      });
+    }
+  }
+
   req.portalUser = decoded;
+  next();
+}
+
+function requirePortalCsrf(req, res, next) {
+  // Defense-in-depth CSRF check on state-modifying requests
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    const contentType = req.headers['content-type'] || '';
+    const requestedWith = req.headers['x-requested-with'] || '';
+    const customCsrf = req.headers['x-avani-portal-csrf'] || '';
+    const isStandardApi = contentType.includes('application/json') || requestedWith || customCsrf;
+
+    if (!isStandardApi) {
+      return res.status(403).json({
+        success: false,
+        message: 'Security validation failed: Request must specify valid content type or client headers.'
+      });
+    }
+  }
   next();
 }
 
@@ -88,6 +120,7 @@ function requirePermission(permission) {
 
 module.exports = {
   requirePortalAuth,
+  requirePortalCsrf,
   requirePasswordChangeChecked,
   requireRole,
   requirePermission

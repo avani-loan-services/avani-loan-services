@@ -67,11 +67,39 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
     return { success: false, status: 400, message: 'Username/email and password are required.' };
   }
 
-  // Find user by username or email
-  const user = db.findOne('admin_users', u =>
-    (u.username && u.username.toLowerCase() === identifier) ||
-    (u.email && u.email.toLowerCase() === identifier)
-  );
+  // 1. Authoritative check in MongoDB Atlas if connected
+  let user = null;
+  if (db.isMongoConnected) {
+    try {
+      const { getPortalModels } = require('../models/portalSchemas.cjs');
+      const models = getPortalModels();
+      if (models.PortalAdminUser) {
+        const escaped = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const mongoUser = await models.PortalAdminUser.findOne({
+          $or: [
+            { username: { $regex: new RegExp(`^${escaped}$`, 'i') } },
+            { email: { $regex: new RegExp(`^${escaped}$`, 'i') } }
+          ]
+        }).lean();
+        if (mongoUser) {
+          user = mongoUser;
+          if (db.tables && db.tables.admin_users) {
+            db.tables.admin_users.set(user.user_id, user);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[PortalAuth] Atlas user lookup warning:', err.message);
+    }
+  }
+
+  // 2. Fallback to in-memory/disk store
+  if (!user) {
+    user = db.findOne('admin_users', u =>
+      (u.username && u.username.toLowerCase() === identifier) ||
+      (u.email && u.email.toLowerCase() === identifier)
+    );
+  }
 
   if (!user) {
     db.logAudit(null, 'SYSTEM', 'LOGIN_FAILED_UNKNOWN_USER', { identifier }, ip, userAgent);
@@ -126,32 +154,38 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
   user.last_login = new Date().toISOString();
   db.upsert('admin_users', 'user_id', user);
 
-  // Generate JWT token
+  // Generate cryptographically secure session ID
+  const crypto = require('crypto');
+  const sessionId = `SESS-${Date.now()}-${crypto.randomBytes(16).toString('hex')}`;
+
+  // Generate JWT token with embedded session ID
   const token = jwt.sign(
     {
       userId: user.user_id,
       username: user.username,
       email: user.email,
       role: user.role,
+      sessionId,
       mustChangePassword: user.must_change_password
     },
     JWT_SECRET,
     { expiresIn: TOKEN_EXPIRY }
   );
 
-  // Record session
+  // Record session in database & Atlas
   const session = {
-    session_id: `SESS-${Date.now()}-${Math.random().toString(36).substr(2, 8)}`,
+    session_id: sessionId,
     user_id: user.user_id,
     token,
     ip_address: ip,
     user_agent: userAgent,
+    is_revoked: false,
     created_at: new Date().toISOString(),
     expires_at: new Date(Date.now() + 8 * 3600 * 1000).toISOString()
   };
   db.upsert('admin_sessions', 'session_id', session);
 
-  db.logAudit(user.user_id, 'SYSTEM', 'LOGIN_SUCCESS', { role: user.role, mustChangePassword: user.must_change_password }, ip, userAgent);
+  db.logAudit(user.user_id, 'SYSTEM', 'LOGIN_SUCCESS', { role: user.role, sessionId, mustChangePassword: user.must_change_password }, ip, userAgent);
 
   return {
     success: true,
@@ -201,6 +235,58 @@ function verifyToken(token) {
   }
 }
 
+async function isSessionActive(sessionId) {
+  if (!sessionId) return false;
+  // 1. Check in-memory store
+  const sess = db.getById('admin_sessions', sessionId);
+  if (sess) {
+    if (sess.is_revoked) return false;
+    if (new Date(sess.expires_at).getTime() < Date.now()) return false;
+    return true;
+  }
+  // 2. Check MongoDB Atlas if connected
+  if (db.isMongoConnected) {
+    try {
+      const { getPortalModels } = require('../models/portalSchemas.cjs');
+      const models = getPortalModels();
+      if (models.PortalAdminSession) {
+        const s = await models.PortalAdminSession.findOne({ session_id: sessionId }).lean();
+        if (s) {
+          if (s.is_revoked) return false;
+          if (new Date(s.expires_at).getTime() < Date.now()) return false;
+          if (db.tables && db.tables.admin_sessions) {
+            db.tables.admin_sessions.set(sessionId, s);
+          }
+          return true;
+        }
+      }
+    } catch (_) {}
+  }
+  return false;
+}
+
+async function revokeSession(sessionId) {
+  if (!sessionId) return false;
+  const sess = db.getById('admin_sessions', sessionId);
+  if (sess) {
+    sess.is_revoked = true;
+    db.upsert('admin_sessions', 'session_id', sess);
+  }
+  if (db.isMongoConnected) {
+    try {
+      const { getPortalModels } = require('../models/portalSchemas.cjs');
+      const models = getPortalModels();
+      if (models.PortalAdminSession) {
+        await models.PortalAdminSession.findOneAndUpdate(
+          { session_id: sessionId },
+          { $set: { is_revoked: true } }
+        );
+      }
+    } catch (_) {}
+  }
+  return true;
+}
+
 function hasPermission(userRole, permission) {
   if (userRole === 'Super Administrator') return true;
   const userPerms = ROLE_PERMISSIONS[userRole] || [];
@@ -211,7 +297,10 @@ module.exports = {
   authenticate,
   changePassword,
   verifyToken,
+  isSessionActive,
+  revokeSession,
   hasPermission,
   ROLES,
   ROLE_PERMISSIONS
 };
+

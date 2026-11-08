@@ -22,6 +22,17 @@ const Schemas = {
     last_login: { type: Date, default: null }
   }, { collection: 'portal_admin_users', strict: false }),
 
+  PortalAdminSession: new mongoose.Schema({
+    session_id: { type: String, required: true, unique: true, index: true },
+    user_id: { type: String, required: true, index: true },
+    token: { type: String, required: true },
+    ip_address: { type: String, default: '127.0.0.1' },
+    user_agent: { type: String, default: '' },
+    is_revoked: { type: Boolean, default: false, index: true },
+    created_at: { type: Date, default: Date.now },
+    expires_at: { type: Date, required: true, index: true }
+  }, { collection: 'portal_admin_sessions', strict: false }),
+
   PortalBuilderCompany: new mongoose.Schema({
     builder_id: { type: String, required: true, unique: true, index: true },
     company_name: { type: String, required: true, index: true },
