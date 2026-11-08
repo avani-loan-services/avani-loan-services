@@ -10,18 +10,59 @@ import {
   Building2, GraduationCap, LayoutDashboard, CheckSquare, Inbox,
   Send, FileSpreadsheet, RefreshCw, AlertOctagon, Users, Settings,
   History, LogOut, ShieldAlert, KeyRound, Search, Filter, Download,
-  ExternalLink, Eye, ChevronRight, CheckCircle2, XCircle, Clock,
+  ExternalLink, Eye, EyeOff, AlertCircle, ChevronRight, CheckCircle2, XCircle, Clock,
   ArrowUpRight, AlertTriangle, Play, Lock, UserCheck, Phone, Mail,
   MapPin, Award, FileText, Check, DollarSign, Database, Menu, X,
   BarChart3, Copy, Plus, PlayCircle
 } from 'lucide-react';
 import './UnifiedAdminPortal.css';
 
+// ── Robust Portal API Client with Bearer Token, Cookie & Direct Fallback ──
+const portalFetch = async (endpoint, options = {}) => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('avani_portal_token') : null;
+  const headers = {
+    'Accept': 'application/json',
+    ...(options.headers || {})
+  };
+  if (token && !headers['Authorization']) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const fetchOptions = {
+    ...options,
+    headers,
+    credentials: 'include'
+  };
+
+  try {
+    const res = await fetch(endpoint, fetchOptions);
+    // If relative endpoint returns 500/502/503/504 from serverless function, seamlessly fallback to Oracle VM direct
+    if (!res.ok && res.status >= 500 && endpoint.startsWith('/api/')) {
+      try {
+        const fallbackRes = await fetch(`https://api.avanifinserv.com${endpoint}`, fetchOptions);
+        if (fallbackRes.ok || fallbackRes.status < 500) {
+          return fallbackRes;
+        }
+      } catch (err) {
+        console.warn('[PortalFetch] Direct fallback warning:', err);
+      }
+    }
+    return res;
+  } catch (err) {
+    if (endpoint.startsWith('/api/')) {
+      return await fetch(`https://api.avanifinserv.com${endpoint}`, fetchOptions);
+    }
+    throw err;
+  }
+};
+
 export default function UnifiedAdminPortal({ initialTab }) {
   // Authentication State
   const [authLoading, setAuthLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showForgotHelp, setShowForgotHelp] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [loginSubmitting, setLoginSubmitting] = useState(false);
 
@@ -186,7 +227,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const checkAuth = async () => {
     setAuthLoading(true);
     try {
-      const res = await fetch('/api/portal/auth/me');
+      const res = await portalFetch('/api/portal/auth/me');
       const data = await res.json();
       if (res.ok && data.authenticated) {
         setCurrentUser(data.user);
@@ -195,9 +236,11 @@ export default function UnifiedAdminPortal({ initialTab }) {
         }
         loadAllData();
       } else {
+        localStorage.removeItem('avani_portal_token');
         setCurrentUser(null);
       }
     } catch {
+      localStorage.removeItem('avani_portal_token');
       setCurrentUser(null);
     } finally {
       setAuthLoading(false);
@@ -209,24 +252,36 @@ export default function UnifiedAdminPortal({ initialTab }) {
     setLoginSubmitting(true);
     setLoginError('');
 
+    const cleanUsername = (loginForm.username || '').trim();
+    const cleanPassword = (loginForm.password || '').trim();
+
+    if (!cleanUsername || !cleanPassword) {
+      setLoginError('Please enter both administrator username/email and security password.');
+      setLoginSubmitting(false);
+      return;
+    }
+
     try {
-      const res = await fetch('/api/portal/auth/login', {
+      const res = await portalFetch('/api/portal/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginForm)
+        body: JSON.stringify({ username: cleanUsername, password: cleanPassword })
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        if (data.token) {
+          localStorage.setItem('avani_portal_token', data.token);
+        }
         setCurrentUser(data.user);
         if (data.user.mustChangePassword) {
           setShowPwdModal(true);
         }
         loadAllData();
       } else {
-        setLoginError(data.message || 'Login failed. Please verify credentials.');
+        setLoginError(data.message || 'Invalid credentials provided. Please verify administrator username and password.');
       }
     } catch {
-      setLoginError('Network error connecting to portal authentication server.');
+      setLoginError('Network error connecting to portal authentication server. Please check connection.');
     } finally {
       setLoginSubmitting(false);
     }
@@ -234,8 +289,9 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/portal/auth/logout', { method: 'POST' });
+      await portalFetch('/api/portal/auth/logout', { method: 'POST' });
     } catch { /* ignore */ }
+    localStorage.removeItem('avani_portal_token');
     setCurrentUser(null);
     setActiveTab('overview');
   };
@@ -254,7 +310,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
     setPwdMsg({ type: '', text: '' });
 
     try {
-      const res = await fetch('/api/portal/auth/change-password', {
+      const res = await portalFetch('/api/portal/auth/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -304,7 +360,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchLeads = async () => {
     try {
-      const res = await fetch('/api/portal/leads');
+      const res = await portalFetch('/api/portal/leads');
       const data = await res.json();
       if (res.ok && data.success) setLeads(data.data);
     } catch (e) {
@@ -314,7 +370,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const handleUpdateLeadStatus = async (leadId, newStatus) => {
     try {
-      const res = await fetch(`/api/portal/leads/${leadId}/status`, {
+      const res = await portalFetch(`/api/portal/leads/${leadId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -330,7 +386,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchTemplates = async () => {
     try {
-      const res = await fetch('/api/portal/templates');
+      const res = await portalFetch('/api/portal/templates');
       const data = await res.json();
       if (res.ok && data.success) setTemplates(data.data);
     } catch (e) {
@@ -340,7 +396,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchMetaStatus = async () => {
     try {
-      const res = await fetch('/api/portal/templates/meta-status');
+      const res = await portalFetch('/api/portal/templates/meta-status');
       const data = await res.json();
       if (res.ok && data.success) setMetaStatus(data.data);
     } catch (e) {
@@ -352,7 +408,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
     e.preventDefault();
     try {
       const varsArray = tplForm.variables.split(',').map(v => v.trim()).filter(Boolean);
-      const res = await fetch('/api/portal/templates', {
+      const res = await portalFetch('/api/portal/templates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -375,7 +431,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const handleDuplicateTemplate = async (templateId) => {
     try {
-      const res = await fetch(`/api/portal/templates/${templateId}/duplicate`, { method: 'POST' });
+      const res = await portalFetch(`/api/portal/templates/${templateId}/duplicate`, { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
         setTemplates(prev => [data.data, ...prev]);
@@ -402,7 +458,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchCampaigns = async () => {
     try {
-      const res = await fetch('/api/portal/campaigns');
+      const res = await portalFetch('/api/portal/campaigns');
       const data = await res.json();
       if (res.ok && data.success) setCampaigns(data.data);
     } catch (e) {
@@ -413,7 +469,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const handleCreateCampaign = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/portal/campaigns', {
+      const res = await portalFetch('/api/portal/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cmpForm)
@@ -434,7 +490,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const handleExecuteDryRun = async (campaignId) => {
     setDryRunLoading(true);
     try {
-      const res = await fetch(`/api/portal/campaigns/${campaignId}/dry-run`, { method: 'POST' });
+      const res = await portalFetch(`/api/portal/campaigns/${campaignId}/dry-run`, { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
         setCampaigns(prev => prev.map(c => c.campaign_id === campaignId ? data.data : c));
@@ -452,7 +508,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const handleApproveCampaign = async (campaignId) => {
     try {
-      const res = await fetch(`/api/portal/campaigns/${campaignId}/approve`, { method: 'POST' });
+      const res = await portalFetch(`/api/portal/campaigns/${campaignId}/approve`, { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
         setCampaigns(prev => prev.map(c => c.campaign_id === campaignId ? data.data : c));
@@ -466,7 +522,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const handleStopCampaign = async (campaignId) => {
     try {
-      const res = await fetch(`/api/portal/campaigns/${campaignId}/stop`, { method: 'POST' });
+      const res = await portalFetch(`/api/portal/campaigns/${campaignId}/stop`, { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
         setCampaigns(prev => prev.map(c => c.campaign_id === campaignId ? data.data : c));
@@ -478,7 +534,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const handleDuplicateCampaign = async (campaignId) => {
     try {
-      const res = await fetch(`/api/portal/campaigns/${campaignId}/duplicate`, { method: 'POST' });
+      const res = await portalFetch(`/api/portal/campaigns/${campaignId}/duplicate`, { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
         setCampaigns(prev => [data.data, ...prev]);
@@ -490,7 +546,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchAnalytics = async () => {
     try {
-      const res = await fetch('/api/portal/leads/analytics');
+      const res = await portalFetch('/api/portal/leads/analytics');
       const data = await res.json();
       if (res.ok && data.success) setAnalyticsData(data.data);
     } catch (e) {
@@ -500,7 +556,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchOverview = async () => {
     try {
-      const res = await fetch('/api/portal/dashboard/overview');
+      const res = await portalFetch('/api/portal/dashboard/overview');
       const data = await res.json();
       if (res.ok && data.success) {
         setOverviewData(data.data);
@@ -513,7 +569,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchBuilders = async (subview = builderSubview) => {
     try {
-      const res = await fetch(`/api/portal/builder/companies?limit=100&subview=${subview}`);
+      const res = await portalFetch(`/api/portal/builder/companies?limit=100&subview=${subview}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setBuilders(data.data);
@@ -526,7 +582,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchSchools = async (subview = schoolsSubview) => {
     try {
-      const res = await fetch(`/api/portal/education/schools?limit=100&subview=${subview}`);
+      const res = await portalFetch(`/api/portal/education/schools?limit=100&subview=${subview}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setSchools(data.data);
@@ -539,7 +595,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchColleges = async (subview = collegesSubview) => {
     try {
-      const res = await fetch(`/api/portal/education/colleges?limit=100&subview=${subview}`);
+      const res = await portalFetch(`/api/portal/education/colleges?limit=100&subview=${subview}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setColleges(data.data);
@@ -552,7 +608,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchInstitutions = async () => {
     try {
-      const res = await fetch('/api/portal/education/institutions?limit=100');
+      const res = await portalFetch('/api/portal/education/institutions?limit=100');
       const data = await res.json();
       if (res.ok && data.success) setInstitutions(data.data);
     } catch (e) {
@@ -562,7 +618,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchBuilderPipeline = async () => {
     try {
-      const res = await fetch('/api/portal/builder/pipeline');
+      const res = await portalFetch('/api/portal/builder/pipeline');
       const data = await res.json();
       if (res.ok && data.success) setBuilderPipeline(data);
     } catch (e) {
@@ -572,7 +628,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchEduPipeline = async () => {
     try {
-      const res = await fetch('/api/portal/education/pipeline');
+      const res = await portalFetch('/api/portal/education/pipeline');
       const data = await res.json();
       if (res.ok && data.success) setEduPipeline(data);
     } catch (e) {
@@ -582,7 +638,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch('/api/portal/dashboard/tasks');
+      const res = await portalFetch('/api/portal/dashboard/tasks');
       const data = await res.json();
       if (res.ok && data.success) setTasks(data.data);
     } catch (e) {
@@ -592,7 +648,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchEnquiries = async () => {
     try {
-      const res = await fetch('/api/portal/dashboard/enquiries');
+      const res = await portalFetch('/api/portal/dashboard/enquiries');
       const data = await res.json();
       if (res.ok && data.success) setEnquiries(data.data);
     } catch (e) {
@@ -602,7 +658,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchAuditLogs = async () => {
     try {
-      const res = await fetch('/api/portal/dashboard/audit-logs?limit=50');
+      const res = await portalFetch('/api/portal/dashboard/audit-logs?limit=50');
       const data = await res.json();
       if (res.ok && data.success) setAuditLogs(data.data);
     } catch (e) {
@@ -612,7 +668,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchAutomationStatus = async () => {
     try {
-      const res = await fetch('/api/portal/dashboard/automation/status');
+      const res = await portalFetch('/api/portal/dashboard/automation/status');
       const data = await res.json();
       if (res.ok && data.success) setAutomationState(data.data);
     } catch (e) {
@@ -622,7 +678,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('/api/portal/auth/users');
+      const res = await portalFetch('/api/portal/auth/users');
       const data = await res.json();
       if (res.ok && data.success) setUsersList(data.users);
     } catch (e) {
@@ -634,7 +690,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const handleTriggerEmergencyStop = async () => {
     setActionLoading(true);
     try {
-      const res = await fetch('/api/portal/dashboard/automation/emergency-stop', {
+      const res = await portalFetch('/api/portal/dashboard/automation/emergency-stop', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason: stopReason || 'Immediate Administrator Emergency Halt' })
@@ -656,7 +712,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const handleResumeAutomation = async () => {
     setActionLoading(true);
     try {
-      const res = await fetch('/api/portal/dashboard/automation/resume', {
+      const res = await portalFetch('/api/portal/dashboard/automation/resume', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ channels: ['email', 'whatsapp', 'followups'] })
@@ -677,7 +733,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const handleRecalculateScores = async () => {
     setActionLoading(true);
     try {
-      await fetch('/api/portal/dashboard/automation/sync', { method: 'POST' });
+      await portalFetch('/api/portal/dashboard/automation/sync', { method: 'POST' });
       fetchOverview();
       fetchBuilders();
       fetchInstitutions();
@@ -711,49 +767,92 @@ export default function UnifiedAdminPortal({ initialTab }) {
             </div>
             <h2>AVANI LOAN SERVICES</h2>
             <p className="portal-subtitle">Unified Business Growth & Lead Management Portal</p>
-            <div className="portal-modules-tag">
-              <span>Builder Partnerships</span> • <span>Education Institutional Funding</span>
-            </div>
+            <div className="portal-badge-pill">Administrator Login</div>
           </div>
 
           <form onSubmit={handleLogin} className="portal-login-form">
             {loginError && (
-              <div className="portal-alert portal-alert-error">
-                <AlertCircleIcon /> <span>{loginError}</span>
+              <div className="portal-alert portal-alert-error" role="alert">
+                <AlertCircle size={18} /> <span>{loginError}</span>
               </div>
             )}
 
             <div className="portal-form-group">
-              <label>Administrator Username or Email</label>
-              <input
-                type="text"
-                required
-                autoComplete="username"
-                placeholder="admin or admin@avanifinserv.com"
-                value={loginForm.username}
-                onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
-              />
+              <label htmlFor="portal-username">Administrator Username or Email</label>
+              <div className="portal-input-icon-wrapper">
+                <Users size={18} className="portal-input-icon" />
+                <input
+                  id="portal-username"
+                  name="username"
+                  type="text"
+                  required
+                  autoComplete="username"
+                  placeholder="Enter administrator username or email"
+                  value={loginForm.username}
+                  onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
+                />
+              </div>
+              <span className="portal-form-help">Authorized default administrator account: <code>admin</code> or <code>admin@avanifinserv.com</code></span>
             </div>
 
             <div className="portal-form-group">
-              <label>Security Password</label>
-              <input
-                type="password"
-                required
-                autoComplete="current-password"
-                placeholder="••••••••••••"
-                value={loginForm.password}
-                onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-              />
+              <label htmlFor="portal-password">Security Password</label>
+              <div className="portal-input-icon-wrapper">
+                <Lock size={18} className="portal-input-icon" />
+                <input
+                  id="portal-password"
+                  name="password"
+                  type={showLoginPassword ? 'text' : 'password'}
+                  required
+                  autoComplete="current-password"
+                  placeholder="Enter administrator password"
+                  value={loginForm.password}
+                  onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                />
+                <button
+                  type="button"
+                  className="portal-password-toggle"
+                  onClick={() => setShowLoginPassword(!showLoginPassword)}
+                  title={showLoginPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
-            <button type="submit" disabled={loginSubmitting} className="portal-btn portal-btn-primary">
-              {loginSubmitting ? 'Verifying Authorization...' : 'Authenticate & Access Portal'}
+            <button type="submit" disabled={loginSubmitting} className="portal-btn portal-btn-primary portal-btn-block">
+              {loginSubmitting ? (
+                <>
+                  <RefreshCw size={16} className="portal-spin" /> Verifying Security Authorization...
+                </>
+              ) : (
+                <>
+                  <Lock size={16} /> Sign In Securely
+                </>
+              )}
             </button>
+
+            <div className="portal-reset-box">
+              <button
+                type="button"
+                className="portal-link-btn"
+                onClick={() => setShowForgotHelp(!showForgotHelp)}
+              >
+                {showForgotHelp ? 'Hide Reset Guidance ▲' : 'Forgot Password / Reset Instructions ▼'}
+              </button>
+              {showForgotHelp && (
+                <div className="portal-reset-instructions animate-fade-in">
+                  <p><strong>Administrator Security Guidance:</strong></p>
+                  <p>Administrative credentials use salted bcrypt hashing and strict role-based access. Passwords are never stored in plaintext.</p>
+                  <p>To rotate or reset your credentials, execute the interactive administrator password update via the secure terminal or contact the technical administrator.</p>
+                </div>
+              )}
+            </div>
 
             <div className="portal-security-footer">
               <Lock size={14} />
-              <span>Strict Server-Side Session • HTTP-Only Cookies • Role-Based Access</span>
+              <span>Strict Server-Side Session • HTTP-Only Cookies • Role-Based Access Control</span>
             </div>
           </form>
         </div>
@@ -914,9 +1013,14 @@ export default function UnifiedAdminPortal({ initialTab }) {
                 />
               </div>
 
-              <button type="submit" disabled={pwdSubmitting} className="portal-btn portal-btn-primary">
-                {pwdSubmitting ? 'Updating...' : 'Set New Secure Password'}
-              </button>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+                <button type="submit" disabled={pwdSubmitting} className="portal-btn portal-btn-primary">
+                  {pwdSubmitting ? 'Updating...' : 'Set New Secure Password'}
+                </button>
+                <button type="button" onClick={() => setShowPwdModal(false)} className="portal-btn portal-btn-secondary">
+                  Review Modules First
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -1221,8 +1325,9 @@ export default function UnifiedAdminPortal({ initialTab }) {
                 </div>
               </div>
 
-              {/* Three Password-Protected Databases Header Grid */}
-              <div className="portal-three-db-grid">
+              {/* Six Core Unified Administration Module Cards */}
+              <div className="portal-six-module-grid">
+                {/* 1. Builder Database */}
                 <div className="portal-db-card" onClick={() => { setActiveTab('builder'); fetchBuilders('all'); }}>
                   <div className="portal-db-card-header">
                     <div className="portal-db-card-icon blue">
@@ -1238,6 +1343,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
                   </div>
                 </div>
 
+                {/* 2. School Funding Database */}
                 <div className="portal-db-card" onClick={() => { setActiveTab('schools'); fetchSchools('all'); }}>
                   <div className="portal-db-card-header">
                     <div className="portal-db-card-icon green">
@@ -1253,6 +1359,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
                   </div>
                 </div>
 
+                {/* 3. College & University Database */}
                 <div className="portal-db-card" onClick={() => { setActiveTab('colleges'); fetchColleges('all'); }}>
                   <div className="portal-db-card-header">
                     <div className="portal-db-card-icon purple">
@@ -1264,6 +1371,54 @@ export default function UnifiedAdminPortal({ initialTab }) {
                   <p>56 Higher Education Institutions • Engineering, Medical & Deemed</p>
                   <div className="portal-db-card-footer">
                     <span>Expansion Finance & Working Capital</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+
+                {/* 4. Leads Management */}
+                <div className="portal-db-card" onClick={() => { setActiveTab('leads'); fetchLeads(); }}>
+                  <div className="portal-db-card-header">
+                    <div className="portal-db-card-icon amber">
+                      <UserCheck size={24} />
+                    </div>
+                    <div className="portal-db-card-count">{leads.length || overviewData?.leads?.totalLeads || 6}</div>
+                  </div>
+                  <h3>4. Consumer Leads CRM</h3>
+                  <p>Verified Retail Loan Borrowers • Eligibility Assessment Profiles</p>
+                  <div className="portal-db-card-footer">
+                    <span>Borrower Leads, Status & WhatsApp Connect</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+
+                {/* 5. Templates Engine */}
+                <div className="portal-db-card" onClick={() => { setActiveTab('templates'); fetchTemplates(); }}>
+                  <div className="portal-db-card-header">
+                    <div className="portal-db-card-icon teal">
+                      <FileText size={24} />
+                    </div>
+                    <div className="portal-db-card-count">{templates.length || 12}</div>
+                  </div>
+                  <h3>5. Templates Engine</h3>
+                  <p>WhatsApp & Email Templates • Meta WABA Status Active</p>
+                  <div className="portal-db-card-footer">
+                    <span>Productwise Messaging, Variables & Preview</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+
+                {/* 6. Campaigns Automation */}
+                <div className="portal-db-card" onClick={() => { setActiveTab('campaigns'); fetchCampaigns(); }}>
+                  <div className="portal-db-card-header">
+                    <div className="portal-db-card-icon rose">
+                      <Send size={24} />
+                    </div>
+                    <div className="portal-db-card-count">{campaigns.length || 4}</div>
+                  </div>
+                  <h3>6. Campaigns Automation</h3>
+                  <p>Audience Segments • Zero-Spend Simulated Dry Runs (Mock Mode)</p>
+                  <div className="portal-db-card-footer">
+                    <span>Dry-Run Engine, Approval Gate & Dispatch Log</span>
                     <ArrowUpRight size={14} />
                   </div>
                 </div>

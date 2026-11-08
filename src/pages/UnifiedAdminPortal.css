@@ -646,6 +646,107 @@
   box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.12);
 }
 
+.portal-input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.portal-input-icon-wrapper .portal-input-icon {
+  position: absolute;
+  left: 12px;
+  color: #94A3B8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.portal-input-icon-wrapper input {
+  width: 100%;
+  padding-left: 38px !important;
+  padding-right: 42px !important;
+  box-sizing: border-box;
+}
+
+.portal-password-toggle {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  z-index: 2;
+}
+
+.portal-password-toggle:hover {
+  color: #0F172A;
+  background: #F1F5F9;
+}
+
+.portal-form-help {
+  font-size: 0.73rem;
+  color: #64748B;
+  margin-top: 4px;
+  line-height: 1.4;
+  display: block;
+}
+
+.portal-form-help code {
+  background: #F1F5F9;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #0F172A;
+  font-weight: 600;
+  font-size: 0.72rem;
+}
+
+.portal-reset-box {
+  text-align: center;
+  margin-top: 4px;
+}
+
+.portal-link-btn {
+  background: none;
+  border: none;
+  color: #2563EB;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.portal-link-btn:hover {
+  color: #1D4ED8;
+}
+
+.portal-reset-instructions {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: #475569;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.portal-reset-instructions p {
+  margin: 0 0 6px 0;
+}
+
+.portal-reset-instructions p:last-child {
+  margin-bottom: 0;
+}
+
 .portal-security-footer {
   display: flex;
   align-items: center;
@@ -878,6 +979,26 @@
   }
 }
 
+/* Six Core SaaS Module Grid */
+.portal-six-module-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .portal-six-module-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .portal-six-module-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .portal-db-card {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
@@ -923,6 +1044,21 @@
 .portal-db-card-icon.purple {
   background: #FAF5FF;
   color: #7E22CE;
+}
+
+.portal-db-card-icon.orange {
+  background: #FFF7ED;
+  color: #EA580C;
+}
+
+.portal-db-card-icon.indigo {
+  background: #EEF2FF;
+  color: #4F46E5;
+}
+
+.portal-db-card-icon.cyan {
+  background: #ECFEFF;
+  color: #0891B2;
 }
 
 .portal-db-card-count {

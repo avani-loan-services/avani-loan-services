@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import useSEO from '../hooks/useSEO';
 import { CheckCircle2, ChevronRight, ChevronLeft, UploadCloud, AlertCircle } from 'lucide-react';
-import PasswordGate from '../components/PasswordGate';
 import './Eligibility.css';
 
 const LOAN_TYPES = [
@@ -11,7 +10,7 @@ const LOAN_TYPES = [
 ];
 
 export default function Eligibility() {
-  useSEO({ title: 'AI Eligibility Engine - Password Protected - Avani Loan Services', description: 'Check your loan eligibility and get AI recommendations securely.', keywords: 'Eligibility, Loan, AI, School Funding, College Funding' });
+  useSEO({ title: 'AI Loan Eligibility Engine | Avani Loan Services', description: 'Check your loan eligibility and get instant AI calculations and recommendations.', keywords: 'Eligibility, Loan, AI, School Funding, College Funding' });
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -82,8 +81,7 @@ export default function Eligibility() {
   };
 
   return (
-    <PasswordGate title="AI Loan Eligibility Engine - Authorized Access">
-      <div className="eligibility-container">
+    <div className="eligibility-container">
         <div className="eligibility-header">
           <h1>AI Loan Eligibility Engine</h1>
           <p>Get instant eligibility scores, EMI calculations, and personalized loan recommendations.</p>
@@ -244,7 +242,6 @@ export default function Eligibility() {
           </form>
         </div>
       </div>
-    </PasswordGate>
   );
 }
 
