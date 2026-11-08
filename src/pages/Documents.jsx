@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, MessageCircle, Phone } from 'lucide-react';
 import { generateWhatsAppDocumentLink, PHONE_NUMBER, DISPLAY_PHONE } from '../utils/whatsappHelper';
 import brandLogo from '../assets/avani-brand-logo.png';
-import PasswordGate from '../components/PasswordGate';
 import './Documents.css';
 
 const docs = [
@@ -147,38 +146,36 @@ function DocAccordion({ item }) {
 }
 
 export default function Documents() {
-  useSEO({ title: 'Documents Vault - Password Protected - Avani Loan Services', description: 'Mandatory documentation checklist for Home, Business, School Funding, and Education loans.', keywords: 'Documents, Loan, Avani Finserv, School Funding, Latur' });
+  useSEO({ title: 'Loan Documentation Checklist | Avani Loan Services', description: 'Mandatory documentation checklist for Home, Business, School Funding, and Education loans.', keywords: 'Documents, Loan, Avani Finserv, School Funding, Latur' });
 
   return (
-    <PasswordGate title="Documents Vault - Authorized Access">
-      <div>
-        <section className="page-header">
-          <div className="container">
-            <div className="page-header-top">
-              <img src={brandLogo} alt="Avani Loan Services" className="page-header-logo" />
-              <div>
-                <span className="badge">Documentation</span>
-                <div className="page-header-address">Old Barshi Road, 5 no Chauk, next to Sai School, KulswaminiNagar, Latur-413531, Maharashtra, India</div>
-              </div>
+    <div>
+      <section className="page-header">
+        <div className="container">
+          <div className="page-header-top">
+            <img src={brandLogo} alt="Avani Loan Services" className="page-header-logo" />
+            <div>
+              <span className="badge">Documentation</span>
+              <div className="page-header-address">Old Barshi Road, 5 no Chauk, next to Sai School, KulswaminiNagar, Latur-413531, Maharashtra, India</div>
             </div>
-            <h1>Documents Required for Each Loan</h1>
-            <p>Click on any loan type to see the exact documents you need to prepare</p>
           </div>
-        </section>
+          <h1>Documents Required for Each Loan</h1>
+          <p>Click on any loan type to see the exact documents you need to prepare</p>
+        </div>
+      </section>
 
-        <section className="section">
-          <div className="container">
-            <div className="docs-tip glass-card">
-              💡 <strong>Pro Tip:</strong> Start collecting these documents before applying. Our advisors will review your documents FREE and confirm your eligibility.
-              <a href="https://wa.me/919175635165" target="_blank" rel="noopener noreferrer" className="tip-link"> WhatsApp your docs →</a>
-            </div>
-            <div className="docs-list">
-              {docs.map((d, i) => <DocAccordion key={i} item={d} />)}
-            </div>
+      <section className="section">
+        <div className="container">
+          <div className="docs-tip glass-card">
+            💡 <strong>Pro Tip:</strong> Start collecting these documents before applying. Our advisors will review your documents FREE and confirm your eligibility.
+            <a href="https://wa.me/919175635165" target="_blank" rel="noopener noreferrer" className="tip-link"> WhatsApp your docs →</a>
           </div>
-        </section>
-      </div>
-    </PasswordGate>
+          <div className="docs-list">
+            {docs.map((d, i) => <DocAccordion key={i} item={d} />)}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
 

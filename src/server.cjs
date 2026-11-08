@@ -12,7 +12,28 @@ const { connectDB } = require('./models/database.cjs');
 validateEnvironmentIsolation();
 connectDB().catch(err => console.warn('[Database] Initial connection warning:', err.message));
 
-app.use(cors());
+const allowedOrigins = [
+  'https://www.avanifinserv.com',
+  'https://avanifinserv.com',
+  'https://api.avanifinserv.com',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Cookie']
+}));
 app.use(express.json({
   limit: '20mb',
   verify: (req, res, buf) => {

@@ -79,8 +79,8 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/loans" element={<Loans />} />
-              <Route path="/eligibility" element={<PasswordGate pageTitle="AI Loan Eligibility Engine"><Eligibility /></PasswordGate>} />
-              <Route path="/documents" element={<PasswordGate pageTitle="Document Vault & Calculator"><Documents /></PasswordGate>} />
+              <Route path="/eligibility" element={<Eligibility />} />
+              <Route path="/documents" element={<Documents />} />
               <Route path="/download-application" element={<DownloadApplication />} />
               <Route path="/loan-documents/:token" element={<DocumentPortal />} />
               <Route path="/cibil-check" element={<CibilCheck />} />
@@ -125,8 +125,8 @@ export default function App() {
                   </CalculatorProtectedRoute>
                 }
               />
-              <Route path="/financial-tools/eligibility" element={<PasswordGate pageTitle="Financial Tools Eligibility Engine"><Eligibility /></PasswordGate>} />
-              <Route path="/financial-tools/documents" element={<PasswordGate pageTitle="Financial Tools Document Vault"><Documents /></PasswordGate>} />
+              <Route path="/financial-tools/eligibility" element={<Eligibility />} />
+              <Route path="/financial-tools/documents" element={<Documents />} />
               <Route path="/financial-tools/services" element={<ServicesList />} />
 
               {/* Financial Tools — Loan Calculators */}
