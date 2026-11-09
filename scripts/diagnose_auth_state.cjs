@@ -2,9 +2,14 @@
 // Forensic inspection of admin user state in disk JSON vs MongoDB Atlas
 // NEVER prints password hashes, tokens, secrets or credentials.
 
-require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+try {
+  const dns = require('dns');
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (_) {}
+require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
 const mongoose = require('mongoose');
 
 async function run() {
