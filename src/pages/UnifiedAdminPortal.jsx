@@ -123,13 +123,23 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const [templates, setTemplates] = useState([]);
   const [templateChannelFilter, setTemplateChannelFilter] = useState('ALL');
   const [templateCategoryFilter, setTemplateCategoryFilter] = useState('ALL');
+  const [templateStatusFilter, setTemplateStatusFilter] = useState('ALL');
+  const [templateLanguageFilter, setTemplateLanguageFilter] = useState('ALL');
+  const [templateSort, setTemplateSort] = useState('name_asc');
   const [templateSearch, setTemplateSearch] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [metaStatus, setMetaStatus] = useState(null);
+  const [syncingMeta, setSyncingMeta] = useState(false);
+  const [metaSyncFeedback, setMetaSyncFeedback] = useState(null);
+  const [copiedTemplateId, setCopiedTemplateId] = useState(null);
   const [showCreateTplModal, setShowCreateTplModal] = useState(false);
-  const [tplForm, setTplForm] = useState({ name: '', channel: 'WhatsApp', category: 'MARKETING', language: 'en', header: '', body: '', footer: '', variables: 'Customer Name, Loan Type, Amount' });
+  const [tplForm, setTplForm] = useState({ name: '', display_name: '', channel: 'WhatsApp', category: 'UTILITY', language: 'en', header: '', body: '', footer: '', variables: '1, 2, 3' });
   const [tplPreviewModal, setTplPreviewModal] = useState(false);
   const [tplPreviewData, setTplPreviewData] = useState(null);
+  const [previewVars, setPreviewVars] = useState({});
+  const [testSendPhone, setTestSendPhone] = useState('');
+  const [testSendLoading, setTestSendLoading] = useState(false);
+  const [testSendResult, setTestSendResult] = useState(null);
 
   // Campaigns Management State
   const [campaigns, setCampaigns] = useState([]);
@@ -410,6 +420,55 @@ export default function UnifiedAdminPortal({ initialTab }) {
     }
   };
 
+  const handleSyncMetaTemplates = async () => {
+    setSyncingMeta(true);
+    setMetaSyncFeedback(null);
+    try {
+      const res = await portalFetch('/api/portal/templates/sync-meta', { method: 'POST' });
+      const data = await res.json();
+      await fetchTemplates();
+      await fetchMetaStatus();
+      if (res.ok && data.success) {
+        setMetaSyncFeedback({
+          synced: data.synced,
+          reason: data.data?.reason || 'OK',
+          message: data.data?.message || `Synchronized ${data.data?.count || 0} templates from Meta WABA.`,
+          recommendation: data.data?.recommendation || null,
+          timestamp: new Date().toLocaleTimeString()
+        });
+      } else {
+        setMetaSyncFeedback({
+          synced: false,
+          reason: 'SYNC_ERROR',
+          message: data.message || 'Meta synchronization check completed with warnings.',
+          timestamp: new Date().toLocaleTimeString()
+        });
+      }
+    } catch (e) {
+      setMetaSyncFeedback({
+        synced: false,
+        reason: 'NETWORK_ERROR',
+        message: 'Could not reach synchronization endpoint.',
+        timestamp: new Date().toLocaleTimeString()
+      });
+    } finally {
+      setSyncingMeta(false);
+    }
+  };
+
+  const handleCopyTemplate = (tpl) => {
+    const content = [
+      tpl.header ? `${tpl.header}\n` : '',
+      tpl.body || '',
+      tpl.footer ? `\n${tpl.footer}` : ''
+    ].filter(Boolean).join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(content).catch(() => {});
+    }
+    setCopiedTemplateId(tpl.template_id);
+    setTimeout(() => setCopiedTemplateId(null), 2000);
+  };
+
   const handleCreateTemplate = async (e) => {
     e.preventDefault();
     try {
@@ -426,7 +485,8 @@ export default function UnifiedAdminPortal({ initialTab }) {
       if (res.ok && data.success) {
         setTemplates(prev => [data.data, ...prev]);
         setShowCreateTplModal(false);
-        setTplForm({ name: '', channel: 'WhatsApp', category: 'MARKETING', language: 'en', header: '', body: '', footer: '', variables: 'Customer Name, Loan Type, Amount' });
+        setTplForm({ name: '', display_name: '', channel: 'WhatsApp', category: 'UTILITY', language: 'en', header: '', body: '', footer: '', variables: '1, 2, 3' });
+        fetchMetaStatus();
       } else {
         alert(data.message || 'Failed to create template');
       }
@@ -441,25 +501,87 @@ export default function UnifiedAdminPortal({ initialTab }) {
       const data = await res.json();
       if (res.ok && data.success) {
         setTemplates(prev => [data.data, ...prev]);
+        fetchMetaStatus();
       }
     } catch (e) {
       console.error('Failed to duplicate template', e);
     }
   };
 
-  const handlePreviewTemplate = (tpl) => {
-    let rendered = tpl.body;
-    if (tpl.sample_values) {
-      Object.keys(tpl.sample_values).forEach((k, idx) => {
+  const computeRenderedBody = (tpl, customVars) => {
+    let rendered = tpl.body || '';
+    const activeVars = customVars || tpl.sample_values || {};
+    Object.keys(activeVars).forEach((k, idx) => {
+      const val = activeVars[k];
+      if (val !== undefined && String(val).trim() !== '') {
         const p = new RegExp(`\\{\\{${k}\\}\\}|\\{\\{${idx + 1}\\}\\}`, 'g');
-        rendered = rendered.replace(p, tpl.sample_values[k]);
+        rendered = rendered.replace(p, val);
+      }
+    });
+    return rendered;
+  };
+
+  const handlePreviewTemplate = (tpl) => {
+    const initialVars = {};
+    if (Array.isArray(tpl.variables) && tpl.variables.length > 0) {
+      tpl.variables.forEach((v, idx) => {
+        initialVars[v] = (tpl.sample_values && (tpl.sample_values[v] || tpl.sample_values[String(idx + 1)])) || '';
       });
+    } else if (tpl.sample_values) {
+      Object.assign(initialVars, tpl.sample_values);
     }
+    setPreviewVars(initialVars);
+    setTestSendPhone('+91 9175635165');
+    setTestSendResult(null);
     setTplPreviewData({
       template: tpl,
-      renderedBody: rendered
+      renderedBody: computeRenderedBody(tpl, initialVars)
     });
     setTplPreviewModal(true);
+  };
+
+  const handlePreviewVarChange = (varKey, val) => {
+    const updated = { ...previewVars, [varKey]: val };
+    setPreviewVars(updated);
+    if (tplPreviewData && tplPreviewData.template) {
+      setTplPreviewData({
+        ...tplPreviewData,
+        renderedBody: computeRenderedBody(tplPreviewData.template, updated)
+      });
+    }
+  };
+
+  const handleSendTestTemplate = async (e) => {
+    e.preventDefault();
+    if (!tplPreviewData?.template) return;
+    setTestSendLoading(true);
+    setTestSendResult(null);
+    try {
+      const res = await portalFetch('/api/portal/templates/send-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          template_id: tplPreviewData.template.template_id,
+          recipient_phone: testSendPhone,
+          language: tplPreviewData.template.language || 'en',
+          variables: previewVars
+        })
+      });
+      const data = await res.json();
+      setTestSendResult({
+        success: Boolean(res.ok && data.success),
+        message: data.message || (res.ok ? 'Simulation complete' : 'Validation failed'),
+        simulation: data.simulation || null,
+        missing_variables: data.missing_variables || []
+      });
+    } catch (err) {
+      setTestSendResult({
+        success: false,
+        message: 'Error simulating test message.'
+      });
+    } finally {
+      setTestSendLoading(false);
+    }
   };
 
   const fetchCampaigns = async () => {
@@ -933,16 +1055,42 @@ export default function UnifiedAdminPortal({ initialTab }) {
     return matchSearch && matchLoan && matchStatus;
   });
 
-  const filteredTemplates = templates.filter(t => {
-    const matchChannel = !templateChannelFilter || templateChannelFilter === 'ALL' || (t.channel && t.channel.toLowerCase() === templateChannelFilter.toLowerCase());
-    const matchCategory = !templateCategoryFilter || templateCategoryFilter === 'ALL' || (t.category && t.category.toLowerCase() === templateCategoryFilter.toLowerCase());
-    const matchSearch = !templateSearch || (
-      (t.name && t.name.toLowerCase().includes(templateSearch.toLowerCase())) ||
-      (t.display_name && t.display_name.toLowerCase().includes(templateSearch.toLowerCase())) ||
-      (t.body && t.body.toLowerCase().includes(templateSearch.toLowerCase()))
-    );
-    return matchChannel && matchCategory && matchSearch;
-  });
+  const filteredTemplates = templates
+    .filter(t => {
+      const matchChannel = !templateChannelFilter || templateChannelFilter === 'ALL' || (t.channel && t.channel.toLowerCase() === templateChannelFilter.toLowerCase());
+      const matchCategory = !templateCategoryFilter || templateCategoryFilter === 'ALL' || (t.category && t.category.toLowerCase() === templateCategoryFilter.toLowerCase());
+      const matchLang = !templateLanguageFilter || templateLanguageFilter === 'ALL' || ((t.language || 'en').toLowerCase() === templateLanguageFilter.toLowerCase());
+      let matchStatus = true;
+      if (templateStatusFilter && templateStatusFilter !== 'ALL') {
+        const st = (t.meta_approval_status || t.status || '').toUpperCase();
+        const qSt = templateStatusFilter.toUpperCase();
+        if (qSt === 'APPROVED') {
+          matchStatus = st === 'APPROVED' && t.synced_from_meta === true;
+        } else if (qSt === 'NOT_VERIFIED' || qSt === 'LOCAL_DRAFT') {
+          matchStatus = ['LOCAL_DRAFT', 'NOT_VERIFIED', 'UNVERIFIED_LOCAL_TEMPLATE', 'UNKNOWN'].includes(st) || (t.channel === 'WhatsApp' && !t.synced_from_meta);
+        } else if (qSt === 'NON_WHATSAPP') {
+          matchStatus = t.channel !== 'WhatsApp';
+        } else {
+          matchStatus = st === qSt;
+        }
+      }
+      const matchSearch = !templateSearch || (
+        (t.name && t.name.toLowerCase().includes(templateSearch.toLowerCase())) ||
+        (t.display_name && t.display_name.toLowerCase().includes(templateSearch.toLowerCase())) ||
+        (t.template_id && t.template_id.toLowerCase().includes(templateSearch.toLowerCase())) ||
+        (t.body && t.body.toLowerCase().includes(templateSearch.toLowerCase()))
+      );
+      return matchChannel && matchCategory && matchLang && matchStatus && matchSearch;
+    })
+    .sort((a, b) => {
+      if (templateSort === 'name_desc') {
+        return (b.display_name || b.name || '').localeCompare(a.display_name || a.name || '');
+      }
+      if (templateSort === 'updated_desc') {
+        return new Date(b.updated_at || 0).getTime() - new Date(a.updated_at || 0).getTime();
+      }
+      return (a.display_name || a.name || '').localeCompare(b.display_name || b.name || '');
+    });
 
   const filteredCampaigns = campaigns.filter(c => {
     const matchStatus = !campaignStatusFilter || campaignStatusFilter === 'ALL' || (c.status && c.status.toLowerCase() === campaignStatusFilter.toLowerCase());
@@ -2484,55 +2632,153 @@ export default function UnifiedAdminPortal({ initialTab }) {
             <div className="portal-tab-pane">
               <div className="portal-pane-header">
                 <div>
-                  <h2>Outreach & Notification Templates</h2>
-                  <p>Multi-channel WhatsApp, Email & SMS message blueprints with parameter tags and WABA approval compliance</p>
+                  <h2>Meta WhatsApp & Multi-Channel Templates Engine</h2>
+                  <p>Authoritative WABA Template Library, Parameter Validation, Interactive Preview & Mock-Safe Test Workflow</p>
                 </div>
-                <div className="flex-align gap-2">
-                  <button onClick={() => setShowCreateTplModal(true)} className="portal-btn portal-btn-primary">
-                    <Plus size={14} /> Create Template
+                <div className="flex-align gap-2" style={{ flexWrap: 'wrap' }}>
+                  <button
+                    onClick={handleSyncMetaTemplates}
+                    disabled={syncingMeta}
+                    className="portal-btn portal-btn-outline"
+                    style={{ borderColor: '#0052CC', color: '#0052CC', fontWeight: 600 }}
+                    title="Attempt live template synchronization with Meta WhatsApp Business Graph API"
+                  >
+                    <RefreshCw size={14} className={syncingMeta ? 'spin' : ''} />
+                    {syncingMeta ? 'Checking Meta WABA...' : 'Sync from Meta WABA'}
                   </button>
-                  <button onClick={fetchTemplates} className="portal-btn portal-btn-outline">
+                  <button onClick={() => setShowCreateTplModal(true)} className="portal-btn portal-btn-primary">
+                    <Plus size={14} /> Create Local Draft
+                  </button>
+                  <button onClick={() => { fetchTemplates(); fetchMetaStatus(); }} className="portal-btn portal-btn-outline">
                     <RefreshCw size={14} /> Refresh
                   </button>
                 </div>
               </div>
 
-              {/* Meta WABA Connection Status Banner */}
-              <div className="portal-waba-banner">
+              {/* Meta WABA Connection Status Banner (Genuine Environment Status) */}
+              <div className="portal-waba-banner" style={{ background: metaStatus?.connected ? 'linear-gradient(135deg, #0F172A, #1E3A8A)' : 'linear-gradient(135deg, #1E293B, #0F172A)' }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>
-                    WhatsApp Business Platform (Meta Graph API v19.0)
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>WhatsApp Business Platform (Meta Graph API {metaStatus?.graph_api_version || 'v20.0'})</span>
+                    <span className="portal-waba-chip" style={{ background: metaStatus?.connected ? '#16A34A' : '#D97706', color: '#FFFFFF', fontWeight: 700 }}>
+                      {metaStatus?.connected ? 'META GRAPH CONNECTED' : 'TOKEN CONFIGURATION PENDING'}
+                    </span>
                   </div>
-                  <div style={{ fontSize: '0.8rem', opacity: 0.9, marginTop: '2px' }}>
-                    Provider Mode: <strong>MOCK SANDBOX</strong> • Zero Real WhatsApp Messages Sent • Live Delivery Disabled
+                  <div style={{ fontSize: '0.8rem', opacity: 0.92, marginTop: '4px' }}>
+                    Provider Mode: <strong>{(metaStatus?.provider_mode || 'mock').toUpperCase()} SANDBOX</strong> • Zero Live Dispatches • {metaStatus?.notice || 'Direct Meta Graph API sync requires META_ACCESS_TOKEN (whatsapp_business_management).'}
                   </div>
                 </div>
                 <div className="portal-waba-badges">
-                  <span className="portal-waba-chip">WABA: waba_avani_prod_01</span>
-                  <span className="portal-waba-chip">Tier: TIER_250</span>
-                  <span className="portal-waba-chip" style={{ background: '#22C55E' }}>Quality: GREEN</span>
-                  <span className="portal-waba-chip">Status: CONNECTED</span>
+                  <span className="portal-waba-chip">WABA ID: {metaStatus?.waba_id || '1062614709598311'}</span>
+                  <span className="portal-waba-chip">Phone ID: {metaStatus?.phone_number_id || '1147494668457940'}</span>
+                  <span className="portal-waba-chip">Number: {metaStatus?.display_phone || '+917249108474'}</span>
+                  <span className="portal-waba-chip">BSP: {metaStatus?.bsp_partner || 'AiSensy'}</span>
                 </div>
               </div>
 
-              {/* Template Filters */}
-              <div className="portal-filter-bar">
-                <div className="portal-search-box">
+              {/* Synchronization Result / Advisory Alert */}
+              {metaSyncFeedback && (
+                <div
+                  className="portal-estimate-alert"
+                  style={{
+                    marginBottom: '16px',
+                    background: metaSyncFeedback.synced ? '#F0FDF4' : '#FFFBEB',
+                    borderColor: metaSyncFeedback.synced ? '#BBF7D0' : '#FDE68A',
+                    color: metaSyncFeedback.synced ? '#166534' : '#92400E'
+                  }}
+                >
+                  <AlertTriangle size={18} color={metaSyncFeedback.synced ? '#16A34A' : '#D97706'} />
+                  <div style={{ flex: 1 }}>
+                    <strong>Meta WABA Synchronization ({metaSyncFeedback.timestamp}): </strong>
+                    <span>{metaSyncFeedback.message}</span>
+                    {metaSyncFeedback.recommendation && (
+                      <div style={{ fontSize: '0.78rem', marginTop: '4px', opacity: 0.9 }}>
+                        <strong>Action Required:</strong> {metaSyncFeedback.recommendation}
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={() => setMetaSyncFeedback(null)} className="portal-btn-sm portal-btn-outline">Dismiss</button>
+                </div>
+              )}
+
+              {/* Summary KPI Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(165px, 1fr))', gap: '12px', marginBottom: '18px' }}>
+                <div className="portal-card" style={{ padding: '14px', borderLeft: '4px solid #0052CC' }}>
+                  <div className="text-muted text-xs" style={{ fontWeight: 600 }}>TOTAL TEMPLATES</div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#0F172A', marginTop: '4px' }}>{templates.length}</div>
+                  <div className="text-muted text-xs">WhatsApp, Email & SMS</div>
+                </div>
+                <div className="portal-card" style={{ padding: '14px', borderLeft: '4px solid #16A34A' }}>
+                  <div className="text-muted text-xs" style={{ fontWeight: 600 }}>META APPROVED</div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#16A34A', marginTop: '4px' }}>
+                    {templates.filter(t => t.channel === 'WhatsApp' && t.synced_from_meta === true && t.meta_approval_status === 'APPROVED').length}
+                  </div>
+                  <div className="text-muted text-xs">Verified via Graph API</div>
+                </div>
+                <div className="portal-card" style={{ padding: '14px', borderLeft: '4px solid #D97706' }}>
+                  <div className="text-muted text-xs" style={{ fontWeight: 600 }}>LOCAL / UNVERIFIED</div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#D97706', marginTop: '4px' }}>
+                    {templates.filter(t => t.channel === 'WhatsApp' && (!t.synced_from_meta || ['LOCAL_DRAFT', 'NOT_VERIFIED', 'UNVERIFIED_LOCAL_TEMPLATE'].includes(t.meta_approval_status))).length}
+                  </div>
+                  <div className="text-muted text-xs">Awaiting Meta WABA Sync</div>
+                </div>
+                <div className="portal-card" style={{ padding: '14px', borderLeft: '4px solid #2563EB' }}>
+                  <div className="text-muted text-xs" style={{ fontWeight: 600 }}>PENDING REVIEW</div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#2563EB', marginTop: '4px' }}>
+                    {templates.filter(t => t.meta_approval_status === 'PENDING' || t.meta_approval_status === 'IN_REVIEW').length}
+                  </div>
+                  <div className="text-muted text-xs">Submitted to Meta</div>
+                </div>
+                <div className="portal-card" style={{ padding: '14px', borderLeft: '4px solid #DC2626' }}>
+                  <div className="text-muted text-xs" style={{ fontWeight: 600 }}>REJECTED / PAUSED</div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#DC2626', marginTop: '4px' }}>
+                    {templates.filter(t => ['REJECTED', 'PAUSED', 'DISABLED'].includes(t.meta_approval_status)).length}
+                  </div>
+                  <div className="text-muted text-xs">Requires Revision</div>
+                </div>
+                <div className="portal-card" style={{ padding: '14px', borderLeft: '4px solid #64748B' }}>
+                  <div className="text-muted text-xs" style={{ fontWeight: 600 }}>EMAIL & SMS</div>
+                  <div style={{ fontSize: '1.55rem', fontWeight: 800, color: '#334155', marginTop: '4px' }}>
+                    {templates.filter(t => t.channel !== 'WhatsApp').length}
+                  </div>
+                  <div className="text-muted text-xs">Direct Transactional</div>
+                </div>
+              </div>
+
+              {/* Template Filters & Sorting */}
+              <div className="portal-filter-bar" style={{ flexWrap: 'wrap', gap: '10px' }}>
+                <div className="portal-search-box" style={{ minWidth: '240px', flex: 1 }}>
                   <Search size={16} />
                   <input
                     type="text"
-                    placeholder="Search templates by name, body text..."
+                    placeholder="Search by template name, ID, or message body..."
                     value={templateSearch}
                     onChange={(e) => setTemplateSearch(e.target.value)}
                   />
                   {templateSearch && <button onClick={() => setTemplateSearch('')} className="portal-clear-btn">✕</button>}
                 </div>
 
-                <div className="portal-filter-selects">
+                <div className="portal-filter-selects" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <select
+                    value={templateStatusFilter}
+                    onChange={(e) => setTemplateStatusFilter(e.target.value)}
+                    className="portal-select"
+                    aria-label="Filter by approval status"
+                  >
+                    <option value="ALL">All Approval Statuses</option>
+                    <option value="APPROVED">Meta Approved (Verified)</option>
+                    <option value="NOT_VERIFIED">Local Draft / Unverified</option>
+                    <option value="PENDING">Pending Meta Review</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="PAUSED">Paused / Disabled</option>
+                    <option value="NON_WHATSAPP">N/A (Email & SMS)</option>
+                  </select>
+
                   <select
                     value={templateChannelFilter}
                     onChange={(e) => setTemplateChannelFilter(e.target.value)}
                     className="portal-select"
+                    aria-label="Filter by channel"
                   >
                     <option value="ALL">All Channels</option>
                     <option value="WhatsApp">WhatsApp</option>
@@ -2544,11 +2790,38 @@ export default function UnifiedAdminPortal({ initialTab }) {
                     value={templateCategoryFilter}
                     onChange={(e) => setTemplateCategoryFilter(e.target.value)}
                     className="portal-select"
+                    aria-label="Filter by category"
                   >
                     <option value="ALL">All Categories</option>
                     <option value="MARKETING">Marketing</option>
                     <option value="UTILITY">Utility</option>
                     <option value="AUTHENTICATION">Authentication</option>
+                    <option value="PARTNERSHIP">Partnership</option>
+                    <option value="INSTITUTIONAL">Institutional</option>
+                    <option value="TRANSACTIONAL">Transactional</option>
+                  </select>
+
+                  <select
+                    value={templateLanguageFilter}
+                    onChange={(e) => setTemplateLanguageFilter(e.target.value)}
+                    className="portal-select"
+                    aria-label="Filter by language"
+                  >
+                    <option value="ALL">All Languages</option>
+                    <option value="en">English (en)</option>
+                    <option value="mr">Marathi (mr)</option>
+                    <option value="hi">Hindi (hi)</option>
+                  </select>
+
+                  <select
+                    value={templateSort}
+                    onChange={(e) => setTemplateSort(e.target.value)}
+                    className="portal-select"
+                    aria-label="Sort templates"
+                  >
+                    <option value="name_asc">Sort: Name (A–Z)</option>
+                    <option value="name_desc">Sort: Name (Z–A)</option>
+                    <option value="updated_desc">Sort: Recently Updated</option>
                   </select>
                 </div>
               </div>
@@ -2556,67 +2829,114 @@ export default function UnifiedAdminPortal({ initialTab }) {
               {/* Templates Grid */}
               <div className="portal-templates-grid">
                 {filteredTemplates.length === 0 ? (
-                  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: '#64748B' }}>
-                    No templates match your filters.
+                  <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: '#64748B', background: '#FFFFFF', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+                    <FileText size={32} color="#94A3B8" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontWeight: 600, color: '#334155' }}>No templates match your active filters</div>
+                    <div className="text-xs text-muted" style={{ marginTop: '4px' }}>
+                      Adjust the status, channel, or category filters above, or create a new local template draft.
+                    </div>
                   </div>
                 ) : (
-                  filteredTemplates.map((t) => (
-                    <div key={t.template_id} className="portal-template-card">
-                      <div>
-                        <div className="flex-between">
-                          <span className={`portal-badge ${t.channel === 'WhatsApp' ? 'badge-success' : 'badge-primary'}`}>
-                            {t.channel}
-                          </span>
-                          <span className={`portal-badge ${t.status === 'APPROVED' ? 'badge-success' : 'badge-warning'}`}>
-                            {t.status}
-                          </span>
-                        </div>
-                        <h3 style={{ marginTop: '10px', fontSize: '1rem' }}>{t.display_name || t.name}</h3>
-                        <div className="text-muted text-xs">
-                          ID: <code>{t.template_id}</code> • Category: <strong>{t.category}</strong> • Lang: <strong>{t.language}</strong>
-                        </div>
+                  filteredTemplates.map((t) => {
+                    const rawStatus = t.meta_approval_status || t.status || 'NOT_VERIFIED';
+                    const isVerifiedMetaApproved = t.channel === 'WhatsApp' && t.synced_from_meta === true && rawStatus === 'APPROVED';
+                    const statusLabel = isVerifiedMetaApproved
+                      ? 'META APPROVED'
+                      : t.channel === 'WhatsApp'
+                      ? (rawStatus === 'LOCAL_DRAFT' ? 'LOCAL DRAFT' : rawStatus === 'NOT_VERIFIED' ? 'UNVERIFIED BLUEPRINT' : rawStatus)
+                      : rawStatus;
+                    const statusBadgeClass = isVerifiedMetaApproved
+                      ? 'badge-success'
+                      : rawStatus === 'REJECTED' || rawStatus === 'DISABLED'
+                      ? 'badge-danger'
+                      : t.channel !== 'WhatsApp'
+                      ? 'badge-primary'
+                      : 'badge-warning';
 
-                        {t.header && (
-                          <div style={{ fontWeight: 700, fontSize: '0.85rem', marginTop: '8px', color: '#0F172A' }}>
-                            {t.header}
+                    return (
+                      <div key={t.template_id} className="portal-template-card">
+                        <div>
+                          <div className="flex-between" style={{ gap: '6px', flexWrap: 'wrap' }}>
+                            <span className={`portal-badge ${t.channel === 'WhatsApp' ? 'badge-success' : 'badge-primary'}`}>
+                              {t.channel}
+                            </span>
+                            <span className={`portal-badge ${statusBadgeClass}`} title={t.verification_note || statusLabel}>
+                              {statusLabel}
+                            </span>
                           </div>
-                        )}
+                          <h3 style={{ marginTop: '10px', fontSize: '1rem', color: '#0F172A' }}>{t.display_name || t.name}</h3>
+                          <div className="text-muted text-xs" style={{ marginTop: '2px' }}>
+                            Code: <code>{t.name}</code> • ID: <code>{t.template_id}</code>
+                          </div>
+                          <div className="text-muted text-xs" style={{ marginTop: '2px' }}>
+                            Category: <strong>{t.category}</strong> • Lang: <strong>{t.language || 'en'}</strong> • Meta ID: <code>{t.meta_id || 'Local Only'}</code>
+                          </div>
 
-                        <div className="portal-template-body-preview">
-                          {t.body}
+                          {t.header && (
+                            <div style={{ fontWeight: 700, fontSize: '0.84rem', marginTop: '10px', color: '#0F172A', background: '#F8FAFC', padding: '6px 8px', borderRadius: '4px', borderLeft: '3px solid #0052CC' }}>
+                              {t.header}
+                            </div>
+                          )}
+
+                          <div className="portal-template-body-preview" style={{ marginTop: '8px' }}>
+                            {t.body}
+                          </div>
+
+                          {t.footer && (
+                            <div className="text-muted text-xs" style={{ fontStyle: 'italic', marginBottom: '8px' }}>
+                              Footer: {t.footer}
+                            </div>
+                          )}
+
+                          {Array.isArray(t.buttons) && t.buttons.length > 0 && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
+                              {t.buttons.map((btn, bIdx) => (
+                                <span key={bIdx} style={{ fontSize: '0.7rem', background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', borderRadius: '12px', padding: '2px 8px', fontWeight: 600 }}>
+                                  ↪ {btn}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {t.variables && t.variables.length > 0 && (
+                            <div className="portal-variables-row">
+                              {t.variables.map((v, idx) => {
+                                const lbl = t.variable_labels && t.variable_labels[idx] ? ` (${t.variable_labels[idx]})` : '';
+                                return (
+                                  <span key={idx} className="portal-var-badge">&#123;&#123;{v}&#125;&#125;{lbl}</span>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
 
-                        {t.footer && (
-                          <div className="text-muted text-xs" style={{ fontStyle: 'italic', marginBottom: '8px' }}>
-                            Footer: {t.footer}
-                          </div>
-                        )}
-
-                        {t.variables && t.variables.length > 0 && (
-                          <div className="portal-variables-row">
-                            {t.variables.map((v, idx) => (
-                              <span key={idx} className="portal-var-badge">&#123;&#123;{v}&#125;&#125;</span>
-                            ))}
-                          </div>
-                        )}
+                        <div className="portal-btn-row" style={{ marginTop: '14px', borderTop: '1px solid #F1F5F9', paddingTop: '10px', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => handlePreviewTemplate(t)}
+                            className="portal-btn-sm portal-btn-primary"
+                            title="Inspect template metadata, validate variables, preview phone bubble, or simulate test dispatch"
+                          >
+                            <Eye size={12} /> Details & Preview
+                          </button>
+                          <button
+                            onClick={() => handleDuplicateTemplate(t.template_id)}
+                            className="portal-btn-sm portal-btn-outline"
+                            title="Clone as a modifiable Local Draft"
+                          >
+                            <Copy size={12} /> Duplicate Draft
+                          </button>
+                          <button
+                            onClick={() => handleCopyTemplate(t)}
+                            className="portal-btn-sm portal-btn-outline"
+                            title="Copy formatted template text to clipboard"
+                          >
+                            {copiedTemplateId === t.template_id ? <Check size={12} color="#16A34A" /> : <FileText size={12} />}
+                            {copiedTemplateId === t.template_id ? 'Copied' : 'Copy Text'}
+                          </button>
+                        </div>
                       </div>
-
-                      <div className="portal-btn-row" style={{ marginTop: '14px', borderTop: '1px solid #F1F5F9', paddingTop: '10px' }}>
-                        <button
-                          onClick={() => handlePreviewTemplate(t)}
-                          className="portal-btn-sm portal-btn-outline"
-                        >
-                          <Eye size={12} /> Preview
-                        </button>
-                        <button
-                          onClick={() => handleDuplicateTemplate(t.template_id)}
-                          className="portal-btn-sm portal-btn-outline"
-                        >
-                          <Copy size={12} /> Duplicate
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -3282,38 +3602,186 @@ export default function UnifiedAdminPortal({ initialTab }) {
         </div>
       )}
 
-      {/* WhatsApp / Email Template Preview Modal */}
+      {/* WhatsApp / Email Template Detail, Interactive Preview & Variable Validation Modal */}
       {tplPreviewModal && tplPreviewData && (
         <div className="portal-modal-backdrop" onClick={() => setTplPreviewModal(false)}>
-          <div className="portal-modal-card" style={{ maxWidth: '440px' }} onClick={(e) => e.stopPropagation()}>
+          <div className="portal-modal-card" style={{ maxWidth: '720px', maxHeight: '90vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
             <div className="portal-modal-header">
               <Eye size={28} color="#0052CC" />
-              <h3>Template Interactive Preview</h3>
-              <p>Simulated recipient view with sample parameter injection.</p>
+              <h3>Template Details, Variable Validation & Phone Preview</h3>
+              <p>Inspect Meta WABA attributes, test dynamic parameter replacement, and simulate controlled mock dispatch.</p>
             </div>
             <div className="portal-modal-body">
-              <div className="portal-phone-mockup">
-                <div className="portal-wa-bubble">
-                  {tplPreviewData.template.header && (
-                    <div className="portal-wa-header">{tplPreviewData.template.header}</div>
-                  )}
-                  <div style={{ whiteSpace: 'pre-wrap' }}>
-                    {tplPreviewData.renderedBody}
+              <div className="portal-grid-2" style={{ alignItems: 'start', gap: '20px' }}>
+                {/* Left Column: Metadata & Variable Inputs */}
+                <div>
+                  <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '0.8rem', marginBottom: '14px' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F172A', marginBottom: '6px' }}>
+                      {tplPreviewData.template.display_name || tplPreviewData.template.name}
+                    </div>
+                    <div><strong>Internal ID:</strong> <code>{tplPreviewData.template.template_id}</code></div>
+                    <div><strong>Template Name:</strong> <code>{tplPreviewData.template.name}</code></div>
+                    <div><strong>Meta Template ID:</strong> <code>{tplPreviewData.template.meta_id || 'Local Only (Not Synced)'}</code></div>
+                    <div><strong>Channel / Category:</strong> {tplPreviewData.template.channel} • {tplPreviewData.template.category}</div>
+                    <div><strong>Language:</strong> {tplPreviewData.template.language || 'en'}</div>
+                    <div>
+                      <strong>Approval Status:</strong>{' '}
+                      <span className={`portal-badge ${tplPreviewData.template.synced_from_meta && tplPreviewData.template.meta_approval_status === 'APPROVED' ? 'badge-success' : 'badge-warning'}`}>
+                        {tplPreviewData.template.synced_from_meta && tplPreviewData.template.meta_approval_status === 'APPROVED'
+                          ? 'META APPROVED'
+                          : tplPreviewData.template.meta_approval_status || 'LOCAL_DRAFT'}
+                      </span>
+                    </div>
+                    {tplPreviewData.template.verification_note && (
+                      <div className="text-muted text-xs" style={{ marginTop: '6px' }}>
+                        {tplPreviewData.template.verification_note}
+                      </div>
+                    )}
                   </div>
-                  {tplPreviewData.template.footer && (
-                    <div className="portal-wa-footer">{tplPreviewData.template.footer}</div>
+
+                  {/* Interactive Variable Validation */}
+                  {Object.keys(previewVars).length > 0 && (
+                    <div style={{ background: '#FFFFFF', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', marginBottom: '14px' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.85rem', marginBottom: '8px', color: '#0F172A' }}>
+                        Parameter Placeholders & Live Validation
+                      </div>
+                      {Object.keys(previewVars).map((vKey, idx) => {
+                        const isEmpty = !previewVars[vKey] || String(previewVars[vKey]).trim() === '';
+                        const labelHint = tplPreviewData.template.variable_labels && tplPreviewData.template.variable_labels[idx]
+                          ? ` (${tplPreviewData.template.variable_labels[idx]})`
+                          : '';
+                        return (
+                          <div key={vKey} style={{ marginBottom: '8px' }}>
+                            <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: isEmpty ? '#DC2626' : '#334155', marginBottom: '2px' }}>
+                              Placeholder &#123;&#123;{vKey}&#125;&#125;{labelHint} {isEmpty && '— REQUIRED'}
+                            </label>
+                            <input
+                              type="text"
+                              value={previewVars[vKey]}
+                              onChange={(e) => handlePreviewVarChange(vKey, e.target.value)}
+                              placeholder={`Enter value for {{${vKey}}}...`}
+                              style={{
+                                width: '100%',
+                                padding: '6px 10px',
+                                fontSize: '0.8rem',
+                                borderRadius: '6px',
+                                border: isEmpty ? '1.5px solid #DC2626' : '1px solid #CBD5E1',
+                                background: isEmpty ? '#FEF2F2' : '#FFFFFF'
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
+                      {Object.values(previewVars).some(v => !v || String(v).trim() === '') ? (
+                        <div style={{ fontSize: '0.75rem', color: '#DC2626', fontWeight: 600, marginTop: '4px' }}>
+                          ⚠️ Validation Warning: One or more required placeholders are empty. Message dispatch is blocked until all variables are populated.
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.75rem', color: '#16A34A', fontWeight: 600, marginTop: '4px' }}>
+                          ✓ All {Object.keys(previewVars).length} template variable(s) validated.
+                        </div>
+                      )}
+                    </div>
                   )}
-                  <div className="portal-wa-time">10:30 AM ✓✓</div>
+
+                  {/* Controlled Individual Message Simulation (Mock Mode Safe) */}
+                  <form onSubmit={handleSendTestTemplate} style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#0F172A', marginBottom: '4px' }}>
+                      Controlled Test Message Simulation (Mock Sandbox)
+                    </div>
+                    <div className="text-muted text-xs" style={{ marginBottom: '8px' }}>
+                      Validates phone format, consent & variables. Strictly simulated (0 live sends).
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        type="text"
+                        value={testSendPhone}
+                        onChange={(e) => setTestSendPhone(e.target.value)}
+                        placeholder="+91 9175635165"
+                        style={{ flex: 1, padding: '6px 10px', fontSize: '0.8rem', borderRadius: '6px', border: '1px solid #CBD5E1' }}
+                      />
+                      <button type="submit" disabled={testSendLoading} className="portal-btn-sm portal-btn-primary">
+                        <Send size={12} /> {testSendLoading ? 'Simulating...' : 'Simulate Send'}
+                      </button>
+                    </div>
+                    {testSendResult && (
+                      <div
+                        style={{
+                          marginTop: '8px',
+                          padding: '8px',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          background: testSendResult.success ? '#F0FDF4' : '#FEF2F2',
+                          color: testSendResult.success ? '#166534' : '#991B1B',
+                          border: `1px solid ${testSendResult.success ? '#BBF7D0' : '#FECACA'}`
+                        }}
+                      >
+                        <div><strong>{testSendResult.success ? '✓ Simulation Passed:' : '✕ Validation Failed:'}</strong> {testSendResult.message}</div>
+                        {testSendResult.simulation && (
+                          <div style={{ marginTop: '4px', fontFamily: 'monospace', fontSize: '0.7rem' }}>
+                            WAMID: {testSendResult.simulation.message_id} • Cost: ₹0 • Live Send: FALSE
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </form>
+                </div>
+
+                {/* Right Column: Phone Bubble Preview */}
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#0F172A', marginBottom: '8px', textAlign: 'center' }}>
+                    Live Handset Rendering Preview
+                  </div>
+                  <div className="portal-phone-mockup">
+                    <div className="portal-wa-bubble">
+                      {tplPreviewData.template.header && (
+                        <div className="portal-wa-header">{tplPreviewData.template.header}</div>
+                      )}
+                      <div style={{ whiteSpace: 'pre-wrap', fontSize: '0.85rem', lineHeight: 1.45 }}>
+                        {tplPreviewData.renderedBody}
+                      </div>
+                      {tplPreviewData.template.footer && (
+                        <div className="portal-wa-footer">{tplPreviewData.template.footer}</div>
+                      )}
+                      <div className="portal-wa-time">10:30 AM ✓✓</div>
+                    </div>
+                    {Array.isArray(tplPreviewData.template.buttons) && tplPreviewData.template.buttons.length > 0 && (
+                      <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {tplPreviewData.template.buttons.map((b, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              background: '#FFFFFF',
+                              color: '#00A884',
+                              textAlign: 'center',
+                              padding: '7px',
+                              borderRadius: '8px',
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.08)'
+                            }}
+                          >
+                            ↪ {b}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div style={{ marginTop: '16px', fontSize: '0.8rem', color: '#64748B', textAlign: 'center' }}>
-                Channel: <strong>{tplPreviewData.template.channel}</strong> • Category: <strong>{tplPreviewData.template.category}</strong>
-              </div>
-
-              <div className="portal-btn-row">
-                <button onClick={() => setTplPreviewModal(false)} className="portal-btn portal-btn-primary" style={{ width: '100%' }}>
-                  Close Preview
+              <div className="portal-btn-row" style={{ marginTop: '18px' }}>
+                <button
+                  onClick={() => {
+                    handleDuplicateTemplate(tplPreviewData.template.template_id);
+                    setTplPreviewModal(false);
+                  }}
+                  className="portal-btn portal-btn-outline"
+                >
+                  <Copy size={14} /> Duplicate as Local Draft
+                </button>
+                <button onClick={() => setTplPreviewModal(false)} className="portal-btn portal-btn-primary">
+                  Close Inspector
                 </button>
               </div>
             </div>
@@ -3386,10 +3854,10 @@ export default function UnifiedAdminPortal({ initialTab }) {
                   onChange={(e) => setCmpForm({ ...cmpForm, template_id: e.target.value })}
                   className="portal-select"
                 >
-                  <option value="">Select a verified template</option>
+                  <option value="">Select a template blueprint</option>
                   {templates.map(t => (
                     <option key={t.template_id} value={t.template_id}>
-                      {t.display_name || t.name} ({t.channel})
+                      {t.display_name || t.name} ({t.channel} — {t.synced_from_meta && t.meta_approval_status === 'APPROVED' ? 'Meta Approved' : t.meta_approval_status || 'Local Draft'})
                     </option>
                   ))}
                 </select>
@@ -3418,7 +3886,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
       {/* Dry Run Results Modal */}
       {dryRunModal && dryRunSummary && (
         <div className="portal-modal-backdrop" onClick={() => setDryRunModal(false)}>
-          <div className="portal-modal-card" style={{ maxWidth: '520px' }} onClick={(e) => e.stopPropagation()}>
+          <div className="portal-modal-card" style={{ maxWidth: '560px' }} onClick={(e) => e.stopPropagation()}>
             <div className="portal-modal-header" style={{ background: '#F0FDF4', borderBottom: '1px solid #BBF7D0' }}>
               <CheckCircle2 size={32} color="#16A34A" />
               <h3>Dry Run Simulation Completed</h3>
@@ -3427,9 +3895,11 @@ export default function UnifiedAdminPortal({ initialTab }) {
             <div className="portal-modal-body">
               <div className="portal-dryrun-summary">
                 <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#0F172A' }}>
-                  Campaign: {dryRunSummary.campaign_name || dryRunSummary.campaign_id}
+                  Template Applied: {dryRunSummary.template_applied || 'Default Direct Briefing'}
                 </div>
-                <div className="text-muted text-xs">Target Cohort: {dryRunSummary.target_segment}</div>
+                <div className="text-muted text-xs">
+                  Template Status: <strong>{dryRunSummary.template_status || 'N/A'}</strong> • Mode: <strong>{dryRunSummary.provider_mode || 'mock'}</strong>
+                </div>
 
                 <div className="portal-dryrun-metrics">
                   <div className="portal-dryrun-stat">
@@ -3441,18 +3911,29 @@ export default function UnifiedAdminPortal({ initialTab }) {
                     <div className="lbl">Valid Contacts</div>
                   </div>
                   <div className="portal-dryrun-stat">
-                    <div className="num text-warning">{dryRunSummary.suppressed_count || 0}</div>
-                    <div className="lbl">Suppressed</div>
+                    <div className="num text-warning">{dryRunSummary.suppressed_opt_outs || 0}</div>
+                    <div className="lbl">Opt-Out Suppressed</div>
                   </div>
                 </div>
               </div>
 
+              {Array.isArray(dryRunSummary.validation_warnings) && dryRunSummary.validation_warnings.length > 0 && (
+                <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', color: '#92400E', padding: '10px', borderRadius: '6px', fontSize: '0.78rem', marginBottom: '12px' }}>
+                  <strong>Compliance Notice:</strong>
+                  <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
+                    {dryRunSummary.validation_warnings.map((w, idx) => (
+                      <li key={idx}>{w}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '6px', fontSize: '0.8rem', color: '#334155' }}>
-                <div><strong>Simulation Result:</strong> <span className="portal-badge badge-success">PASS</span></div>
-                <div><strong>Delivery Cost:</strong> ₹0.00 (PROVIDER_MODE=mock)</div>
-                <div style={{ marginTop: '6px' }}><strong>Sample Formatted Payload:</strong></div>
-                <pre style={{ background: '#FFFFFF', padding: '8px', borderRadius: '4px', border: '1px solid #E2E8F0', fontSize: '0.75rem', marginTop: '4px', overflowX: 'auto' }}>
-                  {JSON.stringify(dryRunSummary.sample_payload || { recipient: 'Sample Developer / School Desk', template: 'verified', status: 'mock_delivered' }, null, 2)}
+                <div><strong>Simulation Result:</strong> <span className="portal-badge badge-success">{dryRunSummary.status || 'SUCCESSFUL_SIMULATION'}</span></div>
+                <div><strong>Live Messages Sent:</strong> 0 • <strong>Delivery Cost:</strong> ₹0.00 (PROVIDER_MODE=mock)</div>
+                <div style={{ marginTop: '6px' }}><strong>Sample Rendered Message Preview:</strong></div>
+                <pre style={{ background: '#FFFFFF', padding: '8px', borderRadius: '4px', border: '1px solid #E2E8F0', fontSize: '0.75rem', marginTop: '4px', whiteSpace: 'pre-wrap' }}>
+                  {dryRunSummary.sample_rendered_message || dryRunSummary.result_message}
                 </pre>
               </div>
 

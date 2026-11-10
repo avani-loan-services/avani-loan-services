@@ -15,20 +15,27 @@
       "Opt-out"
     ],
     "variables": [
-      "Customer Name",
-      "Loan Type",
-      "Eligibility Amount"
+      "1",
+      "2",
+      "3"
     ],
     "sample_values": {
       "1": "Sachin Patil",
       "2": "Home Loan",
       "3": "₹45,00,000"
     },
-    "meta_approval_status": "APPROVED",
+    "meta_approval_status": "NOT_VERIFIED",
     "local_status": "Active",
     "created_by": "system",
     "created_at": "2026-11-07T13:46:01.029Z",
-    "updated_at": "2026-11-07T13:46:01.029Z"
+    "updated_at": "2026-11-07T13:46:01.029Z",
+    "synced_from_meta": false,
+    "verification_note": "Local blueprint — requires Meta Graph API System User Token to verify live WABA approval status.",
+    "variable_labels": [
+      "Customer Name",
+      "Loan Type",
+      "Eligibility Amount"
+    ]
   },
   {
     "template_id": "TPL-WABA-002",
@@ -46,20 +53,27 @@
       "Decline"
     ],
     "variables": [
-      "Executive Name",
-      "Company Name",
-      "City"
+      "1",
+      "2",
+      "3"
     ],
     "sample_values": {
       "1": "Mr. Abhishek Lodha",
       "2": "Macrotech Developers (Lodha)",
       "3": "Mumbai"
     },
-    "meta_approval_status": "APPROVED",
+    "meta_approval_status": "NOT_VERIFIED",
     "local_status": "Active",
     "created_by": "system",
     "created_at": "2026-11-07T13:46:01.029Z",
-    "updated_at": "2026-11-07T13:46:01.029Z"
+    "updated_at": "2026-11-07T13:46:01.029Z",
+    "synced_from_meta": false,
+    "verification_note": "Local blueprint — requires Meta Graph API System User Token to verify live WABA approval status.",
+    "variable_labels": [
+      "Executive Name",
+      "Company Name",
+      "City"
+    ]
   },
   {
     "template_id": "TPL-WABA-003",
@@ -76,18 +90,24 @@
       "Opt-out"
     ],
     "variables": [
-      "Trustee/Chairman Name",
-      "Institution Name"
+      "1",
+      "2"
     ],
     "sample_values": {
       "1": "Mr. Rustom Kerawalla",
       "2": "VIBGYOR High Group of Schools"
     },
-    "meta_approval_status": "APPROVED",
+    "meta_approval_status": "NOT_VERIFIED",
     "local_status": "Active",
     "created_by": "system",
     "created_at": "2026-11-07T13:46:01.029Z",
-    "updated_at": "2026-11-07T13:46:01.029Z"
+    "updated_at": "2026-11-07T13:46:01.029Z",
+    "synced_from_meta": false,
+    "verification_note": "Local blueprint — requires Meta Graph API System User Token to verify live WABA approval status.",
+    "variable_labels": [
+      "Trustee/Chairman Name",
+      "Institution Name"
+    ]
   },
   {
     "template_id": "TPL-EMAIL-001",
@@ -173,91 +193,82 @@
     "updated_at": "2026-11-07T13:46:01.029Z"
   },
   {
-    "template_id": "TPL-WHAT-MW6GR5XI",
-    "name": "test_phase_5_3_19_tpl",
-    "display_name": "test_phase_5_3_19_tpl",
+    "template_id": "TPL-WABA-004",
+    "meta_id": null,
+    "name": "als_college_university_capex_v1",
+    "display_name": "College & University Capex Term Debt (WhatsApp)",
     "channel": "WhatsApp",
-    "category": "MARKETING",
+    "category": "UTILITY",
     "language": "en",
-    "header": "Avani Loan Services — Exclusive Desk",
-    "body": "Hello {{1}}, we are pleased to introduce customized capital financing for {{2}}.",
-    "footer": "Reply STOP to unsubscribe",
-    "buttons": [],
-    "variables": [
-      "Customer Name",
-      "Project Name"
+    "header": "Higher Education Institutional Banking Desk",
+    "body": "Respected {{1}}, Avani Loan Services structures long-tenure institutional capex & equipment finance (₹5 Cr - ₹10 Cr) for {{2}} in {{3}}. May we share our institutional debt advisory sheet?",
+    "footer": "Avani Loan Services Institutional Desk | Latur & Mumbai",
+    "buttons": [
+      "Share Advisory Note",
+      "Request Call",
+      "Opt-out"
     ],
-    "sample_values": {},
-    "meta_approval_status": "LOCAL_DRAFT",
+    "variables": [
+      "1",
+      "2",
+      "3"
+    ],
+    "variable_labels": [
+      "Chancellor/President Name",
+      "University/College Name",
+      "City"
+    ],
+    "sample_values": {
+      "1": "Shri Amrish R. Patel",
+      "2": "SVKM NMIMS University",
+      "3": "Mumbai"
+    },
+    "meta_approval_status": "NOT_VERIFIED",
+    "synced_from_meta": false,
+    "quality_score": "UNKNOWN",
+    "verification_note": "Local blueprint — requires Meta Graph API System User Token to verify live WABA approval status.",
     "local_status": "Active",
-    "created_by": "admin",
-    "created_at": "2026-11-07T13:53:03.174Z",
-    "updated_at": "2026-11-07T13:53:03.174Z"
+    "created_by": "system",
+    "created_at": "2026-11-10T04:17:13.500Z",
+    "updated_at": "2026-11-10T04:17:13.500Z"
   },
   {
-    "template_id": "TPL-WHAT-MW6GR628",
-    "name": "test_phase_5_3_19_tpl_copy",
-    "display_name": "test_phase_5_3_19_tpl (Copy)",
+    "template_id": "TPL-WHAT-MWAAAC68",
+    "name": "als_builder_apf_desk_v1_draft_ac6b",
+    "display_name": "Builder APF Tie-up & Home Loan Desk (WhatsApp) (Local Draft)",
     "channel": "WhatsApp",
-    "category": "MARKETING",
+    "category": "UTILITY",
     "language": "en",
-    "header": "Avani Loan Services — Exclusive Desk",
-    "body": "Hello {{1}}, we are pleased to introduce customized capital financing for {{2}}.",
-    "footer": "Reply STOP to unsubscribe",
-    "buttons": [],
-    "variables": [
-      "Customer Name",
-      "Project Name"
+    "header": "Builder Partnership & APF Desk",
+    "body": "Dear {{1}}, team Avani Loan Services wishes to establish an on-site Home Loan desk for {{2}} in {{3}}. We partner with 30+ leading banks & HFCs for fast buyer sanctions and APF approvals. When can we schedule a 10-minute briefing?",
+    "footer": "Avani Loan Services Corporate Partnerships Desk",
+    "buttons": [
+      "Schedule Briefing",
+      "View Builder Deck",
+      "Decline"
     ],
-    "sample_values": {},
+    "variables": [
+      "1",
+      "2",
+      "3"
+    ],
+    "sample_values": {
+      "1": "Mr. Abhishek Lodha",
+      "2": "Macrotech Developers (Lodha)",
+      "3": "Mumbai"
+    },
     "meta_approval_status": "LOCAL_DRAFT",
     "local_status": "Active",
     "created_by": "admin",
-    "created_at": "2026-11-07T13:53:03.344Z",
-    "updated_at": "2026-11-07T13:53:03.344Z"
-  },
-  {
-    "template_id": "TPL-WHAT-MW6GU7DU",
-    "name": "test_phase_5_3_19_tpl",
-    "display_name": "test_phase_5_3_19_tpl",
-    "channel": "WhatsApp",
-    "category": "MARKETING",
-    "language": "en",
-    "header": "Avani Loan Services — Exclusive Desk",
-    "body": "Hello {{1}}, we are pleased to introduce customized capital financing for {{2}}.",
-    "footer": "Reply STOP to unsubscribe",
-    "buttons": [],
-    "variables": [
-      "Customer Name",
-      "Project Name"
+    "created_at": "2026-11-10T06:03:05.123Z",
+    "updated_at": "2026-11-10T06:03:05.126Z",
+    "synced_from_meta": false,
+    "verification_note": "Duplicated as a Local Draft — requires submission and approval in Meta Business Suite before live WABA dispatch.",
+    "variable_labels": [
+      "Executive Name",
+      "Company Name",
+      "City"
     ],
-    "sample_values": {},
-    "meta_approval_status": "LOCAL_DRAFT",
-    "local_status": "Active",
-    "created_by": "admin",
-    "created_at": "2026-11-07T13:55:25.026Z",
-    "updated_at": "2026-11-07T13:55:25.026Z"
-  },
-  {
-    "template_id": "TPL-WHAT-MW6GU7E2",
-    "name": "test_phase_5_3_19_tpl_copy",
-    "display_name": "test_phase_5_3_19_tpl (Copy)",
-    "channel": "WhatsApp",
-    "category": "MARKETING",
-    "language": "en",
-    "header": "Avani Loan Services — Exclusive Desk",
-    "body": "Hello {{1}}, we are pleased to introduce customized capital financing for {{2}}.",
-    "footer": "Reply STOP to unsubscribe",
-    "buttons": [],
-    "variables": [
-      "Customer Name",
-      "Project Name"
-    ],
-    "sample_values": {},
-    "meta_approval_status": "LOCAL_DRAFT",
-    "local_status": "Active",
-    "created_by": "admin",
-    "created_at": "2026-11-07T13:55:25.034Z",
-    "updated_at": "2026-11-07T13:55:25.034Z"
+    "meta_id": null
   }
 ]

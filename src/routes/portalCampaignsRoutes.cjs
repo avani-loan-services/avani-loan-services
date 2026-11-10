@@ -9,6 +9,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/portalDatabase.cjs');
 const { requirePortalAuth, requirePermission, requireRole } = require('../middleware/portalAuthMiddleware.cjs');
+const { isSchool, isCollege } = require('../utils/educationCategoryHelper.cjs');
 
 // Helper to calculate audience size based on target segment
 function getAudienceForSegment(segment) {
@@ -21,18 +22,12 @@ function getAudienceForSegment(segment) {
       break;
     case 'SCHOOLS_24':
       const institutions = db.getAll('education_institutions');
-      count = institutions.filter(i => {
-        const cat = (i.institution_category || '').toLowerCase();
-        return cat.includes('school') || cat.includes('k-12');
-      }).length || 24;
+      count = institutions.filter(i => isSchool(i)).length || 24;
       description = 'K-12 School Chains & Educational Trusts (24 Campuses)';
       break;
     case 'COLLEGES_56':
       const insts = db.getAll('education_institutions');
-      count = insts.filter(i => {
-        const cat = (i.institution_category || '').toLowerCase();
-        return !cat.includes('school') && !cat.includes('k-12');
-      }).length || 56;
+      count = insts.filter(i => isCollege(i)).length || 56;
       description = 'Colleges, Autonomous Institutes & Universities (56 Campuses)';
       break;
     case 'RETAIL_LEADS':
@@ -274,11 +269,32 @@ router.post('/:id/dry-run', requirePortalAuth, (req, res) => {
     const optOutCount = consents.filter(c => c.opt_out === true).length;
     const eligibleCount = Math.max(0, totalRecipients - optOutCount);
 
-    // 3. Template check
+    // 3. Template check & variable interpolation preview
     let templateName = 'Default Direct Briefing';
+    let templateStatus = 'N/A';
+    let templateMetaVerified = false;
+    let sampleRenderedMessage = 'Dear Partner, Avani Loan Services invites you to review our institutional financing & home loan partnership desk.';
+    const validationWarnings = [];
+
     if (campaign.template_id) {
       const tpl = db.getById('portal_templates', campaign.template_id);
-      if (tpl) templateName = tpl.display_name || tpl.name;
+      if (tpl) {
+        templateName = tpl.display_name || tpl.name;
+        templateStatus = tpl.meta_approval_status || 'NOT_VERIFIED';
+        templateMetaVerified = Boolean(tpl.synced_from_meta && tpl.meta_approval_status === 'APPROVED');
+        if (tpl.channel === 'WhatsApp' && !templateMetaVerified) {
+          validationWarnings.push(`Template "${tpl.name}" has status "${templateStatus}" (not yet verified via Meta Graph API). Live WABA dispatch requires Meta approval.`);
+        }
+        let bodyText = tpl.body || '';
+        const samples = tpl.sample_values || { '1': 'Partner Executive', '2': 'Enterprise Organization', '3': 'Mumbai' };
+        Object.keys(samples).forEach((k, idx) => {
+          const reg = new RegExp(`\\{\\{${k}\\}\\}|\\{\\{${idx + 1}\\}\\}`, 'g');
+          bodyText = bodyText.replace(reg, samples[k]);
+        });
+        sampleRenderedMessage = bodyText;
+      } else {
+        validationWarnings.push(`Selected template ID "${campaign.template_id}" was not found.`);
+      }
     }
 
     // 4. Update campaign state to Dry Run Completed / Awaiting Approval
@@ -291,11 +307,16 @@ router.post('/:id/dry-run', requirePortalAuth, (req, res) => {
       validated_eligible_records: eligibleCount,
       valid_recipients: eligibleCount,
       cost_incurred: 0,
+      template_id: campaign.template_id || null,
       template_applied: templateName,
+      template_status: templateStatus,
+      template_meta_verified: templateMetaVerified,
+      sample_rendered_message: sampleRenderedMessage,
+      validation_warnings: validationWarnings,
       variables_validated: true,
       live_messages_dispatched: 0,
       status: 'SUCCESSFUL_SIMULATION',
-      result_message: `Dry Run Verified: ${eligibleCount}/${totalRecipients} recipients eligible. 0 live dispatches (Mock Mode active). Ready for Owner Approval.`
+      result_message: `Dry Run Verified: ${eligibleCount}/${totalRecipients} recipients eligible (${optOutCount} opt-out suppressed). 0 live dispatches (Mock Mode active). Ready for Owner Review.`
     };
 
     campaign.dry_run_executed = true;

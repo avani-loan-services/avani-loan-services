@@ -7,14 +7,14 @@
     "target_segment": "BUILDERS_80",
     "target_segment_desc": "Top 80 Maharashtra Builder & Developer Enterprises",
     "template_id": "TPL-WABA-002",
-    "status": "Paused",
+    "status": "Awaiting Approval",
     "total_audience": 80,
     "eligible_audience": 80,
     "suppressed_count": 0,
     "consent_verified": true,
     "dry_run_executed": true,
     "dry_run_summary": {
-      "executed_at": "2026-11-07T13:55:25.046Z",
+      "executed_at": "2026-11-10T12:18:16.830Z",
       "provider_mode": "mock",
       "total_target_records": 80,
       "total_audience": 80,
@@ -22,19 +22,26 @@
       "validated_eligible_records": 80,
       "valid_recipients": 80,
       "cost_incurred": 0,
+      "template_id": "TPL-WABA-002",
       "template_applied": "Builder APF Tie-up & Home Loan Desk (WhatsApp)",
+      "template_status": "NOT_VERIFIED",
+      "template_meta_verified": false,
+      "sample_rendered_message": "Dear Mr. Abhishek Lodha, team Avani Loan Services wishes to establish an on-site Home Loan desk for Macrotech Developers (Lodha) in Mumbai. We partner with 30+ leading banks & HFCs for fast buyer sanctions and APF approvals. When can we schedule a 10-minute briefing?",
+      "validation_warnings": [
+        "Template \"als_builder_apf_desk_v1\" has status \"NOT_VERIFIED\" (not yet verified via Meta Graph API). Live WABA dispatch requires Meta approval."
+      ],
       "variables_validated": true,
       "live_messages_dispatched": 0,
       "status": "SUCCESSFUL_SIMULATION",
-      "result_message": "Dry Run Verified: 80/80 recipients eligible. 0 live dispatches (Mock Mode active). Ready for Owner Approval."
+      "result_message": "Dry Run Verified: 80/80 recipients eligible (0 opt-out suppressed). 0 live dispatches (Mock Mode active). Ready for Owner Review."
     },
-    "approval_status": "Halted via Emergency Stop",
+    "approval_status": "Pending Owner Sign-off",
     "approval_by": "admin",
     "scheduled_date": "2026-11-15",
     "notes": "Targeting 80 verified Maharashtra enterprise builder headquarters across 10 cities.",
     "created_by": "admin",
     "created_at": "2026-11-01T10:00:00Z",
-    "updated_at": "2026-11-07T13:55:25.061Z",
+    "updated_at": "2026-11-10T12:18:16.830Z",
     "approved_at": "2026-11-07T13:55:25.054Z"
   },
   {

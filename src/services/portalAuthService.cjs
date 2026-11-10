@@ -222,6 +222,33 @@ async function changePassword(userId, currentPassword, newPassword, ip = '127.0.
   user.updated_at = new Date().toISOString();
   db.upsert('admin_users', 'user_id', user);
 
+  // Invalidate all active sessions for this user upon password change (Session Revocation Boundary)
+  if (db.tables && db.tables.admin_sessions) {
+    for (const [sId, sess] of db.tables.admin_sessions.entries()) {
+      if (sess.user_id === userId) {
+        sess.is_revoked = true;
+        db.tables.admin_sessions.set(sId, sess);
+      }
+    }
+    if (typeof db.persist === 'function') {
+      db.persist('admin_sessions');
+    }
+  }
+  if (db.isMongoConnected) {
+    try {
+      const { getPortalModels } = require('../models/portalSchemas.cjs');
+      const models = getPortalModels();
+      if (models.PortalAdminSession) {
+        await models.PortalAdminSession.updateMany(
+          { user_id: userId, is_revoked: false },
+          { $set: { is_revoked: true, revoked_at: new Date() } }
+        );
+      }
+    } catch (sErr) {
+      console.warn('[PortalAuth] Session revocation notice:', sErr.message);
+    }
+  }
+
   db.logAudit(user.user_id, 'SYSTEM', 'PASSWORD_CHANGED', {}, ip, userAgent);
 
   return { success: true, message: 'Password updated successfully. You can now access all portal functions.' };
