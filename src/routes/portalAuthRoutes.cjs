@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const rateLimit = require('express-rate-limit');
-const { authenticate, changePassword, ROLES } = require('../services/portalAuthService.cjs');
+const { authenticate, changePassword, issueSession, getHashFingerprint, ROLES } = require('../services/portalAuthService.cjs');
 const { requirePortalAuth, requireRole } = require('../middleware/portalAuthMiddleware.cjs');
 const db = require('../models/portalDatabase.cjs');
 
@@ -53,10 +53,32 @@ router.post('/login', loginLimiter, async (req, res) => {
 });
 
 // GET /api/portal/auth/me
-router.get('/me', requirePortalAuth, (req, res) => {
-  let user = db.getById('admin_users', req.portalUser.userId);
-  if (!user && db.tables && db.tables.admin_users) {
-    user = db.tables.admin_users.get(req.portalUser.userId);
+router.get('/me', requirePortalAuth, async (req, res) => {
+  let user = null;
+  let authSource = 'local_store';
+
+  if (db.isMongoConnected) {
+    try {
+      const { getPortalModels } = require('../models/portalSchemas.cjs');
+      const models = getPortalModels();
+      if (models.PortalAdminUser) {
+        const mongoUser = await models.PortalAdminUser.findOne({ user_id: req.portalUser.userId }).lean();
+        if (mongoUser) {
+          user = mongoUser;
+          authSource = 'mongodb_atlas';
+          if (db.tables && db.tables.admin_users) {
+            db.tables.admin_users.set(user.user_id, user);
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  if (!user) {
+    user = db.getById('admin_users', req.portalUser.userId);
+    if (!user && db.tables && db.tables.admin_users) {
+      user = db.tables.admin_users.get(req.portalUser.userId);
+    }
   }
   if (!user || !user.is_active) {
     return res.status(401).json({ success: false, authenticated: false, message: 'User not found or inactive.' });
@@ -65,13 +87,17 @@ router.get('/me', requirePortalAuth, (req, res) => {
   return res.json({
     success: true,
     authenticated: true,
+    authSource,
+    atlasConnected: Boolean(db.isMongoConnected),
     user: {
       userId: user.user_id,
       username: user.username,
       email: user.email,
       fullName: user.full_name,
       role: user.role,
-      mustChangePassword: user.must_change_password
+      mustChangePassword: user.must_change_password,
+      updatedAt: user.updated_at || null,
+      hashFingerprint: getHashFingerprint(user.password_hash)
     }
   });
 });
@@ -88,22 +114,9 @@ router.post('/change-password', requirePortalAuth, async (req, res) => {
       return res.status(result.status || 400).json(result);
     }
 
-    // Issue refreshed token with mustChangePassword: false
-    const jwt = require('jsonwebtoken');
-    const JWT_SECRET = process.env.CALCULATOR_SESSION_SECRET || process.env.JWT_SECRET || 'AVANI_PORTAL_SECURE_KEY_2026_@FINSERV';
+    // Create a brand-new active session for the refreshed token while leaving all prior sessions revoked
     const updatedUser = db.getById('admin_users', req.portalUser.userId);
-    const refreshedToken = jwt.sign(
-      {
-        userId: updatedUser.user_id,
-        username: updatedUser.username,
-        email: updatedUser.email,
-        role: updatedUser.role,
-        sessionId: req.portalUser.sessionId,
-        mustChangePassword: false
-      },
-      JWT_SECRET,
-      { expiresIn: '8h' }
-    );
+    const { token: refreshedToken } = await issueSession(updatedUser, ip, userAgent);
     result.token = refreshedToken;
 
     // Refresh cookie

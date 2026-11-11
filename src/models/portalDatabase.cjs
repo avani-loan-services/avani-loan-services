@@ -696,6 +696,22 @@ const db = {
     return updated;
   },
 
+  upsertAsync: async (tableName, pkField, record) => {
+    const updated = db.upsert(tableName, pkField, record);
+    if (isConnected && isConnected()) {
+      const models = getPortalModels();
+      const modelName = modelMap[tableName];
+      if (modelName && models[modelName]) {
+        await models[modelName].findOneAndUpdate(
+          { [pkField]: updated[pkField] },
+          { $set: updated },
+          { upsert: true }
+        );
+      }
+    }
+    return updated;
+  },
+
   delete: (tableName, id) => {
     if (!tables[tableName] || !(tables[tableName] instanceof Map)) return false;
 
@@ -839,6 +855,65 @@ async function syncFromAtlas() {
         tables.system_automation_state = { ...tables.system_automation_state, ...state };
       }
     }
+
+    // 4. Clean stale test pollution in portal_templates and reconcile genuine blueprints
+    if (models.PortalTemplate) {
+      await models.PortalTemplate.deleteMany({ name: { $regex: /^test_phase_5_3_19_tpl/ } });
+      const atlasTpls = await models.PortalTemplate.find({}).lean();
+      for (const t of atlasTpls) {
+        if (t && t.template_id) {
+          const clean = { ...t };
+          delete clean._id;
+          delete clean.__v;
+          // Guard against legacy hardcoded APPROVED without genuine Meta sync
+          if (clean.channel === 'WhatsApp' && !clean.synced_from_meta && clean.meta_approval_status === 'APPROVED') {
+            clean.meta_approval_status = 'NOT_VERIFIED';
+          }
+          tables.portal_templates.set(clean.template_id, clean);
+        }
+      }
+      // Push local/seed templates that aren't in Atlas yet
+      const atlasIds = new Set(atlasTpls.map(t => t.template_id));
+      for (const localTpl of tables.portal_templates.values()) {
+        if (!atlasIds.has(localTpl.template_id)) {
+          await models.PortalTemplate.findOneAndUpdate(
+            { template_id: localTpl.template_id },
+            { $set: localTpl },
+            { upsert: true }
+          );
+        }
+      }
+      persistTable('portal_templates');
+    }
+
+    // 5. Reconcile Campaigns & Leads with Atlas
+    const reconcileCollection = async (tableName, modelKey, pk) => {
+      const Model = models[modelKey];
+      if (!Model) return;
+      const atlasDocs = await Model.find({}).lean();
+      const atlasMap = new Map();
+      for (const doc of atlasDocs) {
+        if (doc && doc[pk]) {
+          const clean = { ...doc };
+          delete clean._id;
+          delete clean.__v;
+          atlasMap.set(clean[pk], clean);
+          tables[tableName].set(clean[pk], clean);
+        }
+      }
+      for (const localDoc of tables[tableName].values()) {
+        if (!atlasMap.has(localDoc[pk])) {
+          await Model.findOneAndUpdate({ [pk]: localDoc[pk] }, { $set: localDoc }, { upsert: true });
+        }
+      }
+      persistTable(tableName);
+    };
+
+    await reconcileCollection('portal_campaigns', 'PortalCampaign', 'campaign_id');
+    await reconcileCollection('portal_leads', 'PortalLead', 'lead_id');
+    await reconcileCollection('builder_companies', 'PortalBuilderCompany', 'builder_id');
+    await reconcileCollection('education_institutions', 'PortalEducationInstitution', 'institution_id');
+    await reconcileCollection('education_consent_records', 'PortalEducationConsentRecord', 'consent_id');
 
     return true;
   } catch (err) {

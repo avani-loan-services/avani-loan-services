@@ -130,7 +130,7 @@ const Schemas = {
     name: { type: String, required: true },
     display_name: { type: String, default: '' },
     language: { type: String, default: 'en' },
-    meta_approval_status: { type: String, default: 'APPROVED', index: true },
+    meta_approval_status: { type: String, default: 'LOCAL_DRAFT', index: true },
     body: { type: String, required: true }
   }, { collection: 'portal_templates', strict: false }),
 

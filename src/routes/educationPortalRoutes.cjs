@@ -514,18 +514,62 @@ router.get('/institutions/:id', requirePortalAuth, requirePermission('education:
   });
 });
 
+// 2b. POST /api/portal/education/institutions
+router.post('/institutions', requirePortalAuth, requirePermission('education:write'), async (req, res) => {
+  const { institution_id, institution_name, institution_category, city } = req.body;
+  if (!institution_name || !institution_name.toString().trim() || !institution_category) {
+    return res.status(400).json({ success: false, message: 'institution_name and institution_category are required.' });
+  }
+
+  const normalizedName = institution_name.toString().trim();
+  const normalizedCity = (city || 'Maharashtra').toString().trim();
+  const duplicate = db.findOne('education_institutions', i =>
+    (i.institution_name || '').toLowerCase().trim() === normalizedName.toLowerCase() &&
+    (i.city || '').toLowerCase().trim() === normalizedCity.toLowerCase()
+  );
+  if (duplicate) {
+    return res.status(409).json({
+      success: false,
+      message: `Duplicate institution record exists (${duplicate.institution_id}) for ${normalizedName} in ${normalizedCity}.`
+    });
+  }
+
+  const newId = institution_id && institution_id.toString().trim()
+    ? institution_id.toString().trim()
+    : `ALS-EDU-${Date.now().toString(36).toUpperCase()}`;
+
+  const created = await db.upsertAsync('education_institutions', 'institution_id', {
+    ...req.body,
+    institution_id: newId,
+    institution_name: normalizedName,
+    institution_category,
+    city: normalizedCity,
+    state: req.body.state || 'Maharashtra',
+    lead_priority_tier: req.body.lead_priority_tier || 'A',
+    verification_status: req.body.verification_status || 'Unverified_Pending',
+    pipeline_stage: req.body.pipeline_stage || 1,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  });
+
+  db.logAudit(req.portalUser.userId, 'EDUCATION', 'CREATE_EDUCATION_INSTITUTION', { institution_id: newId, institution_name: normalizedName }, req.ip);
+
+  return res.status(201).json({ success: true, message: 'Institution record created successfully.', data: created });
+});
+
 // 3. PUT /api/portal/education/institutions/:id
-router.put('/institutions/:id', requirePortalAuth, requirePermission('education:write'), (req, res) => {
+router.put('/institutions/:id', requirePortalAuth, requirePermission('education:write'), async (req, res) => {
   const instId = req.params.id;
   const existing = db.getById('education_institutions', instId);
   if (!existing) {
     return res.status(404).json({ success: false, message: 'Educational institution not found.' });
   }
 
-  const updated = db.upsert('education_institutions', 'institution_id', {
+  const updated = await db.upsertAsync('education_institutions', 'institution_id', {
     ...existing,
     ...req.body,
-    institution_id: instId
+    institution_id: instId,
+    updated_at: new Date().toISOString()
   });
 
   db.logAudit(req.portalUser.userId, 'EDUCATION', 'UPDATE_EDUCATION_INSTITUTION', { institution_id: instId, changes: Object.keys(req.body) }, req.ip);

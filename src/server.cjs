@@ -3,8 +3,13 @@ require('dotenv').config();
 const express  = require('express');
 const path     = require('path');
 const cors     = require('cors');
+const helmet   = require('helmet');
 const app      = express();
 app.set('trust proxy', 1);
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 
 const { validateEnvironmentIsolation } = require('./config/envValidator.cjs');
 const { connectDB } = require('./models/database.cjs');
@@ -25,10 +30,13 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+    if (allowedOrigins.includes(origin) || /^https:\/\/avani-loan-service.*\.vercel\.app$/i.test(origin)) {
       return callback(null, true);
     }
-    return callback(null, true);
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
@@ -157,9 +165,10 @@ app.get('/api/portal/health', async (req, res) => {
 app.use((err, req, res, next) => {
   const status = err.statusCode || err.status || 500;
   if (res.headersSent) return next(err);
+  const safeError = (status >= 500 && process.env.NODE_ENV === 'production') ? 'Internal Server Error' : (err.message || 'Internal Server Error');
   return res.status(status).json({
     success: false,
-    error: err.message || 'Internal Server Error'
+    error: safeError
   });
 });
 

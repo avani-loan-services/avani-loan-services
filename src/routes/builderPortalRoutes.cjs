@@ -154,18 +154,61 @@ router.get('/companies/:id', requirePortalAuth, requirePermission('builder:read'
   });
 });
 
+// 2b. POST /api/portal/builder/companies
+router.post('/companies', requirePortalAuth, requirePermission('builder:write'), async (req, res) => {
+  const { builder_id, company_name, city } = req.body;
+  if (!company_name || !company_name.toString().trim()) {
+    return res.status(400).json({ success: false, message: 'company_name is required.' });
+  }
+
+  const normalizedName = company_name.toString().trim();
+  const normalizedCity = (city || 'Maharashtra').toString().trim();
+  const duplicate = db.findOne('builder_companies', c =>
+    (c.company_name || '').toLowerCase().trim() === normalizedName.toLowerCase() &&
+    (c.city || '').toLowerCase().trim() === normalizedCity.toLowerCase()
+  );
+  if (duplicate) {
+    return res.status(409).json({
+      success: false,
+      message: `Duplicate builder record exists (${duplicate.builder_id}) for ${normalizedName} in ${normalizedCity}.`
+    });
+  }
+
+  const newId = builder_id && builder_id.toString().trim()
+    ? builder_id.toString().trim()
+    : `ALS-BLD-${Date.now().toString(36).toUpperCase()}`;
+
+  const created = await db.upsertAsync('builder_companies', 'builder_id', {
+    ...req.body,
+    builder_id: newId,
+    company_name: normalizedName,
+    city: normalizedCity,
+    state: req.body.state || 'Maharashtra',
+    lead_priority_tier: req.body.lead_priority_tier || 'A',
+    verification_status: req.body.verification_status || 'Unverified_Pending',
+    pipeline_stage: req.body.pipeline_stage || 1,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  });
+
+  db.logAudit(req.portalUser.userId, 'BUILDER', 'CREATE_BUILDER_COMPANY', { builder_id: newId, company_name: normalizedName }, req.ip);
+
+  return res.status(201).json({ success: true, message: 'Builder company created successfully.', data: created });
+});
+
 // 3. PUT /api/portal/builder/companies/:id
-router.put('/companies/:id', requirePortalAuth, requirePermission('builder:write'), (req, res) => {
+router.put('/companies/:id', requirePortalAuth, requirePermission('builder:write'), async (req, res) => {
   const builderId = req.params.id;
   const existing = db.getById('builder_companies', builderId);
   if (!existing) {
     return res.status(404).json({ success: false, message: 'Builder company not found.' });
   }
 
-  const updated = db.upsert('builder_companies', 'builder_id', {
+  const updated = await db.upsertAsync('builder_companies', 'builder_id', {
     ...existing,
     ...req.body,
-    builder_id: builderId // Prevent tampering with PK
+    builder_id: builderId, // Prevent tampering with PK
+    updated_at: new Date().toISOString()
   });
 
   db.logAudit(req.portalUser.userId, 'BUILDER', 'UPDATE_BUILDER_COMPANY', { builder_id: builderId, changes: Object.keys(req.body) }, req.ip);

@@ -12,7 +12,7 @@ const { getAllLeads, updateLeadStatus } = require('../services/centralLeadEngine
 
 // ── 1. GET /api/portal/leads ──
 // List all leads with filtering by loan type, status, and search query
-router.get('/', requirePortalAuth, (req, res) => {
+router.get('/', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   try {
     const { loanType, status, search } = req.query;
     
@@ -67,7 +67,7 @@ router.get('/', requirePortalAuth, (req, res) => {
 
 // ── 2. GET /api/portal/leads/analytics ──
 // Lead analytics and conversion performance
-router.get('/analytics', requirePortalAuth, (req, res) => {
+router.get('/analytics', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   try {
     const leads = db.getAll('portal_leads');
     const total = leads.length;
@@ -109,7 +109,7 @@ router.get('/analytics', requirePortalAuth, (req, res) => {
 
 // ── 3. PUT /api/portal/leads/:id/status ──
 // Update lead status
-router.put('/:id/status', requirePortalAuth, (req, res) => {
+router.put('/:id/status', requirePortalAuth, requirePermission('crm:write'), async (req, res) => {
   try {
     const leadId = req.params.id;
     const { status, notes } = req.body;
@@ -126,7 +126,7 @@ router.put('/:id/status', requirePortalAuth, (req, res) => {
     if (notes) lead.notes = notes;
     lead.updated_at = new Date().toISOString();
 
-    db.upsert('portal_leads', 'lead_id', lead);
+    await db.upsertAsync('portal_leads', 'lead_id', lead);
     updateLeadStatus(leadId, status, notes);
     db.logAudit(req.portalUser.userId, 'LEADS', 'UPDATE_LEAD_STATUS', { leadId, newStatus: status }, req.ip);
 

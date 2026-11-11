@@ -8,7 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/portalDatabase.cjs');
-const { requirePortalAuth } = require('../middleware/portalAuthMiddleware.cjs');
+const { requirePortalAuth, requirePermission } = require('../middleware/portalAuthMiddleware.cjs');
 const {
   getMetaConnectionStatus,
   syncTemplatesWithDatabase,
@@ -17,7 +17,7 @@ const {
 
 // ── 1. GET /api/portal/templates ──
 // List templates with filtering (channel, category, status, language, search) and sorting
-router.get('/', requirePortalAuth, (req, res) => {
+router.get('/', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   try {
     const { channel, category, status, language, search, sort } = req.query;
     let templates = db.getAll('portal_templates');
@@ -75,7 +75,7 @@ router.get('/', requirePortalAuth, (req, res) => {
 
 // ── 2. GET /api/portal/templates/meta-status ──
 // Genuine Meta WhatsApp Cloud API connection and template status overview
-router.get('/meta-status', requirePortalAuth, async (req, res) => {
+router.get('/meta-status', requirePortalAuth, requirePermission('crm:read'), async (req, res) => {
   try {
     const statusData = await getMetaConnectionStatus();
     return res.json({
@@ -90,7 +90,7 @@ router.get('/meta-status', requirePortalAuth, async (req, res) => {
 
 // ── 3. POST /api/portal/templates/sync-meta ──
 // Synchronize templates from Meta WhatsApp Business Account (never fabricates success)
-router.post('/sync-meta', requirePortalAuth, async (req, res) => {
+router.post('/sync-meta', requirePortalAuth, requirePermission('automation:write'), async (req, res) => {
   try {
     const syncOutcome = await syncTemplatesWithDatabase();
     db.logAudit(
@@ -114,7 +114,7 @@ router.post('/sync-meta', requirePortalAuth, async (req, res) => {
 
 // ── 4. POST /api/portal/templates/preview ──
 // Generate preview with variable replacement and missing variable validation
-router.post('/preview', requirePortalAuth, (req, res) => {
+router.post('/preview', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   try {
     const { template_id, body: rawBody, header: rawHeader, footer: rawFooter, sample_values = {} } = req.body;
     let body = rawBody;
@@ -183,7 +183,7 @@ router.post('/preview', requirePortalAuth, (req, res) => {
 
 // ── 5. POST /api/portal/templates/send-test ──
 // Controlled individual template message test workflow (strictly mock-mode safe)
-router.post('/send-test', requirePortalAuth, async (req, res) => {
+router.post('/send-test', requirePortalAuth, requirePermission('automation:write'), async (req, res) => {
   try {
     const { template_id, recipient_phone, language, variables } = req.body;
     const result = await simulateTestDispatch({
@@ -206,7 +206,7 @@ router.post('/send-test', requirePortalAuth, async (req, res) => {
 
 // ── 6. GET /api/portal/templates/:id ──
 // Get individual template by ID
-router.get('/:id', requirePortalAuth, (req, res) => {
+router.get('/:id', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   try {
     const template = db.getById('portal_templates', req.params.id);
     if (!template) {
@@ -220,7 +220,7 @@ router.get('/:id', requirePortalAuth, (req, res) => {
 
 // ── 7. POST /api/portal/templates ──
 // Create new local template draft
-router.post('/', requirePortalAuth, (req, res) => {
+router.post('/', requirePortalAuth, requirePermission('automation:write'), async (req, res) => {
   try {
     const { name, display_name, channel, category, language, body, header, footer, buttons, variables, variable_labels, sample_values } = req.body;
     if (!name || !channel || !body) {
@@ -256,7 +256,7 @@ router.post('/', requirePortalAuth, (req, res) => {
       updated_at: new Date().toISOString()
     };
 
-    db.upsert('portal_templates', 'template_id', newTemplate);
+    await db.upsertAsync('portal_templates', 'template_id', newTemplate);
     db.logAudit(req.portalUser.userId, 'TEMPLATES', 'CREATE_TEMPLATE_DRAFT', { templateId, name: newTemplate.name, channel }, req.ip);
 
     return res.status(201).json({
@@ -272,7 +272,7 @@ router.post('/', requirePortalAuth, (req, res) => {
 
 // ── 8. PUT /api/portal/templates/:id ──
 // Update local draft template (blocks direct mutation of verified Meta-approved templates)
-router.put('/:id', requirePortalAuth, (req, res) => {
+router.put('/:id', requirePortalAuth, requirePermission('automation:write'), async (req, res) => {
   try {
     const templateId = req.params.id;
     const existing = db.getById('portal_templates', templateId);
@@ -288,19 +288,28 @@ router.put('/:id', requirePortalAuth, (req, res) => {
       });
     }
 
+    const nextBody = typeof req.body.body === 'string' ? req.body.body.trim() : existing.body;
+    const matches = (nextBody || '').match(/\{\{([0-9a-zA-Z_]+)\}\}/g) || [];
+    const extractedVars = [...new Set(matches.map(m => m.replace(/[\{\}]/g, '')))];
+
     const updated = {
       ...existing,
       ...req.body,
       template_id: templateId,
+      meta_id: existing.meta_id || null,
+      created_at: existing.created_at,
+      created_by: existing.created_by,
+      body: nextBody,
+      variables: Array.isArray(req.body.variables) ? req.body.variables : extractedVars,
       synced_from_meta: false,
       updated_at: new Date().toISOString()
     };
 
-    if (existing.channel === 'WhatsApp') {
+    if (updated.channel === 'WhatsApp') {
       updated.meta_approval_status = 'LOCAL_DRAFT';
     }
 
-    db.upsert('portal_templates', 'template_id', updated);
+    await db.upsertAsync('portal_templates', 'template_id', updated);
     db.logAudit(req.portalUser.userId, 'TEMPLATES', 'UPDATE_TEMPLATE_DRAFT', { templateId, name: updated.name }, req.ip);
 
     return res.json({
@@ -316,7 +325,7 @@ router.put('/:id', requirePortalAuth, (req, res) => {
 
 // ── 9. POST /api/portal/templates/:id/duplicate ──
 // Duplicate existing template as a clearly labelled Local Draft
-router.post('/:id/duplicate', requirePortalAuth, (req, res) => {
+router.post('/:id/duplicate', requirePortalAuth, requirePermission('automation:write'), async (req, res) => {
   try {
     const templateId = req.params.id;
     const existing = db.getById('portal_templates', templateId);
@@ -339,7 +348,7 @@ router.post('/:id/duplicate', requirePortalAuth, (req, res) => {
       updated_at: new Date().toISOString()
     };
 
-    db.upsert('portal_templates', 'template_id', duplicated);
+    await db.upsertAsync('portal_templates', 'template_id', duplicated);
     db.logAudit(req.portalUser.userId, 'TEMPLATES', 'DUPLICATE_TEMPLATE_DRAFT', { sourceId: templateId, newId }, req.ip);
 
     return res.status(201).json({

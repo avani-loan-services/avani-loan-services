@@ -10,6 +10,76 @@
 const db = require('../models/portalDatabase.cjs');
 
 /**
+ * Strips formatting from a phone number for comparison/deduplication.
+ */
+function normalizePhone(phone) {
+  if (!phone || typeof phone !== 'string') return '';
+  return phone.replace(/[^\d]/g, '');
+}
+
+/**
+ * Validates that a phone string represents a plausible dialable phone number
+ * (rejects placeholders such as "Not publicly verified", "N/A", or invalid digit counts).
+ */
+function isValidPhone(phone) {
+  if (!phone || typeof phone !== 'string') return false;
+  const trimmed = phone.trim();
+  if (!trimmed || /not publicly verified|not verified|n\/a|none|unknown|pending/i.test(trimmed)) {
+    return false;
+  }
+  const digits = normalizePhone(trimmed);
+  return digits.length >= 8 && digits.length <= 15;
+}
+
+/**
+ * Validates basic email syntax while rejecting placeholder values.
+ */
+function isValidEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  const trimmed = email.trim();
+  if (!trimmed || /not publicly verified|not verified|n\/a|none|unknown/i.test(trimmed)) {
+    return false;
+  }
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+}
+
+/**
+ * Resolves the primary contact phone number across Builder, Education, and Lead schemas.
+ * If a record explicitly marks mobile/WhatsApp as unverified (e.g. "Not publicly verified")
+ * for WhatsApp outreach, preserves that string so validation rejects it rather than
+ * falling back to an unrelated switchboard landline.
+ */
+function resolveContactPhone(contact, channel = 'whatsapp') {
+  if (!contact || typeof contact !== 'object') return '';
+  const ch = (channel || 'whatsapp').toLowerCase();
+  const explicitMobile = contact.official_mobile ?? contact.mobile ?? contact.business_mobile ?? contact.whatsapp_number ?? contact.whatsapp_channel;
+  if (ch === 'whatsapp' && typeof explicitMobile === 'string' && explicitMobile.trim() !== '') {
+    return explicitMobile.trim();
+  }
+  return (
+    explicitMobile ||
+    contact.official_telephone ||
+    contact.official_phone ||
+    contact.telephone ||
+    contact.phone ||
+    ''
+  ).toString().trim();
+}
+
+/**
+ * Checks whether a consent record represents an opt-out, revocation, or suppression.
+ */
+function isSuppressedConsent(consentRecord) {
+  if (!consentRecord) return false;
+  return Boolean(
+    consentRecord.opt_out === true ||
+    consentRecord.consent_status === 'Revoked' ||
+    consentRecord.consent_status === 'Suppressed' ||
+    consentRecord.consent_status === 'Opted_Out'
+  );
+}
+
+/**
  * Evaluates whether a contact is legally and technically eligible for WhatsApp promotional messaging.
  * Note: Having a public phone number or past commercial enquiry does NOT automatically grant promotional rights.
  * 
@@ -61,7 +131,8 @@ function evaluateWhatsAppEligibility(contact, consentRecord = null) {
   }
 
   // 4. Contact Presence & Suppression Check
-  if (!contact || (!contact.mobile && !contact.official_mobile && !contact.telephone && !contact.phone)) {
+  const phone = resolveContactPhone(contact, 'whatsapp');
+  if (!contact || !isValidPhone(phone)) {
     return {
       eligible: false,
       reason: 'INVALID_CONTACT: No verified mobile telephone number present.',
@@ -69,8 +140,6 @@ function evaluateWhatsAppEligibility(contact, consentRecord = null) {
       checks
     };
   }
-
-  const phone = (contact.mobile || contact.official_mobile || contact.telephone || contact.phone || '').trim();
 
   // If consent record not supplied, attempt to find in database
   if (!consentRecord) {
@@ -81,7 +150,7 @@ function evaluateWhatsAppEligibility(contact, consentRecord = null) {
   }
 
   // Check Opt-Out & Suppression Lists
-  if (consentRecord && (consentRecord.opt_out === true || consentRecord.consent_status === 'Revoked' || consentRecord.consent_status === 'Suppressed')) {
+  if (isSuppressedConsent(consentRecord)) {
     checks.notSuppressed = false;
     return {
       eligible: false,
@@ -179,7 +248,7 @@ function evaluateMetaAudienceEligibility(contact, consentRecord = null) {
   }
 
   // Check Opt-Out & Advertising Opt-Out
-  if (consentRecord && (consentRecord.opt_out === true || consentRecord.advertising_opt_out === true || consentRecord.consent_status === 'Suppressed')) {
+  if (isSuppressedConsent(consentRecord) || (consentRecord && consentRecord.advertising_opt_out === true)) {
     return {
       eligible: false,
       reason: 'SUPPRESSED: Contact has opted out of advertising or audience matching.',
@@ -260,5 +329,10 @@ function registerOptOutSuppression(identifier, channel = 'ALL', reason = 'User r
 module.exports = {
   evaluateWhatsAppEligibility,
   evaluateMetaAudienceEligibility,
-  registerOptOutSuppression
+  registerOptOutSuppression,
+  resolveContactPhone,
+  normalizePhone,
+  isValidPhone,
+  isValidEmail,
+  isSuppressedConsent
 };

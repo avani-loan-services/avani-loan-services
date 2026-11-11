@@ -122,7 +122,7 @@ router.get('/overview', requirePortalAuth, (req, res) => {
 
 // 2. Tasks Management
 // GET /api/portal/dashboard/tasks
-router.get('/tasks', requirePortalAuth, (req, res) => {
+router.get('/tasks', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   const { module, status, priority } = req.query;
   let tasks = db.getAll('unified_tasks');
 
@@ -134,7 +134,7 @@ router.get('/tasks', requirePortalAuth, (req, res) => {
 });
 
 // POST /api/portal/dashboard/tasks
-router.post('/tasks', requirePortalAuth, (req, res) => {
+router.post('/tasks', requirePortalAuth, requirePermission('crm:write'), (req, res) => {
   const { module, related_id, task_title, task_type, due_date, priority } = req.body;
   if (!task_title || !due_date || !module) {
     return res.status(400).json({ success: false, message: 'module, task_title and due_date are required.' });
@@ -161,7 +161,7 @@ router.post('/tasks', requirePortalAuth, (req, res) => {
 });
 
 // PUT /api/portal/dashboard/tasks/:id
-router.put('/tasks/:id', requirePortalAuth, (req, res) => {
+router.put('/tasks/:id', requirePortalAuth, requirePermission('crm:write'), (req, res) => {
   const taskId = req.params.id;
   const existing = db.getById('unified_tasks', taskId);
   if (!existing) {
@@ -389,7 +389,7 @@ const {
 } = require('../services/marketingPermissionService.cjs');
 
 // POST /api/portal/dashboard/marketing/check-eligibility
-router.post('/marketing/check-eligibility', requirePortalAuth, (req, res) => {
+router.post('/marketing/check-eligibility', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   const { contact, consent } = req.body;
   if (!contact) {
     return res.status(400).json({ success: false, message: 'Contact payload required.' });
@@ -410,7 +410,7 @@ router.post('/marketing/check-eligibility', requirePortalAuth, (req, res) => {
 });
 
 // POST /api/portal/dashboard/marketing/suppression/opt-out
-router.post('/marketing/suppression/opt-out', requirePortalAuth, (req, res) => {
+router.post('/marketing/suppression/opt-out', requirePortalAuth, requirePermission('automation:write'), (req, res) => {
   const { identifier, channel = 'ALL', reason = 'Direct user opt-out request' } = req.body;
   if (!identifier) {
     return res.status(400).json({ success: false, message: 'Identifier (phone/email/id) is required.' });
@@ -421,10 +421,12 @@ router.post('/marketing/suppression/opt-out', requirePortalAuth, (req, res) => {
 });
 
 // GET /api/portal/dashboard/marketing/compliance-summary
-router.get('/marketing/compliance-summary', requirePortalAuth, (req, res) => {
+router.get('/marketing/compliance-summary', requirePortalAuth, requirePermission('crm:read'), (req, res) => {
   const autoState = db.getAutomationState();
   const consents = db.getAll('education_consent_records');
-  const suppressedCount = consents.filter(c => c.opt_out === true || c.consent_status === 'Suppressed').length;
+  const suppressedCount = consents.filter(c =>
+    c.opt_out === true || ['Suppressed', 'Opted_Out', 'Revoked'].includes(c.consent_status)
+  ).length;
   const grantedCount = consents.filter(c => c.consent_status === 'Granted' && !c.opt_out).length;
 
   return res.json({

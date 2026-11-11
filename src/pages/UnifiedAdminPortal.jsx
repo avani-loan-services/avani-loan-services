@@ -13,7 +13,7 @@ import {
   ExternalLink, Eye, EyeOff, AlertCircle, ChevronRight, CheckCircle2, XCircle, Clock,
   ArrowUpRight, AlertTriangle, Play, Lock, UserCheck, Phone, Mail,
   MapPin, Award, FileText, Check, DollarSign, Database, Menu, X,
-  BarChart3, Copy, Plus, PlayCircle
+  BarChart3, Copy, Plus, PlayCircle, Edit3, Calendar
 } from 'lucide-react';
 import './UnifiedAdminPortal.css';
 
@@ -133,6 +133,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const [metaSyncFeedback, setMetaSyncFeedback] = useState(null);
   const [copiedTemplateId, setCopiedTemplateId] = useState(null);
   const [showCreateTplModal, setShowCreateTplModal] = useState(false);
+  const [editingTemplateId, setEditingTemplateId] = useState(null);
   const [tplForm, setTplForm] = useState({ name: '', display_name: '', channel: 'WhatsApp', category: 'UTILITY', language: 'en', header: '', body: '', footer: '', variables: '1, 2, 3' });
   const [tplPreviewModal, setTplPreviewModal] = useState(false);
   const [tplPreviewData, setTplPreviewData] = useState(null);
@@ -469,12 +470,31 @@ export default function UnifiedAdminPortal({ initialTab }) {
     setTimeout(() => setCopiedTemplateId(null), 2000);
   };
 
+  const handleOpenEditTemplate = (tpl) => {
+    setEditingTemplateId(tpl.template_id);
+    setTplForm({
+      name: tpl.name || '',
+      display_name: tpl.display_name || tpl.name || '',
+      channel: tpl.channel || 'WhatsApp',
+      category: tpl.category || 'UTILITY',
+      language: tpl.language || 'en',
+      header: tpl.header || '',
+      body: tpl.body || '',
+      footer: tpl.footer || '',
+      variables: Array.isArray(tpl.variables) ? tpl.variables.join(', ') : ''
+    });
+    setShowCreateTplModal(true);
+  };
+
   const handleCreateTemplate = async (e) => {
     e.preventDefault();
     try {
       const varsArray = tplForm.variables.split(',').map(v => v.trim()).filter(Boolean);
-      const res = await portalFetch('/api/portal/templates', {
-        method: 'POST',
+      const isEditing = Boolean(editingTemplateId);
+      const url = isEditing ? `/api/portal/templates/${editingTemplateId}` : '/api/portal/templates';
+      const method = isEditing ? 'PUT' : 'POST';
+      const res = await portalFetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...tplForm,
@@ -483,15 +503,20 @@ export default function UnifiedAdminPortal({ initialTab }) {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setTemplates(prev => [data.data, ...prev]);
+        if (isEditing) {
+          setTemplates(prev => prev.map(t => t.template_id === editingTemplateId ? data.data : t));
+        } else {
+          setTemplates(prev => [data.data, ...prev]);
+        }
         setShowCreateTplModal(false);
+        setEditingTemplateId(null);
         setTplForm({ name: '', display_name: '', channel: 'WhatsApp', category: 'UTILITY', language: 'en', header: '', body: '', footer: '', variables: '1, 2, 3' });
         fetchMetaStatus();
       } else {
-        alert(data.message || 'Failed to create template');
+        alert(data.message || 'Failed to save template');
       }
     } catch (e) {
-      console.error('Error creating template', e);
+      console.error('Error saving template', e);
     }
   };
 
@@ -645,6 +670,34 @@ export default function UnifiedAdminPortal({ initialTab }) {
       }
     } catch (e) {
       console.error('Error approving campaign', e);
+    }
+  };
+
+  const handleScheduleCampaign = async (campaignId) => {
+    try {
+      const res = await portalFetch(`/api/portal/campaigns/${campaignId}/schedule`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCampaigns(prev => prev.map(c => c.campaign_id === campaignId ? data.data : c));
+      } else {
+        alert(data.message || 'Failed to schedule campaign');
+      }
+    } catch (e) {
+      console.error('Error scheduling campaign', e);
+    }
+  };
+
+  const handleExecuteMockCampaign = async (campaignId) => {
+    try {
+      const res = await portalFetch(`/api/portal/campaigns/${campaignId}/execute-mock`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCampaigns(prev => prev.map(c => c.campaign_id === campaignId ? data.data : c));
+      } else {
+        alert(data.message || 'Failed to execute mock campaign');
+      }
+    } catch (e) {
+      console.error('Error executing mock campaign', e);
     }
   };
 
@@ -1093,8 +1146,10 @@ export default function UnifiedAdminPortal({ initialTab }) {
     });
 
   const filteredCampaigns = campaigns.filter(c => {
-    const matchStatus = !campaignStatusFilter || campaignStatusFilter === 'ALL' || (c.status && c.status.toLowerCase() === campaignStatusFilter.toLowerCase());
-    return matchStatus;
+    if (!campaignStatusFilter || campaignStatusFilter === 'ALL') return true;
+    const raw = (c.status || '').toLowerCase();
+    const q = campaignStatusFilter.toLowerCase();
+    return raw === q;
   });
 
   return (
@@ -2646,7 +2701,14 @@ export default function UnifiedAdminPortal({ initialTab }) {
                     <RefreshCw size={14} className={syncingMeta ? 'spin' : ''} />
                     {syncingMeta ? 'Checking Meta WABA...' : 'Sync from Meta WABA'}
                   </button>
-                  <button onClick={() => setShowCreateTplModal(true)} className="portal-btn portal-btn-primary">
+                  <button
+                    onClick={() => {
+                      setEditingTemplateId(null);
+                      setTplForm({ name: '', display_name: '', channel: 'WhatsApp', category: 'UTILITY', language: 'en', header: '', body: '', footer: '', variables: '1, 2, 3' });
+                      setShowCreateTplModal(true);
+                    }}
+                    className="portal-btn portal-btn-primary"
+                  >
                     <Plus size={14} /> Create Local Draft
                   </button>
                   <button onClick={() => { fetchTemplates(); fetchMetaStatus(); }} className="portal-btn portal-btn-outline">
@@ -2658,10 +2720,10 @@ export default function UnifiedAdminPortal({ initialTab }) {
               {/* Meta WABA Connection Status Banner (Genuine Environment Status) */}
               <div className="portal-waba-banner" style={{ background: metaStatus?.connected ? 'linear-gradient(135deg, #0F172A, #1E3A8A)' : 'linear-gradient(135deg, #1E293B, #0F172A)' }}>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                     <span>WhatsApp Business Platform (Meta Graph API {metaStatus?.graph_api_version || 'v20.0'})</span>
                     <span className="portal-waba-chip" style={{ background: metaStatus?.connected ? '#16A34A' : '#D97706', color: '#FFFFFF', fontWeight: 700 }}>
-                      {metaStatus?.connected ? 'META GRAPH CONNECTED' : 'TOKEN CONFIGURATION PENDING'}
+                      {metaStatus?.connected ? 'META GRAPH CONNECTED' : 'UNAVAILABLE (PROVIDER ACCESS NOT CONFIGURED)'}
                     </span>
                   </div>
                   <div style={{ fontSize: '0.8rem', opacity: 0.92, marginTop: '4px' }}>
@@ -2918,6 +2980,15 @@ export default function UnifiedAdminPortal({ initialTab }) {
                           >
                             <Eye size={12} /> Details & Preview
                           </button>
+                          {!isVerifiedMetaApproved && (
+                            <button
+                              onClick={() => handleOpenEditTemplate(t)}
+                              className="portal-btn-sm portal-btn-outline"
+                              title="Edit local template draft"
+                            >
+                              <Edit3 size={12} /> Edit Draft
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDuplicateTemplate(t.template_id)}
                             className="portal-btn-sm portal-btn-outline"
@@ -2970,14 +3041,14 @@ export default function UnifiedAdminPortal({ initialTab }) {
               </div>
 
               {/* Status Filters */}
-              <div className="portal-tab-filters" style={{ marginBottom: '16px' }}>
-                {['ALL', 'DRAFT', 'DRY_RUN_PASSED', 'SCHEDULED', 'RUNNING', 'COMPLETED', 'STOPPED'].map(st => (
+              <div className="portal-tab-filters" style={{ marginBottom: '16px', flexWrap: 'wrap', gap: '6px' }}>
+                {['ALL', 'Draft', 'Validation failed', 'Ready for review', 'Approved', 'Scheduled', 'Mock dry-run', 'Cancelled', 'Completed', 'Failed'].map(st => (
                   <button
                     key={st}
                     onClick={() => setCampaignStatusFilter(st)}
                     className={`portal-pill ${campaignStatusFilter === st ? 'active' : ''}`}
                   >
-                    {st === 'ALL' ? 'All Campaigns' : st.replace('_', ' ')}
+                    {st === 'ALL' ? 'All Campaigns' : st}
                   </button>
                 ))}
               </div>
@@ -2989,18 +3060,25 @@ export default function UnifiedAdminPortal({ initialTab }) {
                     No campaigns found under this filter.
                   </div>
                 ) : (
-                  filteredCampaigns.map((c) => (
+                  filteredCampaigns.map((c) => {
+                    const statusVal = c.status || 'Draft';
+                    const canApprove = c.dry_run_executed && ['Ready for review', 'Mock dry-run', 'Awaiting Approval'].includes(statusVal);
+                    const canSchedule = statusVal === 'Approved';
+                    const canExecuteMock = ['Approved', 'Scheduled'].includes(statusVal);
+                    const canCancel = !['Completed', 'Cancelled'].includes(statusVal);
+                    const badgeClass =
+                      ['Approved', 'Running'].includes(statusVal) ? 'badge-success' :
+                      ['Ready for review', 'Mock dry-run', 'Awaiting Approval'].includes(statusVal) ? 'badge-accent' :
+                      statusVal === 'Scheduled' ? 'badge-primary' :
+                      ['Cancelled', 'Stopped', 'Paused', 'Validation failed', 'Failed'].includes(statusVal) ? 'badge-danger' :
+                      statusVal === 'Completed' ? 'badge-emerald' : 'badge-warning';
+
+                    return (
                     <div key={c.campaign_id} className="portal-campaign-card">
                       <div>
                         <div className="flex-between">
-                          <span className={`portal-badge ${
-                            c.status === 'RUNNING' ? 'badge-success' :
-                            c.status === 'DRY_RUN_PASSED' ? 'badge-accent' :
-                            c.status === 'SCHEDULED' ? 'badge-primary' :
-                            c.status === 'STOPPED' ? 'badge-danger' :
-                            c.status === 'COMPLETED' ? 'badge-emerald' : 'badge-warning'
-                          }`}>
-                            {c.status}
+                          <span className={`portal-badge ${badgeClass}`}>
+                            {statusVal}
                           </span>
                           <span className="text-muted text-xs">
                             <code>{c.campaign_id}</code>
@@ -3015,7 +3093,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
                         <div className="portal-score-breakdown" style={{ background: '#F8FAFC', padding: '10px', borderRadius: '6px', fontSize: '0.8rem' }}>
                           <div><span>Channel:</span> <strong>{c.channel}</strong></div>
                           <div><span>Target Segment:</span> <strong>{c.target_segment}</strong></div>
-                          <div><span>Audience Count:</span> <strong>{c.audience_count || 0}</strong></div>
+                          <div><span>Audience Count:</span> <strong>{c.eligible_audience ?? c.total_audience ?? c.audience_count ?? 0} eligible / {c.total_audience ?? c.audience_count ?? 0} total</strong></div>
                           <div><span>Scheduled Date:</span> <strong>{c.scheduled_date || 'Immediate'}</strong></div>
                         </div>
 
@@ -3042,16 +3120,18 @@ export default function UnifiedAdminPortal({ initialTab }) {
                       </div>
 
                       <div className="portal-btn-row" style={{ marginTop: '16px', borderTop: '1px solid #F1F5F9', paddingTop: '12px', flexWrap: 'wrap' }}>
-                        <button
-                          onClick={() => handleExecuteDryRun(c.campaign_id)}
-                          disabled={dryRunLoading}
-                          className="portal-btn-sm portal-btn-outline"
-                          title="Simulate audience extraction and message assembly"
-                        >
-                          <PlayCircle size={12} /> Dry Run
-                        </button>
+                        {canCancel && (
+                          <button
+                            onClick={() => handleExecuteDryRun(c.campaign_id)}
+                            disabled={dryRunLoading}
+                            className="portal-btn-sm portal-btn-outline"
+                            title="Simulate audience extraction, suppression check, and message assembly"
+                          >
+                            <PlayCircle size={12} /> Dry Run
+                          </button>
+                        )}
 
-                        {(c.status === 'DRAFT' || c.status === 'DRY_RUN_PASSED') && (
+                        {canApprove && (
                           <button
                             onClick={() => handleApproveCampaign(c.campaign_id)}
                             className="portal-btn-sm portal-btn-primary"
@@ -3060,24 +3140,45 @@ export default function UnifiedAdminPortal({ initialTab }) {
                           </button>
                         )}
 
-                        {(c.status === 'RUNNING' || c.status === 'SCHEDULED') && (
+                        {canSchedule && (
+                          <button
+                            onClick={() => handleScheduleCampaign(c.campaign_id)}
+                            className="portal-btn-sm portal-btn-outline"
+                          >
+                            <Calendar size={12} /> Schedule
+                          </button>
+                        )}
+
+                        {canExecuteMock && (
+                          <button
+                            onClick={() => handleExecuteMockCampaign(c.campaign_id)}
+                            className="portal-btn-sm portal-btn-primary"
+                            title="Execute simulated run in Mock Mode (0 live dispatches)"
+                          >
+                            <Play size={12} /> Mock Run
+                          </button>
+                        )}
+
+                        {canCancel && (
                           <button
                             onClick={() => handleStopCampaign(c.campaign_id)}
                             className="portal-btn-sm portal-btn-danger"
                           >
-                            <AlertOctagon size={12} /> Stop
+                            <AlertOctagon size={12} /> Cancel
                           </button>
                         )}
 
                         <button
                           onClick={() => handleDuplicateCampaign(c.campaign_id)}
                           className="portal-btn-sm portal-btn-outline"
+                          title="Duplicate campaign as Draft"
                         >
                           <Copy size={12} />
                         </button>
                       </div>
                     </div>
-                  ))
+                  );
+                  })
                 )}
               </div>
 
@@ -3506,13 +3607,13 @@ export default function UnifiedAdminPortal({ initialTab }) {
         </main>
       </div>
 
-      {/* Create Template Modal */}
+      {/* Create / Edit Template Modal */}
       {showCreateTplModal && (
-        <div className="portal-modal-backdrop" onClick={() => setShowCreateTplModal(false)}>
+        <div className="portal-modal-backdrop" onClick={() => { setShowCreateTplModal(false); setEditingTemplateId(null); }}>
           <div className="portal-modal-card" style={{ maxWidth: '540px' }} onClick={(e) => e.stopPropagation()}>
             <div className="portal-modal-header">
               <FileText size={28} color="#0052CC" />
-              <h3>Create Message Template</h3>
+              <h3>{editingTemplateId ? 'Edit Local Template Draft' : 'Create Message Template'}</h3>
               <p>Design a reusable WhatsApp, Email or SMS template with parameter tags.</p>
             </div>
             <form onSubmit={handleCreateTemplate} className="portal-form portal-modal-body">

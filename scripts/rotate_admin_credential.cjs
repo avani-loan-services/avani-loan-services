@@ -141,6 +141,10 @@ async function rotateCredentials() {
   let prodApiStatus = 'NOT_ATTEMPTED';
   let prodBackendStorage = 'UNKNOWN';
   let atlasPersistenceVerified = 'NOT_VERIFIED';
+  let atlasReadBackStatus = 'NOT_VERIFIED';
+  let persistenceAfterRestartStatus = 'NOT_VERIFIED_EXTERNALLY';
+  let priorFingerprint = null;
+  let updatedFingerprint = null;
   let oldCredRevoked = 'NOT_VERIFIED';
   let newCredAccepted = 'NOT_VERIFIED';
   let priorSessionRevoked = 'NOT_VERIFIED';
@@ -218,6 +222,13 @@ async function rotateCredentials() {
         const loginData = await loginRes.json();
         if (loginData.success && loginData.token) {
           loginToken = loginData.token;
+          try {
+            const preMeRes = await fetch(`${prodUrl}/api/portal/auth/me`, {
+              headers: { 'Authorization': `Bearer ${loginToken}` }
+            });
+            const preMeData = await preMeRes.json();
+            priorFingerprint = preMeData?.user?.hashFingerprint || null;
+          } catch (_) {}
           const changeRes = await fetch(`${prodUrl}/api/portal/auth/change-password`, {
             method: 'POST',
             headers: {
@@ -260,12 +271,21 @@ async function rotateCredentials() {
               if (newCheckRes.status === 200 && newCheckData.success && newCheckData.token) {
                 newCredAccepted = 'VERIFIED (HTTP 200 OK + JWT)';
 
-                // 3. Verify /me endpoint with new token
+                // 3. Verify /me endpoint with new token (Authoritative Atlas Read-Back)
                 const meRes = await fetch(`${prodUrl}/api/portal/auth/me`, {
                   headers: { 'Authorization': `Bearer ${newCheckData.token}` }
                 });
                 const meData = await meRes.json();
+                updatedFingerprint = meData?.user?.hashFingerprint || changeData?.hashFingerprint || null;
+                const fpChanged = Boolean(priorFingerprint && updatedFingerprint && priorFingerprint !== updatedFingerprint);
                 if (meRes.status === 200 && meData.user && meData.user.role === 'Super Administrator') {
+                  if (meData.authSource === 'mongodb_atlas' && fpChanged) {
+                    atlasReadBackStatus = 'VERIFIED (Atlas read-back confirmed, hash fingerprint updated)';
+                  } else if (meData.authSource === 'mongodb_atlas') {
+                    atlasReadBackStatus = 'VERIFIED (Atlas read-back confirmed)';
+                  } else {
+                    atlasReadBackStatus = `LOCAL_FALLBACK (${meData.authSource || 'local_store'})`;
+                  }
                   // 4. Verify authoritative health storage engine
                   const healthRes2 = await fetch(`${prodUrl}/api/portal/health`);
                   const healthData2 = await healthRes2.json();
@@ -406,9 +426,11 @@ async function rotateCredentials() {
   console.log('Username / Identifier          : admin (or admin@avanifinserv.com)');
   console.log('Role                           : Super Administrator');
   console.log('Account Lockout                : RESET (failed attempts: 0, lockout: null)');
-  console.log('Direct MongoDB Atlas Sync      :', directAtlasStatus);
-  console.log('Production Backend Proxy       :', prodApiStatus);
+  console.log('LOCAL_ATLAS_CONNECTION         :', directAtlasStatus);
+  console.log('PRODUCTION_API_UPDATE          :', prodApiStatus);
   console.log('Production Backend Storage     :', prodBackendStorage);
+  console.log('ATLAS_READ_BACK                :', directAtlasStatus === 'VERIFIED' ? 'VERIFIED (Direct Atlas Write Confirmed)' : atlasReadBackStatus);
+  console.log('PERSISTENCE_AFTER_RESTART      :', persistenceAfterRestartStatus);
   console.log('Authoritative Atlas Persistence:', atlasPersistenceVerified);
   console.log('Old Credential Revocation      :', oldCredRevoked);
   console.log('New Credential Acceptance      :', newCredAccepted);

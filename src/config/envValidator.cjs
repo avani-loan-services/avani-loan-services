@@ -15,7 +15,7 @@ function validateEnvironmentIsolation() {
   console.log('==================================================');
 
   const isLocalOrTestMongo = mongoUri.includes('localhost') || mongoUri.includes('127.0.0.1') || mongoUri.includes('avani_ai_crm_test') || mongoUri.includes('avani_ai_crm_staging');
-  const isProdMongo = mongoUri.includes('avani_ai_crm_prod');
+  const isProdMongo = mongoUri.includes('avani_ai_crm_prod') || mongoUri.includes('avani_loan_services_prod');
 
   // Rule 1: APP_MODE=production MUST NEVER use test/staging DB or mock provider
   if (appMode === 'production') {

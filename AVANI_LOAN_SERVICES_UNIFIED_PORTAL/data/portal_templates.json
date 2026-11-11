@@ -231,44 +231,5 @@
     "created_by": "system",
     "created_at": "2026-11-10T04:17:13.500Z",
     "updated_at": "2026-11-10T04:17:13.500Z"
-  },
-  {
-    "template_id": "TPL-WHAT-MWAAAC68",
-    "name": "als_builder_apf_desk_v1_draft_ac6b",
-    "display_name": "Builder APF Tie-up & Home Loan Desk (WhatsApp) (Local Draft)",
-    "channel": "WhatsApp",
-    "category": "UTILITY",
-    "language": "en",
-    "header": "Builder Partnership & APF Desk",
-    "body": "Dear {{1}}, team Avani Loan Services wishes to establish an on-site Home Loan desk for {{2}} in {{3}}. We partner with 30+ leading banks & HFCs for fast buyer sanctions and APF approvals. When can we schedule a 10-minute briefing?",
-    "footer": "Avani Loan Services Corporate Partnerships Desk",
-    "buttons": [
-      "Schedule Briefing",
-      "View Builder Deck",
-      "Decline"
-    ],
-    "variables": [
-      "1",
-      "2",
-      "3"
-    ],
-    "sample_values": {
-      "1": "Mr. Abhishek Lodha",
-      "2": "Macrotech Developers (Lodha)",
-      "3": "Mumbai"
-    },
-    "meta_approval_status": "LOCAL_DRAFT",
-    "local_status": "Active",
-    "created_by": "admin",
-    "created_at": "2026-11-10T06:03:05.123Z",
-    "updated_at": "2026-11-10T06:03:05.126Z",
-    "synced_from_meta": false,
-    "verification_note": "Duplicated as a Local Draft — requires submission and approval in Meta Business Suite before live WABA dispatch.",
-    "variable_labels": [
-      "Executive Name",
-      "Company Name",
-      "City"
-    ],
-    "meta_id": null
   }
 ]

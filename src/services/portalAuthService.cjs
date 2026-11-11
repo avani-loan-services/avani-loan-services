@@ -144,7 +144,7 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
       message = `Invalid credentials. ${attemptsRemaining} attempt(s) remaining before account lockout.`;
       db.logAudit(user.user_id, 'SYSTEM', 'LOGIN_FAILED_BAD_PASSWORD', { identifier, attemptsRemaining }, ip, userAgent);
     }
-    db.upsert('admin_users', 'user_id', user);
+    await db.upsertAsync('admin_users', 'user_id', user);
     return { success: false, status: 401, message };
   }
 
@@ -152,38 +152,10 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
   user.failed_login_attempts = 0;
   user.lockout_until = null;
   user.last_login = new Date().toISOString();
-  db.upsert('admin_users', 'user_id', user);
+  await db.upsertAsync('admin_users', 'user_id', user);
 
-  // Generate cryptographically secure session ID
-  const crypto = require('crypto');
-  const sessionId = `SESS-${Date.now()}-${crypto.randomBytes(16).toString('hex')}`;
-
-  // Generate JWT token with embedded session ID
-  const token = jwt.sign(
-    {
-      userId: user.user_id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      sessionId,
-      mustChangePassword: user.must_change_password
-    },
-    JWT_SECRET,
-    { expiresIn: TOKEN_EXPIRY }
-  );
-
-  // Record session in database & Atlas
-  const session = {
-    session_id: sessionId,
-    user_id: user.user_id,
-    token,
-    ip_address: ip,
-    user_agent: userAgent,
-    is_revoked: false,
-    created_at: new Date().toISOString(),
-    expires_at: new Date(Date.now() + 8 * 3600 * 1000).toISOString()
-  };
-  db.upsert('admin_sessions', 'session_id', session);
+  // Create signed session via shared helper
+  const { sessionId, token } = await issueSession(user, ip, userAgent);
 
   db.logAudit(user.user_id, 'SYSTEM', 'LOGIN_SUCCESS', { role: user.role, sessionId, mustChangePassword: user.must_change_password }, ip, userAgent);
 
@@ -201,8 +173,24 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
   };
 }
 
+function getHashFingerprint(passwordHash) {
+  if (!passwordHash) return null;
+  const crypto = require('crypto');
+  return crypto.createHash('sha256').update(String(passwordHash)).digest('hex').slice(0, 12);
+}
+
 async function changePassword(userId, currentPassword, newPassword, ip = '127.0.0.1', userAgent = '') {
-  const user = db.getById('admin_users', userId);
+  let user = db.getById('admin_users', userId);
+  if (db.isMongoConnected) {
+    try {
+      const { getPortalModels } = require('../models/portalSchemas.cjs');
+      const models = getPortalModels();
+      if (models.PortalAdminUser) {
+        const mongoUser = await models.PortalAdminUser.findOne({ user_id: userId }).lean();
+        if (mongoUser) user = mongoUser;
+      }
+    } catch (_) {}
+  }
   if (!user) {
     return { success: false, status: 404, message: 'User not found.' };
   }
@@ -219,8 +207,10 @@ async function changePassword(userId, currentPassword, newPassword, ip = '127.0.
   const salt = await bcrypt.genSalt(12);
   user.password_hash = await bcrypt.hash(newPassword, salt);
   user.must_change_password = false;
+  user.failed_login_attempts = 0;
+  user.lockout_until = null;
   user.updated_at = new Date().toISOString();
-  db.upsert('admin_users', 'user_id', user);
+  await db.upsertAsync('admin_users', 'user_id', user);
 
   // Invalidate all active sessions for this user upon password change (Session Revocation Boundary)
   if (db.tables && db.tables.admin_sessions) {
@@ -251,7 +241,12 @@ async function changePassword(userId, currentPassword, newPassword, ip = '127.0.
 
   db.logAudit(user.user_id, 'SYSTEM', 'PASSWORD_CHANGED', {}, ip, userAgent);
 
-  return { success: true, message: 'Password updated successfully. You can now access all portal functions.' };
+  return {
+    success: true,
+    message: 'Password updated successfully. All prior sessions revoked.',
+    updatedAt: user.updated_at,
+    hashFingerprint: getHashFingerprint(user.password_hash)
+  };
 }
 
 function verifyToken(token) {
@@ -314,6 +309,39 @@ async function revokeSession(sessionId) {
   return true;
 }
 
+/**
+ * Issues a new JWT session for a portal user and persists it to local store + MongoDB Atlas.
+ */
+async function issueSession(user, ip = '127.0.0.1', userAgent = '') {
+  const crypto = require('crypto');
+  const sessionId = `SESS-${Date.now()}-${crypto.randomBytes(16).toString('hex')}`;
+  const token = jwt.sign(
+    {
+      userId: user.user_id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      sessionId,
+      mustChangePassword: Boolean(user.must_change_password)
+    },
+    JWT_SECRET,
+    { expiresIn: TOKEN_EXPIRY }
+  );
+
+  const session = {
+    session_id: sessionId,
+    user_id: user.user_id,
+    token,
+    ip_address: ip,
+    user_agent: userAgent,
+    is_revoked: false,
+    created_at: new Date().toISOString(),
+    expires_at: new Date(Date.now() + 8 * 3600 * 1000).toISOString()
+  };
+  await db.upsertAsync('admin_sessions', 'session_id', session);
+  return { sessionId, token, session };
+}
+
 function hasPermission(userRole, permission) {
   if (userRole === 'Super Administrator') return true;
   const userPerms = ROLE_PERMISSIONS[userRole] || [];
@@ -323,10 +351,12 @@ function hasPermission(userRole, permission) {
 module.exports = {
   authenticate,
   changePassword,
+  issueSession,
   verifyToken,
   isSessionActive,
   revokeSession,
   hasPermission,
+  getHashFingerprint,
   ROLES,
   ROLE_PERMISSIONS
 };
