@@ -72,9 +72,22 @@ export default function UnifiedAdminPortal({ initialTab }) {
   const [pwdMsg, setPwdMsg] = useState({ type: '', text: '' });
   const [pwdSubmitting, setPwdSubmitting] = useState(false);
 
-  // URL-Aware Initial Tab Resolver
+  // URL-Aware Initial Tab Resolver with canonical tab-alias normalization
+  const normalizeTabKey = (raw) => {
+    const key = String(raw || '').trim().toLowerCase();
+    const aliases = {
+      builders: 'builder',
+      school: 'schools',
+      college: 'colleges',
+      lead: 'leads',
+      template: 'templates',
+      campaign: 'campaigns'
+    };
+    return aliases[key] || key;
+  };
+
   const getInitialTab = () => {
-    if (initialTab) return initialTab;
+    if (initialTab) return normalizeTabKey(initialTab);
     if (typeof window !== 'undefined') {
       const path = window.location.pathname;
       if (path === '/templates' || path.startsWith('/templates')) return 'templates';
@@ -88,7 +101,7 @@ export default function UnifiedAdminPortal({ initialTab }) {
       if (path.includes('/admin/analytics')) return 'analytics';
       if (path.includes('/admin/settings')) return 'settings';
       const queryTab = new URLSearchParams(window.location.search).get('tab');
-      if (queryTab) return queryTab;
+      if (queryTab) return normalizeTabKey(queryTab);
     }
     return 'overview';
   };
