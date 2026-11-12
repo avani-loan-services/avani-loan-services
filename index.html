@@ -47,12 +47,6 @@
 
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1ZR27W09W"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-R1ZR27W09W');
-    </script>
     <meta name="geo.position" content="17.3569;75.7811" />
     <meta name="geo.placename" content="Latur, Maharashtra, India" />
     <meta name="geo.region" content="IN-MH" />
@@ -75,41 +69,13 @@
 
     <script type="module" src="/src/main.jsx"></script>
     
-    <!-- Vapi AI Integration -->
-    <script src="https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js" defer async></script>
-    
+    <!-- Vapi AI Integration (version-pinned with Subresource Integrity) -->
+    <script src="https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@1.1.10/dist/assets/index.js" integrity="sha384-jpj68nAINCqCXiRJPAOqdnQm8HUxzwbUU7SZNNYeaKLW2k+vR+Cg8CRm+Ra71Nxg" crossorigin="anonymous" defer async></script>
+
     <!-- HubSpot Forms Script (Pre-loaded for React reliability) -->
     <script type="text/javascript" id="hs-script-loader" async defer src="https://js.hsforms.net/forms/embed/v2.js"></script>
-<!-- HubSpot Form Container -->
-<div class="hs-form-container" id="hubspot-form"></div>
-<script>
-  window.addEventListener('load', () => {
-    if (window.hbspt && window.hbspt.forms) {
-      window.hbspt.forms.create({
-        portalId: "244236573",
-        formId: "edde042c-3451-420a-a472-6a5c42cbdf98",
-        target: "#hubspot-form"
-      });
-    }
-  });
-</script>
-
-    <script>
-      window.addEventListener('load', () => {
-        if (window.vapiSDK) {
-          window.vapiSDK.run({
-            apiKey: "006036f2-b1ee-44de-9abd-117cb4298681",
-            assistant: "9f322737-3bb8-467a-95e3-7a66f9a93dc1",
-            config: {
-              position: "bottom-right",
-              theme: {
-                primary: "#111827",
-                secondary: "#ffffff"
-              }
-            }
-          });
-        }
-      });
-    </script>
+    <!-- HubSpot Form Container -->
+    <div class="hs-form-container" id="hubspot-form"></div>
+    <script defer src="/js/external-widgets.js"></script>
   </body>
 </html>

@@ -141,7 +141,7 @@ async function runTests() {
       password: 'WrongPassword123!'
     });
     assert('Invalid password returns 401', badLogin.status === 401 && badLogin.data.success === false);
-    assert('Bad login returns attempt counter', badLogin.data.message && badLogin.data.message.includes('attempt(s) remaining'));
+    assert('Bad login omits remaining attempt count (non-enumerating)', badLogin.data.message === 'Invalid credentials or account unavailable.' && !badLogin.data.message.includes('remaining'));
 
     // 3. Unknown User Handling
     console.log('\n--- Test 3: Unknown User Handling ---');
@@ -149,7 +149,7 @@ async function runTests() {
       username: 'Admin Operations Dashboard',
       password: 'AnyPassword123!'
     });
-    assert('Unknown username returns 401', unknownUser.status === 401 && unknownUser.data.success === false);
+    assert('Unknown username returns 401', unknownUser.status === 401 && unknownUser.data.success === false && unknownUser.data.message === badLogin.data.message);
 
     // 4. Valid Login Succeeded
     console.log('\n--- Test 4: Valid Login Succeeded ---');
@@ -215,7 +215,7 @@ async function runTests() {
       username: 'testadmin',
       password: 'WrongPasswordAgain!'
     });
-    assert('5th failed attempt locks account', lockTrigger.status === 401 && lockTrigger.data.message.includes('Account locked for 15 minutes'));
+    assert('5th failed attempt locks account', (lockTrigger.status === 423 || lockTrigger.status === 429) && lockTrigger.data.message.includes('locked'));
 
     // Attempting login while locked returns 429
     const lockedAttempt = await makeRequest('POST', '/api/portal/auth/login', {

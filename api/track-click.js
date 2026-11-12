@@ -77,10 +77,20 @@ export default async function handler(req, res) {
     if (utm_campaign && !finalUrl.searchParams.has('utm_campaign')) finalUrl.searchParams.set('utm_campaign', utm_campaign);
     if (campaignId && !finalUrl.searchParams.has('c')) finalUrl.searchParams.set('c', campaignId);
 
-    res.writeHead(302, { Location: finalUrl.toString() });
+    res.writeHead(302, {
+      Location: finalUrl.toString(),
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Cache-Control': 'no-store'
+    });
     res.end();
   } catch (err) {
-    res.writeHead(302, { Location: defaultDest });
+    res.writeHead(302, {
+      Location: defaultDest,
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Cache-Control': 'no-store'
+    });
     res.end();
   }
 }

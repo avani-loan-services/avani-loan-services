@@ -8,8 +8,13 @@ const app      = express();
 app.set('trust proxy', 1);
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  hsts: false
 }));
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  next();
+});
 
 const { validateEnvironmentIsolation } = require('./config/envValidator.cjs');
 const { connectDB } = require('./models/database.cjs');
@@ -17,10 +22,12 @@ const { connectDB } = require('./models/database.cjs');
 validateEnvironmentIsolation();
 connectDB().catch(err => console.warn('[Database] Initial connection warning:', err.message));
 
-const allowedOrigins = [
+const productionAllowedOrigins = [
   'https://www.avanifinserv.com',
   'https://avanifinserv.com',
-  'https://api.avanifinserv.com',
+  'https://api.avanifinserv.com'
+];
+const devAllowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
@@ -30,10 +37,13 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin) || /^https:\/\/avani-loan-service.*\.vercel\.app$/i.test(origin)) {
+    if (
+      productionAllowedOrigins.includes(origin) ||
+      /^https:\/\/avani-loan-service-fy-26-27(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(origin)
+    ) {
       return callback(null, true);
     }
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && devAllowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     return callback(null, false);

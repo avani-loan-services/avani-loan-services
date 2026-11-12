@@ -118,7 +118,7 @@ async function runTests() {
       password: 'WrongPassword999#'
     });
     assert('T02', 'Incorrect password returns HTTP 401', wrongPwdRes.status === 401);
-    assert('T02b', 'Incorrect password notifies remaining attempts', wrongPwdRes.body.message.includes('remaining'));
+    assert('T02b', 'Incorrect password returns uniform non-enumerating error without remaining attempts', wrongPwdRes.body.message === 'Invalid credentials or account unavailable.' && !wrongPwdRes.body.message.includes('remaining'));
 
     // TEST 3: Missing username
     const noUserRes = await request('POST', '/api/portal/auth/login', {

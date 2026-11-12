@@ -61,6 +61,9 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
+const DUMMY_BCRYPT_HASH = '$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW';
+const UNIFORM_LOGIN_ERROR = 'Invalid credentials or account unavailable.';
+
 async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAgent = '') {
   const identifier = (usernameOrEmail || '').trim().toLowerCase();
   if (!identifier || !password) {
@@ -102,13 +105,16 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
   }
 
   if (!user) {
+    // Burn comparable bcrypt compute time to prevent user-existence timing oracles
+    await bcrypt.compare(password, DUMMY_BCRYPT_HASH);
     db.logAudit(null, 'SYSTEM', 'LOGIN_FAILED_UNKNOWN_USER', { identifier }, ip, userAgent);
-    return { success: false, status: 401, message: 'Invalid credentials provided.' };
+    return { success: false, status: 401, message: UNIFORM_LOGIN_ERROR };
   }
 
   if (!user.is_active) {
+    await bcrypt.compare(password, DUMMY_BCRYPT_HASH);
     db.logAudit(user.user_id, 'SYSTEM', 'LOGIN_FAILED_INACTIVE', { identifier }, ip, userAgent);
-    return { success: false, status: 403, message: 'Account is deactivated. Contact Administrator.' };
+    return { success: false, status: 401, message: UNIFORM_LOGIN_ERROR };
   }
 
   // Check lockout
@@ -120,7 +126,7 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
       return {
         success: false,
         status: 429,
-        message: `Account is temporarily locked due to multiple failed login attempts. Try again in ${waitMins} minute(s).`
+        message: 'Too many failed authentication attempts. Account access temporarily locked; please try again later.'
       };
     } else {
       // Lock expired, reset
@@ -133,19 +139,20 @@ async function authenticate(usernameOrEmail, password, ip = '127.0.0.1', userAge
   const isValid = await bcrypt.compare(password, user.password_hash);
   if (!isValid) {
     user.failed_login_attempts = (user.failed_login_attempts || 0) + 1;
-    let message = 'Invalid credentials provided.';
+    let message = UNIFORM_LOGIN_ERROR;
+    let status = 401;
 
     if (user.failed_login_attempts >= MAX_FAILED_ATTEMPTS) {
       user.lockout_until = new Date(Date.now() + LOCKOUT_DURATION_MS).toISOString();
-      message = 'Account locked for 15 minutes due to 5 consecutive failed login attempts.';
+      status = 423;
+      message = 'Too many failed authentication attempts. Account access temporarily locked; please try again later.';
       db.logAudit(user.user_id, 'SYSTEM', 'ACCOUNT_LOCKED', { identifier }, ip, userAgent);
     } else {
       const attemptsRemaining = MAX_FAILED_ATTEMPTS - user.failed_login_attempts;
-      message = `Invalid credentials. ${attemptsRemaining} attempt(s) remaining before account lockout.`;
       db.logAudit(user.user_id, 'SYSTEM', 'LOGIN_FAILED_BAD_PASSWORD', { identifier, attemptsRemaining }, ip, userAgent);
     }
     await db.upsertAsync('admin_users', 'user_id', user);
-    return { success: false, status: 401, message };
+    return { success: false, status, message };
   }
 
   // Login successful -> reset failed attempts
@@ -197,11 +204,29 @@ async function changePassword(userId, currentPassword, newPassword, ip = '127.0.
 
   const isValid = await bcrypt.compare(currentPassword, user.password_hash);
   if (!isValid) {
-    return { success: false, status: 400, message: 'Current password is incorrect.' };
+    db.logAudit(userId, user.username, 'PASSWORD_CHANGE_FAILED_AUTH', {}, ip, userAgent);
+    return { success: false, status: 400, message: 'Unable to verify current credentials.' };
   }
 
-  if (!newPassword || newPassword.length < 8) {
-    return { success: false, status: 400, message: 'New password must be at least 8 characters long.' };
+  const hasComplexity = typeof newPassword === 'string' &&
+    newPassword.length >= 12 &&
+    /[A-Z]/.test(newPassword) &&
+    /[a-z]/.test(newPassword) &&
+    /[0-9]/.test(newPassword) &&
+    /[^A-Za-z0-9]/.test(newPassword);
+
+  if (!hasComplexity) {
+    return {
+      success: false,
+      status: 400,
+      message: 'New password must be at least 12 characters and include uppercase, lowercase, number, and symbol.'
+    };
+  }
+
+  const isReused = newPassword === currentPassword || await bcrypt.compare(newPassword, user.password_hash);
+  if (isReused) {
+    db.logAudit(userId, user.username, 'PASSWORD_CHANGE_REJECTED_REUSE', {}, ip, userAgent);
+    return { success: false, status: 400, message: 'New password must differ from current password.' };
   }
 
   const salt = await bcrypt.genSalt(12);

@@ -11,15 +11,36 @@ const { authenticate, changePassword, issueSession, getHashFingerprint, ROLES } 
 const { requirePortalAuth, requireRole } = require('../middleware/portalAuthMiddleware.cjs');
 const db = require('../models/portalDatabase.cjs');
 
-// Rate limiting for login attempts: 5 requests per 15 minutes per IP (relaxed in test mode)
+const isProductionEnv = () => process.env.NODE_ENV === 'production';
+
+const getRateMax = () => {
+  if (isProductionEnv()) return 5;
+  const override = Number(process.env.PORTAL_TEST_RATE_MAX);
+  if (Number.isFinite(override) && override > 0) return override;
+  return process.env.NODE_ENV === 'test' ? 500 : 5;
+};
+
+// Rate limiting for login attempts: 5 requests per 15 minutes per IP in production
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'test' ? 500 : 5,
+  max: getRateMax,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
-    message: 'Too many login attempts from this IP address. Please try again after 15 minutes.'
+    message: 'Too many authentication attempts from this IP address. Please try again after 15 minutes.'
+  }
+});
+
+// Dedicated rate limiter for password changes: 5 requests per 15 minutes per IP in production
+const changePasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: getRateMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many password update attempts from this IP address. Please try again after 15 minutes.'
   }
 });
 
@@ -103,7 +124,7 @@ router.get('/me', requirePortalAuth, async (req, res) => {
 });
 
 // POST /api/portal/auth/change-password
-router.post('/change-password', requirePortalAuth, async (req, res) => {
+router.post('/change-password', changePasswordLimiter, requirePortalAuth, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const ip = req.ip || req.connection.remoteAddress || '127.0.0.1';
@@ -131,7 +152,7 @@ router.post('/change-password', requirePortalAuth, async (req, res) => {
 
     return res.json(result);
   } catch (err) {
-    console.error('[PortalAuth] Change Password Error:', err);
+    console.error('[PortalAuth] Change Password Error:', err.message);
     return res.status(500).json({ success: false, message: 'Internal error while updating password.' });
   }
 });

@@ -1,4 +1,35 @@
 {
+  "headers": [
+    {
+      "source": "/((?!api/).*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=(), payment=(), usb=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://cdn.jsdelivr.net https://*.hsforms.net https://*.hs-scripts.com https://*.hs-analytics.net https://*.hs-banner.com https://*.usemessages.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://unpkg.com; img-src 'self' data: blob: https://www.googletagmanager.com https://www.google-analytics.com https://*.hsforms.com https://*.hubspot.com https://unpkg.com https://www.gstatic.com; connect-src 'self' https://api.avanifinserv.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://*.hsforms.com https://*.hubspot.com https://api.vapi.ai https://*.vapi.ai wss://*.vapi.ai https://cdn.jsdelivr.net https://unpkg.com; frame-src 'self' https://*.hsforms.com https://*.hsforms.net https://www.google.com https://www.recaptcha.net; media-src 'self' blob: https://*.vapi.ai; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://*.hsforms.com; frame-ancestors 'self'"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/r", "destination": "/api/track-click.js" },
     { "source": "/api/(.*)", "destination": "https://api.avanifinserv.com/api/$1" },
