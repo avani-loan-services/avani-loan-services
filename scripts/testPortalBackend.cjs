@@ -5,8 +5,36 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 process.env.VERCEL = '1'; // prevent app.listen from hanging
+process.env.APP_MODE = 'test';
+process.env.NODE_ENV = 'test';
+process.env.PROVIDER_MODE = 'mock';
+process.env.MONGODB_URI = '';
+process.env.PORTAL_JWT_SECRET = 'phase_5_3_34_isolated_backend_test_jwt_key';
+
+const fs = require('fs');
+const path = require('path');
+const bcrypt = require('bcrypt');
 const app = require('../src/server.cjs');
+const db = require('../src/models/portalDatabase.cjs');
 const http = require('http');
+
+const DATA_DIR = path.join(__dirname, '../AVANI_LOAN_SERVICES_UNIFIED_PORTAL/data');
+const SNAPSHOT_FILES = fs.existsSync(DATA_DIR)
+  ? fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.json'))
+  : [];
+const fileSnapshots = new Map();
+for (const fname of SNAPSHOT_FILES) {
+  const fpath = path.join(DATA_DIR, fname);
+  fileSnapshots.set(fpath, fs.readFileSync(fpath, 'utf8'));
+}
+function restoreSnapshots() {
+  for (const [fpath, orig] of fileSnapshots.entries()) {
+    fs.writeFileSync(fpath, orig, 'utf8');
+  }
+}
+
+const TEST_ADMIN_USER = 'backendtestadmin';
+const TEST_ADMIN_PASS = 'IsolatedBackendTest#2026!';
 
 let server;
 let baseUrl;
@@ -59,11 +87,29 @@ async function runSuite() {
   console.log('RUNNING AVANI UNIFIED PORTAL BACKEND VALIDATION SUITE');
   console.log('========================================================================\n');
 
+  // Seed isolated test-only Super Administrator in memory (never uses production credentials)
+  db.init();
+  const testHash = bcrypt.hashSync(TEST_ADMIN_PASS, 10);
+  db.upsert('admin_users', 'user_id', {
+    user_id: 'USR-TEST-BACKEND-001',
+    username: TEST_ADMIN_USER,
+    email: 'backendtestadmin@avanifinserv.com',
+    full_name: 'Isolated Backend Test Admin',
+    password_hash: testHash,
+    role: 'Super Administrator',
+    must_change_password: true,
+    failed_login_attempts: 0,
+    lockout_until: null,
+    is_active: true,
+    status: 'Active',
+    created_at: new Date().toISOString()
+  });
+
   // Start temporary server
   await new Promise(resolve => {
-    server = app.listen(0, () => {
+    server = app.listen(0, '127.0.0.1', () => {
       const port = server.address().port;
-      baseUrl = `http://localhost:${port}`;
+      baseUrl = `http://127.0.0.1:${port}`;
       console.log(`[TestServer] Running at ${baseUrl}\n`);
       resolve();
     });
@@ -75,11 +121,11 @@ async function runSuite() {
     recordTest('1. Unauthorized Dashboard Access Blocked', unauthRes.status === 401, `Status: ${unauthRes.status}`);
 
     // 2. Auth: Bad credentials rejected
-    const badLogin = await request('POST', '/api/portal/auth/login', { username: 'admin', password: 'WrongPassword' });
+    const badLogin = await request('POST', '/api/portal/auth/login', { username: TEST_ADMIN_USER, password: 'WrongPassword' });
     recordTest('2. Bad Credentials Rejected', badLogin.status === 401, badLogin.body.message);
 
-    // 3. Auth: Valid login with temporary admin credentials
-    const loginRes = await request('POST', '/api/portal/auth/login', { username: 'admin', password: 'AvaniAdmin@2026' });
+    // 3. Auth: Valid login with isolated test admin credentials
+    const loginRes = await request('POST', '/api/portal/auth/login', { username: TEST_ADMIN_USER, password: TEST_ADMIN_PASS });
     recordTest('3. Admin Authentication Successful', loginRes.status === 200 && loginRes.body.success, `Role: ${loginRes.body.user?.role}`);
     authToken = loginRes.body.token;
 
@@ -88,7 +134,7 @@ async function runSuite() {
 
     // 5. Auth /me endpoint
     const meRes = await request('GET', '/api/portal/auth/me');
-    recordTest('5. User Session Profile Verified', meRes.status === 200 && meRes.body.user.username === 'admin', meRes.body.user?.email);
+    recordTest('5. User Session Profile Verified', meRes.status === 200 && meRes.body.user.username === TEST_ADMIN_USER, meRes.body.user?.email);
 
     // 6. Unified Dashboard Overview metrics
     const overviewRes = await request('GET', '/api/portal/dashboard/overview');
@@ -206,12 +252,16 @@ async function runSuite() {
     console.error('[TestSuite] Unhandled Error:', err);
   } finally {
     server.close();
+    restoreSnapshots();
   }
 
   const passedCount = tests.filter(t => t.passed).length;
   console.log('\n========================================================================');
   console.log(`TEST RESULTS: ${passedCount} / ${tests.length} PASSED (${Math.round(passedCount / tests.length * 100)}%)`);
   console.log('========================================================================\n');
+  if (passedCount < tests.length) {
+    process.exit(1);
+  }
 }
 
 runSuite();

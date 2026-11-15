@@ -8,11 +8,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/portalDatabase.cjs');
-const { requirePortalAuth, requirePermission } = require('../middleware/portalAuthMiddleware.cjs');
+const { requirePortalAuth, requirePermission, requireRole, requirePasswordChangeChecked } = require('../middleware/portalAuthMiddleware.cjs');
 const {
   getMetaConnectionStatus,
   syncTemplatesWithDatabase,
-  simulateTestDispatch
+  simulateTestDispatch,
+  submitTemplateToMeta
 } = require('../services/metaWhatsAppTemplateService.cjs');
 
 // ── 1. GET /api/portal/templates ──
@@ -241,11 +242,13 @@ router.post('/', requirePortalAuth, requirePermission('automation:write'), async
       language: language || 'en',
       header: header || '',
       body: body.trim(),
-      footer: footer || 'Avani Loan Services | RBI Registered NBFC & Banking Partner Desk',
+      footer: footer || 'Avani Loan Services • Banking Partner Desk',
       buttons: Array.isArray(buttons) ? buttons : [],
       variables: Array.isArray(variables) && variables.length > 0 ? variables : extractedVars,
       variable_labels: Array.isArray(variable_labels) ? variable_labels : [],
       sample_values: sample_values || {},
+      operator_approval_status: 'PENDING_OPERATOR_APPROVAL',
+      approved_template_hash: null,
       meta_approval_status: channel === 'WhatsApp' ? 'LOCAL_DRAFT' : `N/A (${channel})`,
       synced_from_meta: false,
       quality_score: 'UNKNOWN',
@@ -292,15 +295,27 @@ router.put('/:id', requirePortalAuth, requirePermission('automation:write'), asy
     const matches = (nextBody || '').match(/\{\{([0-9a-zA-Z_]+)\}\}/g) || [];
     const extractedVars = [...new Set(matches.map(m => m.replace(/[\{\}]/g, '')))];
 
+    // Whitelist only editable draft fields (prevents mass assignment of approval/Meta fields)
     const updated = {
       ...existing,
-      ...req.body,
+      name: typeof req.body.name === 'string' ? req.body.name.trim() : existing.name,
+      display_name: typeof req.body.display_name === 'string' ? req.body.display_name.trim() : existing.display_name,
+      category: typeof req.body.category === 'string' ? req.body.category.trim() : existing.category,
+      language: typeof req.body.language === 'string' ? req.body.language.trim() : existing.language,
+      header: typeof req.body.header === 'string' ? req.body.header : existing.header,
+      footer: typeof req.body.footer === 'string' ? req.body.footer : existing.footer,
+      buttons: Array.isArray(req.body.buttons) ? req.body.buttons : existing.buttons,
+      variable_labels: Array.isArray(req.body.variable_labels) ? req.body.variable_labels : existing.variable_labels,
+      sample_values: req.body.sample_values && typeof req.body.sample_values === 'object' ? req.body.sample_values : existing.sample_values,
       template_id: templateId,
       meta_id: existing.meta_id || null,
+      tenant_id: existing.tenant_id || null,
       created_at: existing.created_at,
       created_by: existing.created_by,
       body: nextBody,
       variables: Array.isArray(req.body.variables) ? req.body.variables : extractedVars,
+      operator_approval_status: 'PENDING_OPERATOR_APPROVAL',
+      approved_template_hash: null,
       synced_from_meta: false,
       updated_at: new Date().toISOString()
     };
@@ -361,5 +376,33 @@ router.post('/:id/duplicate', requirePortalAuth, requirePermission('automation:w
     return res.status(500).json({ success: false, message: 'Failed to duplicate template' });
   }
 });
+
+// ── 10. POST /api/portal/templates/:id/submit-meta ──
+// Controlled Meta WABA template submission (strictly guarded by Super Administrator RBAC,
+// server-side operator approval hash verification, allowlist, idempotency, and mock mode)
+router.post(
+  '/:id/submit-meta',
+  requirePortalAuth,
+  requirePasswordChangeChecked,
+  requireRole('Super Administrator'),
+  requirePermission('automation:write'),
+  async (req, res) => {
+    try {
+      const result = await submitTemplateToMeta({
+        templateId: req.params.id,
+        operatorId: req.portalUser.username || req.portalUser.userId,
+        operatorScope: req.portalUser.tenantId || 'avani-loan-services'
+      });
+
+      if (!result.success) {
+        return res.status(result.status || 400).json(result);
+      }
+      return res.json(result);
+    } catch (err) {
+      console.error('[PortalTemplates] Submit Meta error:', err.message);
+      return res.status(500).json({ success: false, message: 'Failed to process Meta template submission' });
+    }
+  }
+);
 
 module.exports = router;

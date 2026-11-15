@@ -8,26 +8,23 @@ const router = express.Router();
 const axios = require('axios');
 const { processIncomingLead } = require('../services/centralLeadEngine.cjs');
 const { notifyLeadCreated } = require('../services/notificationService.cjs');
-
-const VERIFY_TOKEN = process.env.META_WEBHOOK_VERIFY_TOKEN || 'AVANI_META_VERIFY_TOKEN_2026';
-const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN || 'PLACEHOLDER_META_ACCESS_TOKEN';
+const {
+  getProviderMode,
+  resolveCanonicalMetaToken,
+  resolveGraphApiVersion,
+  verifyWebhookChallenge,
+  sanitizeErrorText,
+} = require('../config/metaConfig.cjs');
 
 // ── 1. GET /api/meta/webhook (Verification Endpoint) ────────────
 router.get('/webhook', (req, res) => {
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
-
-  if (mode && token) {
-    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      console.log('[MetaWebhook] Webhook verification success!');
-      return res.status(200).send(challenge);
-    } else {
-      console.warn('[MetaWebhook] Verification failed. Token mismatch.');
-      return res.sendStatus(403);
-    }
+  const check = verifyWebhookChallenge(req, process.env);
+  if (check.ok) {
+    console.log('[MetaWebhook] Webhook verification success!');
+    return res.status(200).send(check.challenge);
   }
-  return res.sendStatus(400);
+  console.warn(`[MetaWebhook] Verification rejected (${check.code}).`);
+  return res.sendStatus(check.status);
 });
 
 // ── 2. POST /api/meta/webhook (Event Handler) ───────────────────
@@ -54,10 +51,14 @@ router.post('/webhook', async (req, res) => {
               loanProduct: 'Personal / Salary Loan'
             };
 
-            if (!META_ACCESS_TOKEN.includes('PLACEHOLDER')) {
+            const providerMode = getProviderMode(process.env);
+            const tokRes = resolveCanonicalMetaToken(process.env, { allowLegacyCompat: false });
+            const verRes = resolveGraphApiVersion(process.env);
+
+            if (providerMode === 'live' && tokRes.valid && tokRes.token && verRes.valid) {
               try {
-                const graphRes = await axios.get(`https://graph.facebook.com/v19.0/${leadgenId}`, {
-                  params: { access_token: META_ACCESS_TOKEN }
+                const graphRes = await axios.get(`https://graph.facebook.com/${verRes.version}/${leadgenId}`, {
+                  params: { access_token: tokRes.token }
                 });
                 const fieldData = graphRes.data.field_data || [];
                 fieldData.forEach(field => {
@@ -69,7 +70,7 @@ router.post('/webhook', async (req, res) => {
                   if (name.includes('loan') || name.includes('product')) leadData.loanProduct = val;
                 });
               } catch (graphErr) {
-                console.warn('[MetaWebhook] Graph API lookup failed (using fallback payload):', graphErr.message);
+                console.warn('[MetaWebhook] Graph API lookup failed (using fallback payload):', sanitizeErrorText(graphErr.message));
               }
             }
 

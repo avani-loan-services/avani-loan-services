@@ -15,6 +15,10 @@ app.use((req, res, next) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
   next();
 });
+app.use(['/api', '/health'], (req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'");
+  next();
+});
 
 const { validateEnvironmentIsolation } = require('./config/envValidator.cjs');
 const { connectDB } = require('./models/database.cjs');
@@ -138,6 +142,42 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     service: 'avani-loan-services-api',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api/health', async (req, res) => {
+  const mongoose = require('mongoose');
+  let dbStatus = 'disconnected';
+  let isHealthy = false;
+
+  if (mongoose.connection && mongoose.connection.readyState === 1 && mongoose.connection.db) {
+    let pingTimer;
+    try {
+      await Promise.race([
+        mongoose.connection.db.admin().ping(),
+        new Promise((_, reject) => {
+          pingTimer = setTimeout(() => reject(new Error('ping_timeout')), 2000);
+          if (pingTimer.unref) pingTimer.unref();
+        })
+      ]);
+      dbStatus = 'connected';
+      isHealthy = true;
+    } catch {
+      dbStatus = 'ping_failed';
+      isHealthy = false;
+    } finally {
+      if (pingTimer) clearTimeout(pingTimer);
+    }
+  }
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const statusCode = (isProduction && !isHealthy) ? 503 : 200;
+
+  return res.status(statusCode).json({
+    status: isHealthy ? 'ok' : 'degraded',
+    service: 'avani-loan-services-api',
+    database: dbStatus,
     timestamp: new Date().toISOString()
   });
 });

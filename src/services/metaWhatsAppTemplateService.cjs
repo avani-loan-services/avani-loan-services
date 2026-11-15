@@ -15,6 +15,97 @@ const db = require('../models/portalDatabase.cjs');
 require('dotenv').config();
 require('dotenv').config({ path: path.join(__dirname, '../../.env.local') });
 
+/**
+ * Canonical Meta System User Token Resolver
+ * Canonical variable: META_SYSTEM_USER_TOKEN
+ * Legacy aliases (META_ACCESS_TOKEN, WHATSAPP_TOKEN):
+ *  - Never silently override META_SYSTEM_USER_TOKEN.
+ *  - Conflicting non-empty values across aliases fail closed with META_TOKEN_ALIAS_CONFLICT.
+ *  - Whitespace-only or malformed tokens fail closed.
+ *  - Legacy-only tokens are rejected unless allowLegacyCompat is explicitly enabled (test-only bridge).
+ */
+function resolveCanonicalMetaToken(env = process.env, { allowLegacyCompat = false } = {}) {
+  const keys = ['META_SYSTEM_USER_TOKEN', 'META_ACCESS_TOKEN', 'WHATSAPP_TOKEN'];
+  const nonEmpty = [];
+
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(env, key) && env[key] !== undefined && env[key] !== null) {
+      const raw = String(env[key]);
+      const trimmed = raw.trim();
+      if (raw.length > 0 && trimmed.length === 0) {
+        return {
+          valid: false,
+          token: null,
+          status: 'INVALID',
+          code: 'META_PRODUCTION_CONFIG_INVALID',
+          source: key,
+          message: `${key} cannot be whitespace-only.`
+        };
+      }
+      if (trimmed.length > 0) {
+        nonEmpty.push({ key, value: trimmed });
+      }
+    }
+  }
+
+  if (nonEmpty.length === 0) {
+    return {
+      valid: false,
+      token: null,
+      status: 'MISSING',
+      code: 'MISSING_META_ACCESS_TOKEN',
+      source: null,
+      message: 'Meta System User Access Token (META_SYSTEM_USER_TOKEN) is not configured.'
+    };
+  }
+
+  const distinctValues = new Set(nonEmpty.map(item => item.value));
+  if (distinctValues.size > 1) {
+    return {
+      valid: false,
+      token: null,
+      status: 'INVALID',
+      code: 'META_TOKEN_ALIAS_CONFLICT',
+      source: nonEmpty.map(item => item.key).join(','),
+      message: `Conflicting Meta token values detected across environment aliases (${nonEmpty.map(i => i.key).join(', ')}).`
+    };
+  }
+
+  const canonicalEntry = nonEmpty.find(item => item.key === 'META_SYSTEM_USER_TOKEN');
+  if (!canonicalEntry && !allowLegacyCompat) {
+    return {
+      valid: false,
+      token: null,
+      status: 'MISSING',
+      code: 'MISSING_META_ACCESS_TOKEN',
+      source: nonEmpty[0].key,
+      message: `Canonical META_SYSTEM_USER_TOKEN is required; legacy alias (${nonEmpty[0].key}) is not accepted in strict mode.`
+    };
+  }
+
+  const resolved = (canonicalEntry || nonEmpty[0]).value;
+  const resolvedSource = (canonicalEntry || nonEmpty[0]).key;
+  if (resolved.length < 20 || /\s/.test(resolved)) {
+    return {
+      valid: false,
+      token: null,
+      status: 'INVALID',
+      code: 'META_PRODUCTION_CONFIG_INVALID',
+      source: resolvedSource,
+      message: `${resolvedSource} format is invalid (must be >=20 chars with no whitespace).`
+    };
+  }
+
+  return {
+    valid: true,
+    token: resolved,
+    status: 'PRESENT',
+    code: null,
+    source: resolvedSource,
+    message: null
+  };
+}
+
 // Meta WhatsApp Platform Credentials (from environment only)
 const CONFIG = {
   metaBusinessId: process.env.META_BUSINESS_ID || '130700309306240',
@@ -23,7 +114,7 @@ const CONFIG = {
   phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || '1147494668457940',
   displayPhoneNumber: process.env.WHATSAPP_PHONE_NUMBER || '+917249108474',
   graphApiVersion: process.env.GRAPH_API_VERSION || 'v20.0',
-  metaAccessToken: process.env.META_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN || process.env.META_SYSTEM_USER_TOKEN || null,
+  metaAccessToken: resolveCanonicalMetaToken(process.env, { allowLegacyCompat: process.env.NODE_ENV === 'test' }).token,
   aisensyApiKey: process.env.AISENCY_WABA_API_KEY || null,
   providerMode: process.env.PROVIDER_MODE || 'mock'
 };
@@ -327,11 +418,517 @@ async function simulateTestDispatch({ templateId, recipientPhone, language = 'en
   };
 }
 
+const ALLOWED_SUBMISSION_TEMPLATE_IDS = [
+  'TPL-WABA-001',
+  'TPL-WABA-002',
+  'TPL-WABA-003',
+  'TPL-WABA-004'
+];
+
+const submissionInFlight = new Set();
+
+function sanitizeErrorText(text) {
+  if (!text) return 'Meta Graph API request failed';
+  return String(text)
+    .replace(/Bearer\s+[A-Za-z0-9_\-\.]+/gi, 'Bearer [REDACTED]')
+    .replace(/EAA[0-9A-Za-z]{10,}/g, '[REDACTED_TOKEN]');
+}
+
+/**
+ * Compute deterministic SHA-256 hash of approved template content so post-approval
+ * edits automatically invalidate approval.
+ */
+function computeTemplateContentHash(tpl) {
+  const canonical = {
+    template_id: tpl?.template_id || '',
+    name: tpl?.name || '',
+    language: tpl?.language || 'en',
+    category: String(tpl?.category || '').toUpperCase(),
+    header: tpl?.header || '',
+    body: tpl?.body || '',
+    footer: tpl?.footer || '',
+    buttons: Array.isArray(tpl?.buttons) ? tpl.buttons : [],
+    sample_values: tpl?.sample_values || {}
+  };
+  return crypto.createHash('sha256').update(JSON.stringify(canonical)).digest('hex');
+}
+
+/**
+ * Verify operator approval strictly from trusted server-side records (never req.body).
+ */
+function verifyServerSideOperatorApproval(template, approvalRecord = null) {
+  const record = approvalRecord || template;
+  if (!record || record.operator_approval_status !== 'APPROVED') {
+    return { approved: false, code: 'OPERATOR_APPROVAL_REQUIRED', reason: 'Server-side operator approval is missing or not APPROVED.' };
+  }
+  const currentHash = computeTemplateContentHash(template);
+  if (!record.approved_template_hash || record.approved_template_hash !== currentHash) {
+    return { approved: false, code: 'APPROVAL_STALE_TEMPLATE_MODIFIED', reason: 'Template content was modified after approval or lacks an approval content hash.' };
+  }
+  return { approved: true, approvedBy: record.approved_by || 'operator', approvedAt: record.approved_at || null };
+}
+
+/**
+ * 5. Validate a WhatsApp template draft against Meta Cloud API structural rules.
+ */
+function validateTemplateForMetaSubmission(tpl) {
+  const errors = [];
+  if (!tpl || tpl.channel !== 'WhatsApp') {
+    errors.push('NOT_WHATSAPP_TEMPLATE');
+    return { valid: false, errors };
+  }
+  if (!tpl.name || !/^[a-z0-9_]+$/.test(tpl.name)) {
+    errors.push('INVALID_NAME_FORMAT');
+  }
+  const supportedLangs = ['en', 'en_US', 'en_GB', 'hi', 'mr'];
+  if (!tpl.language || !supportedLangs.includes(tpl.language)) {
+    errors.push('INVALID_LANGUAGE_CODE');
+  }
+  const validCategories = ['MARKETING', 'UTILITY', 'AUTHENTICATION'];
+  if (!tpl.category || !validCategories.includes(String(tpl.category).toUpperCase())) {
+    errors.push('INVALID_CATEGORY');
+  }
+  if (tpl.header && tpl.header.length > 60) {
+    errors.push(`HEADER_TOO_LONG:${tpl.header.length}`);
+  }
+  if (tpl.footer && tpl.footer.length > 60) {
+    errors.push(`FOOTER_TOO_LONG:${tpl.footer.length}`);
+  }
+  if (!tpl.body || typeof tpl.body !== 'string' || tpl.body.trim().length === 0) {
+    errors.push('EMPTY_BODY');
+  } else if (tpl.body.length > 1024) {
+    errors.push(`BODY_TOO_LONG:${tpl.body.length}`);
+  }
+
+  const rawVars = (tpl.body || '').match(/\{\{([0-9a-zA-Z_]+)\}\}/g) || [];
+  const uniqueVars = [...new Set(rawVars.map(v => v.replace(/[\{\}]/g, '')))];
+  for (let i = 0; i < uniqueVars.length; i++) {
+    if (!uniqueVars.includes(String(i + 1))) {
+      errors.push('NON_SEQUENTIAL_VARIABLES');
+      break;
+    }
+  }
+  if (uniqueVars.length > 0) {
+    if (!tpl.sample_values || typeof tpl.sample_values !== 'object') {
+      errors.push('MISSING_SAMPLE_VALUES');
+    } else {
+      for (const v of uniqueVars) {
+        if (!tpl.sample_values[v] || String(tpl.sample_values[v]).trim() === '') {
+          errors.push(`MISSING_SAMPLE_FOR_${v}`);
+        }
+      }
+    }
+  }
+
+  if (Array.isArray(tpl.buttons)) {
+    if (tpl.buttons.length > 3) {
+      errors.push('TOO_MANY_BUTTONS');
+    }
+    for (const btn of tpl.buttons) {
+      const text = typeof btn === 'string' ? btn : (btn && btn.text ? btn.text : '');
+      if (!text || text.length > 25) {
+        errors.push('INVALID_BUTTON_TEXT');
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * 6. Build Meta Graph API POST /{WABA_ID}/message_templates payload.
+ */
+function buildMetaSubmissionPayload(tpl) {
+  const components = [];
+  if (tpl.header && tpl.header.trim()) {
+    components.push({ type: 'HEADER', format: 'TEXT', text: tpl.header.trim() });
+  }
+  const bodyComponent = { type: 'BODY', text: tpl.body.trim() };
+  const rawVars = (tpl.body || '').match(/\{\{([0-9]+)\}\}/g) || [];
+  const uniqueVars = [...new Set(rawVars.map(v => v.replace(/[\{\}]/g, '')))];
+  if (uniqueVars.length > 0 && tpl.sample_values) {
+    bodyComponent.example = {
+      body_text: [uniqueVars.map(v => String(tpl.sample_values[v] || ''))]
+    };
+  }
+  components.push(bodyComponent);
+
+  if (tpl.footer && tpl.footer.trim()) {
+    components.push({ type: 'FOOTER', text: tpl.footer.trim() });
+  }
+  if (Array.isArray(tpl.buttons) && tpl.buttons.length > 0) {
+    components.push({
+      type: 'BUTTONS',
+      buttons: tpl.buttons.map(btn => ({
+        type: 'QUICK_REPLY',
+        text: typeof btn === 'string' ? btn : btn.text
+      }))
+    });
+  }
+
+  return {
+    name: tpl.name,
+    language: tpl.language || 'en',
+    category: String(tpl.category).toUpperCase(),
+    components
+  };
+}
+
+/**
+ * 7. Controlled Meta Template Submission (POST /{WABA_ID}/message_templates)
+ * Strictly guarded by allowlist, operator approval, validation, idempotency,
+ * PROVIDER_MODE=mock block, explicit production env validation, and genuine API response reconciliation.
+ */
+function validateMetaProductionConfig(env = process.env) {
+  const fields = {};
+  const missing = [];
+  const invalid = [];
+
+  const checkNumeric = (key, val) => {
+    const v = val ? String(val).trim() : '';
+    if (!v) {
+      fields[key] = 'MISSING';
+      missing.push(key);
+    } else if (!/^\d{6,30}$/.test(v)) {
+      fields[key] = 'INVALID';
+      invalid.push(key);
+    } else {
+      fields[key] = 'PRESENT';
+    }
+  };
+
+  checkNumeric('META_BUSINESS_ID', env.META_BUSINESS_ID);
+  checkNumeric('META_APP_ID', env.META_APP_ID);
+  checkNumeric('META_WABA_ID', env.META_WABA_ID || env.WHATSAPP_BUSINESS_ACCOUNT_ID);
+  checkNumeric('WHATSAPP_PHONE_NUMBER_ID', env.WHATSAPP_PHONE_NUMBER_ID);
+
+  const apiVer = env.GRAPH_API_VERSION ? String(env.GRAPH_API_VERSION).trim() : '';
+  if (!apiVer) {
+    fields.GRAPH_API_VERSION = 'MISSING';
+    missing.push('GRAPH_API_VERSION');
+  } else if (!/^v\d+\.\d+$/.test(apiVer)) {
+    fields.GRAPH_API_VERSION = 'INVALID';
+    invalid.push('GRAPH_API_VERSION');
+  } else {
+    fields.GRAPH_API_VERSION = 'PRESENT';
+  }
+
+  const tokRes = resolveCanonicalMetaToken(env, { allowLegacyCompat: false });
+  fields.META_SYSTEM_USER_TOKEN = tokRes.status;
+  if (tokRes.status === 'MISSING') {
+    missing.push('META_SYSTEM_USER_TOKEN');
+  } else if (tokRes.status === 'INVALID') {
+    invalid.push('META_SYSTEM_USER_TOKEN');
+  }
+
+  fields.PROVIDER_MODE = env.PROVIDER_MODE ? 'PRESENT' : 'MISSING';
+  if (!env.PROVIDER_MODE) missing.push('PROVIDER_MODE');
+
+  return {
+    valid: missing.length === 0 && invalid.length === 0,
+    fields,
+    missing,
+    invalid,
+    tokenErrorCode: tokRes.code
+  };
+}
+
+async function submitTemplateToMeta({
+  templateId,
+  operatorId = 'system',
+  operatorScope = 'avani-loan-services',
+  approvalRecord = null,
+  httpClient = axios,
+  dbAdapter = db,
+  overrideTemplate = null,
+  requireExplicitEnvConfig = (process.env.NODE_ENV === 'production')
+} = {}) {
+  const correlationId = crypto.randomBytes(8).toString('hex');
+  const attemptAt = new Date().toISOString();
+
+  if (!templateId || !ALLOWED_SUBMISSION_TEMPLATE_IDS.includes(templateId)) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_REJECTED', {
+      templateId: String(templateId || 'UNKNOWN'),
+      outcome: 'TEMPLATE_NOT_ALLOWLISTED',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      status: 400,
+      code: 'TEMPLATE_NOT_ALLOWLISTED',
+      correlationId,
+      message: `Template ID "${templateId}" is not in the Meta submission allowlist.`
+    };
+  }
+
+  const template = overrideTemplate || dbAdapter.getById('portal_templates', templateId);
+  if (!template) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_REJECTED', {
+      templateId,
+      outcome: 'TEMPLATE_NOT_FOUND',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      status: 404,
+      code: 'TEMPLATE_NOT_FOUND',
+      correlationId,
+      message: `Template "${templateId}" not found.`
+    };
+  }
+
+  // Tenant / scope isolation check
+  if (template.tenant_id && template.tenant_id !== operatorScope) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_FORBIDDEN_SCOPE', {
+      templateId,
+      outcome: 'CROSS_SCOPE_FORBIDDEN',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      status: 403,
+      code: 'CROSS_SCOPE_FORBIDDEN',
+      correlationId,
+      message: 'Access denied: template belongs to an unauthorized scope.'
+    };
+  }
+
+  // Server-side operator approval verification (never trusts client boolean)
+  const approvalCheck = verifyServerSideOperatorApproval(template, approvalRecord);
+  if (!approvalCheck.approved) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_BLOCKED_APPROVAL', {
+      templateId,
+      outcome: approvalCheck.code,
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      status: 403,
+      code: approvalCheck.code,
+      correlationId,
+      message: approvalCheck.reason
+    };
+  }
+
+  const validation = validateTemplateForMetaSubmission(template);
+  if (!validation.valid) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_VALIDATION_FAILED', {
+      templateId,
+      outcome: 'TEMPLATE_VALIDATION_FAILED',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      status: 400,
+      code: 'TEMPLATE_VALIDATION_FAILED',
+      correlationId,
+      message: 'Template failed Meta structural validation.',
+      errors: validation.errors
+    };
+  }
+
+  // Idempotency guard against duplicate or concurrent submissions
+  const blockedStates = ['PENDING', 'IN_REVIEW', 'APPROVED', 'SUBMITTED_TO_META'];
+  if (template.meta_id || blockedStates.includes(String(template.meta_approval_status || '').toUpperCase()) || submissionInFlight.has(templateId)) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_DUPLICATE_BLOCKED', {
+      templateId,
+      outcome: 'DUPLICATE_SUBMISSION_PREVENTED',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      status: 409,
+      code: 'DUPLICATE_SUBMISSION_PREVENTED',
+      correlationId,
+      message: 'Template already has a Meta submission ID, active review status, or in-flight submission.'
+    };
+  }
+
+  const activeProviderMode = process.env.PROVIDER_MODE || CONFIG.providerMode || 'mock';
+  if (activeProviderMode !== 'live') {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_BLOCKED_MOCK_MODE', {
+      templateId,
+      name: template.name,
+      providerMode: activeProviderMode,
+      outcome: 'MOCK_MODE_ACTIVE',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      blocked: true,
+      status: 403,
+      code: 'MOCK_MODE_ACTIVE',
+      correlationId,
+      message: 'Live Meta template submission is blocked while PROVIDER_MODE=mock.'
+    };
+  }
+
+  if (requireExplicitEnvConfig) {
+    const cfgCheck = validateMetaProductionConfig(process.env);
+    if (!cfgCheck.valid) {
+      dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_INCOMPLETE_CONFIG', {
+        templateId,
+        outcome: 'META_PRODUCTION_CONFIG_INCOMPLETE',
+        missing: cfgCheck.missing,
+        invalid: cfgCheck.invalid,
+        correlationId,
+        timestamp: attemptAt
+      });
+      return {
+        success: false,
+        blocked: true,
+        status: 400,
+        code: 'META_PRODUCTION_CONFIG_INCOMPLETE',
+        correlationId,
+        missing: cfgCheck.missing,
+        invalid: cfgCheck.invalid,
+        message: 'Explicit Meta production configuration is incomplete or invalid; fallback IDs cannot be used in production.'
+      };
+    }
+  }
+
+  const tokenRes = resolveCanonicalMetaToken(process.env, {
+    allowLegacyCompat: !requireExplicitEnvConfig && process.env.NODE_ENV === 'test'
+  });
+  if (!tokenRes.valid || !tokenRes.token) {
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_TOKEN_REJECTED', {
+      templateId,
+      outcome: tokenRes.code || 'MISSING_META_ACCESS_TOKEN',
+      correlationId,
+      timestamp: attemptAt
+    });
+    return {
+      success: false,
+      blocked: true,
+      status: 400,
+      code: tokenRes.code || 'MISSING_META_ACCESS_TOKEN',
+      correlationId,
+      message: tokenRes.message || 'Meta System User Access Token is not configured.'
+    };
+  }
+  const token = tokenRes.token;
+
+  // Strict endpoint construction guard (prevents host/WABA injection)
+  const activeGraphVersion = process.env.GRAPH_API_VERSION || CONFIG.graphApiVersion;
+  const activeWabaId = process.env.META_WABA_ID || process.env.WHATSAPP_BUSINESS_ACCOUNT_ID || CONFIG.wabaId;
+  if (!/^v\d+\.\d+$/.test(String(activeGraphVersion)) || !/^\d+$/.test(String(activeWabaId))) {
+    return {
+      success: false,
+      status: 500,
+      code: 'INVALID_META_ENDPOINT_CONFIG',
+      correlationId,
+      message: 'Invalid Meta Graph API version or WABA ID configuration.'
+    };
+  }
+
+  const payload = buildMetaSubmissionPayload(template);
+  const url = `https://graph.facebook.com/${CONFIG.graphApiVersion}/${CONFIG.wabaId}/message_templates`;
+  submissionInFlight.add(templateId);
+
+  try {
+    const res = await httpClient.post(url, payload, {
+      headers: { Authorization: `Bearer ${token}` },
+      timeout: 15000
+    });
+
+    const metaId = res?.data?.id ? String(res.data.id) : null;
+    const rawStatus = String(res?.data?.status || '').toUpperCase();
+    if (!metaId || !/^\d+$/.test(metaId)) {
+      dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_SUBMIT_INVALID_RESPONSE', {
+        templateId,
+        outcome: 'INVALID_META_RESPONSE',
+        correlationId,
+        timestamp: new Date().toISOString()
+      });
+      return {
+        success: false,
+        status: 502,
+        code: 'INVALID_META_RESPONSE',
+        correlationId,
+        message: 'Meta Graph API did not return a valid numeric template submission ID.'
+      };
+    }
+
+    const submittedAt = new Date().toISOString();
+    const canonicalStatus = rawStatus === 'APPROVED' ? 'APPROVED' : (rawStatus === 'REJECTED' ? 'REJECTED' : 'PENDING');
+
+    const updatedRecord = {
+      ...template,
+      meta_id: metaId,
+      meta_approval_status: canonicalStatus,
+      submitted_at: submittedAt,
+      synced_from_meta: true,
+      updated_at: submittedAt
+    };
+
+    if (typeof dbAdapter.upsertAsync === 'function') {
+      await dbAdapter.upsertAsync('portal_templates', 'template_id', updatedRecord);
+    } else if (typeof dbAdapter.upsert === 'function') {
+      dbAdapter.upsert('portal_templates', 'template_id', updatedRecord);
+    }
+
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_TEMPLATE_SUBMITTED', {
+      templateId,
+      metaId,
+      status: canonicalStatus,
+      outcome: 'SUBMITTED',
+      correlationId,
+      timestamp: submittedAt
+    });
+
+    return {
+      success: true,
+      status: 200,
+      meta_id: metaId,
+      meta_approval_status: canonicalStatus,
+      submitted_at: submittedAt,
+      correlationId,
+      data: updatedRecord
+    };
+  } catch (err) {
+    const errStatus = err?.response?.status || 502;
+    const rawErrMsg = err?.response?.data?.error?.message || err.message || 'Meta submission failed';
+    const safeMsg = sanitizeErrorText(rawErrMsg);
+    dbAdapter.logAudit(operatorId, 'TEMPLATES', 'META_TEMPLATE_SUBMIT_FAILED', {
+      templateId,
+      httpStatus: errStatus,
+      outcome: 'META_GRAPH_API_ERROR',
+      correlationId,
+      timestamp: new Date().toISOString()
+    });
+    return {
+      success: false,
+      status: errStatus,
+      code: 'META_GRAPH_API_ERROR',
+      correlationId,
+      message: safeMsg
+    };
+  } finally {
+    submissionInFlight.delete(templateId);
+  }
+}
+
 module.exports = {
   CONFIG,
+  ALLOWED_SUBMISSION_TEMPLATE_IDS,
   getMetaConnectionStatus,
   fetchTemplatesFromMeta,
   syncTemplatesWithDatabase,
   simulateTestDispatch,
-  parseMetaTemplate
+  parseMetaTemplate,
+  validateTemplateForMetaSubmission,
+  buildMetaSubmissionPayload,
+  computeTemplateContentHash,
+  verifyServerSideOperatorApproval,
+  sanitizeErrorText,
+  resolveCanonicalMetaToken,
+  validateMetaProductionConfig,
+  submitTemplateToMeta
 };

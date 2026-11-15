@@ -19,3 +19,12 @@ Ref Data
 *.zip
 *.tar.gz
 *.log
+.env
+.env.*
+!.env.example
+backend/.env
+.vercel/
+Mongodb project details.txt
+*.key
+*.pem
+*.secret

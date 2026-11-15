@@ -245,15 +245,30 @@ async function sendMetaWhatsAppMessage(toPhone, messageText, templateName = null
   const cleanPhone = (toPhone || '').replace(/[^0-9]/g, '');
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
 
-  console.log(`[WhatsApp Engine] Outbound dispatch to ${formattedPhone}...`);
+  console.log(`[WhatsApp Engine] Outbound dispatch to ${formattedPhone.slice(0, 4)}****...`);
 
-  // 1. Try Meta WhatsApp Cloud API if token & phone_id are set
-  const token = process.env.META_WHATSAPP_TOKEN;
-  const phoneId = process.env.META_PHONE_NUMBER_ID || '2049842548930849';
+  const {
+    getProviderMode,
+    resolveCanonicalMetaToken,
+    resolvePhoneNumberId,
+    resolveGraphApiVersion,
+    sanitizeErrorText,
+  } = require('../config/metaConfig.cjs');
 
-  if (token && token.length > 20) {
+  const providerMode = getProviderMode(process.env);
+  if (providerMode !== 'live') {
+    console.log(`[WhatsApp Engine] Mock Mode Active (${providerMode}) — skipping external Meta/AiSensy dispatch.`);
+    return { success: true, provider: 'Mock_Provider', mock: true, text: messageText };
+  }
+
+  // 1. Try Meta WhatsApp Cloud API only when canonical token, phone ID, and API version are valid
+  const tokRes = resolveCanonicalMetaToken(process.env, { allowLegacyCompat: false });
+  const phoneRes = resolvePhoneNumberId(process.env);
+  const verRes = resolveGraphApiVersion(process.env);
+
+  if (tokRes.valid && tokRes.token && phoneRes.valid && verRes.valid) {
     try {
-      const url = `https://graph.facebook.com/v18.0/${phoneId}/messages`;
+      const url = `https://graph.facebook.com/${verRes.version}/${phoneRes.value}/messages`;
       const payload = templateName ? {
         messaging_product: 'whatsapp',
         to: formattedPhone,
@@ -272,19 +287,19 @@ async function sendMetaWhatsAppMessage(toPhone, messageText, templateName = null
 
       const res = await axios.post(url, payload, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokRes.token}`,
           'Content-Type': 'application/json'
         }
       });
       console.log('[WhatsApp Engine] Meta Cloud API Success:', res.status, res.data);
       return { success: true, provider: 'Meta_Cloud_API', data: res.data };
     } catch (metaErr) {
-      console.error('[WhatsApp Engine] Meta Cloud API Error:', metaErr.response?.data || metaErr.message);
+      console.error('[WhatsApp Engine] Meta Cloud API Error:', sanitizeErrorText(metaErr.message));
     }
   }
 
-  // 2. Try AiSensy API if configured
-  const aisensyKey = process.env.AISENSY_API_KEY;
+  // 2. Try AiSensy API if explicitly in live mode and configured
+  const aisensyKey = process.env.AISENSY_API_KEY || process.env.AISENCY_WABA_API_KEY;
   if (aisensyKey) {
     try {
       const res = await axios.post('https://backend.aisensy.com/campaign/t1/api/v2', {

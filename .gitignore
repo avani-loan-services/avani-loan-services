@@ -27,12 +27,17 @@ dist-ssr
 # Vercel and Environment Configs
 .vercel
 .vercel/
+.vercel/output/
 .env
 .env.*
 .env*.local
 *.env
 !.env.example
+!backend/.env.example
 backend/.env
+Mongodb project details.txt
+*.prod.*.txt
+.env.*.txt
 
 # Archives & Backups
 *.rar

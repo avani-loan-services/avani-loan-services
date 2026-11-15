@@ -5,6 +5,12 @@
 
 const axios = require('axios');
 const { recordProviderAttempt } = require('../models/ProviderLedger.cjs');
+const {
+  getProviderMode,
+  resolveCanonicalMetaToken,
+  resolvePhoneNumberId,
+  resolveGraphApiVersion,
+} = require('../config/metaConfig.cjs');
 
 // Status Map Store (providerMessageId -> status)
 const messageStatusLedger = new Map();
@@ -20,18 +26,21 @@ async function dispatchOutboundWhatsApp({
   correlationId = `CORR-${Date.now()}`,
   testRunId = 'AVANI-E2E-2026'
 }) {
-  const providerMode = process.env.PROVIDER_MODE || 'mock';
-  const metaToken = process.env.META_WHATSAPP_TOKEN;
-  const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || process.env.META_PHONE_NUMBER_ID || '2049842548930849';
-  const aisensyKey = process.env.AISENSY_API_KEY;
+  const providerMode = getProviderMode(process.env);
+  const tokRes = resolveCanonicalMetaToken(process.env, { allowLegacyCompat: false });
+  const phoneRes = resolvePhoneNumberId(process.env);
+  const verRes = resolveGraphApiVersion(process.env);
+  const metaToken = tokRes.valid ? tokRes.token : null;
+  const phoneId = phoneRes.valid ? phoneRes.value : null;
+  const aisensyKey = process.env.AISENSY_API_KEY || process.env.AISENCY_WABA_API_KEY || null;
 
   const cleanPhone = String(toPhone || '').replace(/[^0-9]/g, '');
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
 
   console.log(`[WhatsApp Provider] Outbound dispatch to ${formattedPhone.slice(0, 4)}**** (Mode: ${providerMode})...`);
 
-  // 1. MOCK MODE
-  if (providerMode === 'mock' || (!metaToken && !aisensyKey)) {
+  // 1. MOCK MODE (or fail-closed when live credentials/IDs are missing)
+  if (providerMode === 'mock' || ((!metaToken || !phoneId || !verRes.valid) && !aisensyKey)) {
     const mockMessageId = `WAMID-MOCK-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     
     // HTTP 200 = API_ACCEPTED ONLY
@@ -64,9 +73,9 @@ async function dispatchOutboundWhatsApp({
   }
 
   // 2. META WHATSAPP CLOUD API
-  if (metaToken && metaToken.length > 20) {
+  if (metaToken && phoneId && verRes.valid) {
     try {
-      const url = `https://graph.facebook.com/v18.0/${phoneId}/messages`;
+      const url = `https://graph.facebook.com/${verRes.version}/${phoneId}/messages`;
       const payload = templateName ? {
         messaging_product: 'whatsapp',
         to: formattedPhone,

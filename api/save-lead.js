@@ -134,20 +134,23 @@ export default async function handler(req, res) {
       pickyAssist: false
     };
 
-    // 5. Forward to AVANI AI CRM (Master Lead Store)
+    // 5. Forward to AVANI AI CRM (Dedicated Public Enquiry Intake API)
     const CRM_BASE_URL = process.env.AVANI_CRM_URL || process.env.NEXT_PUBLIC_CRM_URL || 'https://avani-ai-crm.vercel.app';
-    const CRM_API_KEY = process.env.CRM_API_KEY || '';
+    let resolvedLeadId = leadId;
 
     try {
       const crmHeaders = { 'Content-Type': 'application/json' };
-      if (CRM_API_KEY) crmHeaders['x-api-key'] = CRM_API_KEY;
-
-      const crmRes = await axios.post(`${CRM_BASE_URL}/api/leads`, crmPayload, {
+      const crmRes = await axios.post(`${CRM_BASE_URL}/api/public/enquiry`, {
+        ...crmPayload,
+        privacyPolicyVersion: raw.privacyPolicyVersion || 'DPDP-2026-v1',
+        consent: true
+      }, {
         headers: crmHeaders,
         timeout: 8000
       });
-      if (crmRes.status === 200 && crmRes.data?.success) {
+      if ((crmRes.status === 200 || crmRes.status === 201) && crmRes.data?.success) {
         syncResults.crm = true;
+        if (crmRes.data.leadId) resolvedLeadId = crmRes.data.leadId;
       }
     } catch (crmErr) {
       console.warn('[LeadIntake] AVANI AI CRM sync warning:', crmErr.message);
@@ -192,7 +195,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      leadId,
+      leadId: resolvedLeadId,
       correlationId,
       status: 'RECEIVED',
       productCategory: canonicalLoanCategory,

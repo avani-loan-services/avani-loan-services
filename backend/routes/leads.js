@@ -176,13 +176,15 @@ router.post('/whatsapp/qualify', async (req, res) => {
   }
 });
 
+const { verifyWebhookChallenge } = require('../../src/config/metaConfig.cjs');
+
 // POST & GET: WhatsApp Webhook
 router.get('/whatsapp-webhook', (req, res) => {
-  const verifyToken = process.env.META_WHATSAPP_VERIFY_TOKEN || 'avani_loan_verify_token_1356';
-  if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === verifyToken) {
-    return res.status(200).send(req.query['hub.challenge']);
+  const check = verifyWebhookChallenge(req, process.env);
+  if (check.ok) {
+    return res.status(200).send(check.challenge);
   }
-  return res.sendStatus(403);
+  return res.sendStatus(check.status);
 });
 
 router.post('/whatsapp-webhook', async (req, res) => {

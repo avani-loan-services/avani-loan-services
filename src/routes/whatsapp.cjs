@@ -11,24 +11,17 @@ const {
   getChecklistText,
   syncAllIntegrations
 } = require('../services/whatsappQualificationEngine.cjs');
+const { verifyWebhookChallenge } = require('../config/metaConfig.cjs');
 
 // ── 1. GET /api/whatsapp/webhook (Meta Webhook Verification) ────
 router.get('/webhook', (req, res) => {
-  const verifyToken = process.env.META_WHATSAPP_VERIFY_TOKEN || process.env.OMNIDM_VERIFY_TOKEN || 'avani_loan_verify_token_1356';
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
-
-  if (mode && token) {
-    if (mode === 'subscribe' && token === verifyToken) {
-      console.log('[WhatsApp Webhook] Verification successful.');
-      return res.status(200).send(challenge);
-    } else {
-      console.warn('[WhatsApp Webhook] Verification failed - invalid token.');
-      return res.sendStatus(403);
-    }
+  const check = verifyWebhookChallenge(req, process.env);
+  if (check.ok) {
+    console.log('[WhatsApp Webhook] Verification successful.');
+    return res.status(200).send(check.challenge);
   }
-  return res.sendStatus(400);
+  console.warn(`[WhatsApp Webhook] Verification rejected (${check.code}).`);
+  return res.sendStatus(check.status);
 });
 
 // ── 2. POST /api/whatsapp/webhook (Incoming Messages) ───────────

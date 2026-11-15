@@ -36,10 +36,9 @@ router.post('/submit', async (req, res) => {
       sheetRes = await syncToGoogleSheetMaster(masterRecord);
     }
 
-    // ── Forward to Authoritative Master Lead Store: AVANI AI CRM ──
+    // ── Forward to Authoritative Master Lead Store: AVANI AI CRM (Public Intake) ──
     const CRM_BASE_URL = process.env.AVANI_CRM_URL || process.env.NEXT_PUBLIC_CRM_URL || 'https://avani-ai-crm.vercel.app';
-    const CRM_API_KEY = process.env.CRM_API_KEY || '';
-    axios.post(`${CRM_BASE_URL}/api/leads`, {
+    axios.post(`${CRM_BASE_URL}/api/public/enquiry`, {
       leadId: masterRecord.leadId,
       name: masterRecord.fullName,
       phone: masterRecord.mobile,
@@ -53,13 +52,14 @@ router.post('/submit', async (req, res) => {
       utmSource: masterRecord.utmSource,
       utmMedium: masterRecord.utmMedium,
       utmCampaign: masterRecord.utmCampaign,
+      consent: true,
       consentStatus: 'GRANTED',
       consentPurpose: 'LOAN_ELIGIBILITY_PROCESSING',
+      privacyPolicyVersion: rawData.privacyPolicyVersion || 'DPDP-2026-v1',
       idempotencyKey: `IDEMP-EXPRESS-${masterRecord.leadId}`
     }, {
       headers: {
-        'Content-Type': 'application/json',
-        ...(CRM_API_KEY ? { 'x-api-key': CRM_API_KEY } : {})
+        'Content-Type': 'application/json'
       },
       timeout: 8000
     }).catch(err => console.warn('[AVANI AI CRM] non-fatal sync err:', err.message));
