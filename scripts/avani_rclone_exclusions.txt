@@ -1,0 +1,17 @@
+# Safe default rclone exclusion patterns for AVANI LOAN SERVICES
+# Prevents uploading protected secrets, credentials, keys, browser profiles, or active build/source artifacts.
+
+.env
+.env.*
+Mongodb project details.txt
+*.key
+*.pem
+*.pfx
+*.p12
+*.token
+*secret*
+*credential*
+node_modules/**
+src/**
+dist/**
+.git/**
