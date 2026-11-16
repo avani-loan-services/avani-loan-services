@@ -64,12 +64,12 @@ export default function AdminIntegrationsPage() {
   };
 
   return (
-    <div style={{ maxWidth: 1180, margin: '2rem auto', padding: '0 1rem' }}>
+    <div style={{ maxWidth: 1240, margin: '2rem auto', padding: '0 1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
-          <h1 style={{ margin: 0 }}>Ecosystem Integrations Control Centre</h1>
+          <h1 style={{ margin: 0 }}>AVANI Unified Ecosystem Control Centre</h1>
           <p style={{ margin: '0.25rem 0 0', color: '#4b5563' }}>
-            Central Integration Gateway, Provider Adapters, Workflows &amp; DLQ ({data?.mode || 'mock'} mode)
+            Core API, AVANI AI CRM, Loan Agents, Calling Agent, Providers, Workflows &amp; DLQ ({data?.mode || 'mock'} mode)
           </p>
         </div>
         <Link to="/admin/dashboard" style={{ padding: '0.5rem 1rem', background: '#111827', color: '#fff', borderRadius: 6, textDecoration: 'none' }}>
@@ -83,32 +83,34 @@ export default function AdminIntegrationsPage() {
 
       {data && (
         <>
-          <h2>Provider Adapters ({data.providers?.length || 0})</h2>
+          <h2>Ecosystem Services &amp; Provider Adapters ({data.providers?.length || 0})</h2>
           <div style={{ overflowX: 'auto', marginBottom: '2rem' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.92rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
                 <tr style={{ background: '#f3f4f6', textAlign: 'left' }}>
-                  <th style={{ padding: '0.6rem' }}>Provider</th>
-                  <th style={{ padding: '0.6rem' }}>Category</th>
-                  <th style={{ padding: '0.6rem' }}>Status</th>
-                  <th style={{ padding: '0.6rem' }}>Mode</th>
-                  <th style={{ padding: '0.6rem' }}>Credentials</th>
-                  <th style={{ padding: '0.6rem' }}>Webhook</th>
-                  <th style={{ padding: '0.6rem' }}>Errors / Retries</th>
-                  <th style={{ padding: '0.6rem' }}>Actions</th>
+                  <th style={{ padding: '0.55rem' }}>Service</th>
+                  <th style={{ padding: '0.55rem' }}>Project Ownership</th>
+                  <th style={{ padding: '0.55rem' }}>Category</th>
+                  <th style={{ padding: '0.55rem' }}>Status</th>
+                  <th style={{ padding: '0.55rem' }}>Mode</th>
+                  <th style={{ padding: '0.55rem' }}>Credentials</th>
+                  <th style={{ padding: '0.55rem' }}>Health / Webhook</th>
+                  <th style={{ padding: '0.55rem' }}>Errors / Retries</th>
+                  <th style={{ padding: '0.55rem' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {(data.providers || []).map(p => (
                   <tr key={p.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                    <td style={{ padding: '0.6rem', fontWeight: 600 }}>{p.name}</td>
-                    <td style={{ padding: '0.6rem' }}>{p.category}</td>
-                    <td style={{ padding: '0.6rem' }}>{p.status}</td>
-                    <td style={{ padding: '0.6rem' }}>{p.mode}</td>
-                    <td style={{ padding: '0.6rem' }}>{p.credentialsConfigured ? 'Configured' : 'Missing'}</td>
-                    <td style={{ padding: '0.6rem' }}><code>{p.webhook || 'N/A'}</code></td>
-                    <td style={{ padding: '0.6rem' }}>{p.errorCount} / {p.retryCount}</td>
-                    <td style={{ padding: '0.6rem', display: 'flex', gap: '0.5rem' }}>
+                    <td style={{ padding: '0.55rem', fontWeight: 600 }}>{p.name}</td>
+                    <td style={{ padding: '0.55rem' }}>{p.ownerProject}</td>
+                    <td style={{ padding: '0.55rem' }}>{p.category}</td>
+                    <td style={{ padding: '0.55rem' }}>{p.status}</td>
+                    <td style={{ padding: '0.55rem' }}>{p.mode}</td>
+                    <td style={{ padding: '0.55rem' }}>{p.credentialsConfigured ? 'Configured' : 'Missing'}</td>
+                    <td style={{ padding: '0.55rem' }}><code>{p.healthEndpoint || p.webhook || 'N/A'}</code></td>
+                    <td style={{ padding: '0.55rem' }}>{p.errorCount} / {p.retryCount}</td>
+                    <td style={{ padding: '0.55rem', display: 'flex', gap: '0.4rem' }}>
                       <button type="button" onClick={() => handleTest(p.id)}>Test</button>
                       <button type="button" onClick={() => handleToggle(p.id, !p.enabled)}>
                         {p.enabled ? 'Disable' : 'Enable'}
@@ -120,26 +122,28 @@ export default function AdminIntegrationsPage() {
             </table>
           </div>
 
-          <h2>Central Automation Workflows ({data.workflows?.length || 0})</h2>
+          <h2>Unified Automation Workflows ({data.workflows?.length || 0})</h2>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.92rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
                 <tr style={{ background: '#f3f4f6', textAlign: 'left' }}>
-                  <th style={{ padding: '0.6rem' }}>ID</th>
-                  <th style={{ padding: '0.6rem' }}>Workflow</th>
-                  <th style={{ padding: '0.6rem' }}>Trigger</th>
-                  <th style={{ padding: '0.6rem' }}>Owner</th>
-                  <th style={{ padding: '0.6rem' }}>Status</th>
+                  <th style={{ padding: '0.55rem' }}>ID</th>
+                  <th style={{ padding: '0.55rem' }}>Version</th>
+                  <th style={{ padding: '0.55rem' }}>Workflow</th>
+                  <th style={{ padding: '0.55rem' }}>Trigger</th>
+                  <th style={{ padding: '0.55rem' }}>Owner</th>
+                  <th style={{ padding: '0.55rem' }}>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {(data.workflows || []).map(w => (
                   <tr key={w.workflowId} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                    <td style={{ padding: '0.6rem' }}><code>{w.workflowId}</code></td>
-                    <td style={{ padding: '0.6rem' }}>{w.name}</td>
-                    <td style={{ padding: '0.6rem' }}><code>{w.trigger}</code></td>
-                    <td style={{ padding: '0.6rem' }}>{w.owner}</td>
-                    <td style={{ padding: '0.6rem' }}>{w.enabled ? 'ENABLED' : 'PAUSED'}</td>
+                    <td style={{ padding: '0.55rem' }}><code>{w.workflowId}</code></td>
+                    <td style={{ padding: '0.55rem' }}>{w.version}</td>
+                    <td style={{ padding: '0.55rem' }}>{w.name}</td>
+                    <td style={{ padding: '0.55rem' }}><code>{w.trigger}</code></td>
+                    <td style={{ padding: '0.55rem' }}>{w.owner}</td>
+                    <td style={{ padding: '0.55rem' }}>{w.enabled ? 'ENABLED' : 'PAUSED'}</td>
                   </tr>
                 ))}
               </tbody>

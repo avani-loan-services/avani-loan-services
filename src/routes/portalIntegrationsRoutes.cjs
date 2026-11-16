@@ -13,13 +13,12 @@ const registry = require('../services/ecosystemIntegrationRegistry.cjs');
 
 // GET /api/portal/integrations
 router.get('/', requirePortalAuth, (req, res) => {
-  const providers = registry.listIntegrations();
-  const workflows = registry.listWorkflows();
   return res.json({
     success: true,
     mode: registry.getEffectiveMode(),
-    providers,
-    workflows,
+    providers: registry.listIntegrations(),
+    workflows: registry.listWorkflows(),
+    events: registry.crossProjectEvents.slice(-50),
     dlq: registry.gateway.deadLetterQueue.slice(-50),
     ledger: registry.gateway.auditLedger.slice(-50)
   });
@@ -34,8 +33,26 @@ router.get('/health', requirePortalAuth, (req, res) => {
     totalProviders: providers.length,
     enabledProviders: providers.filter(p => p.enabled).length,
     dlqPendingCount: registry.gateway.deadLetterQueue.filter(i => i.status !== 'RESOLVED').length,
+    crossProjectEventCount: registry.crossProjectEvents.length,
     ledgerEntries: registry.gateway.auditLedger.length
   });
+});
+
+// POST /api/portal/integrations/cross-project/event
+router.post('/cross-project/event', requirePortalAuth, requirePortalCsrf, requireRole('Super Administrator', 'Administrator', 'Sales Manager', 'Sales Executive'), async (req, res) => {
+  const { eventType, payload = {}, correlationId = null } = req.body || {};
+  if (!eventType) {
+    return res.status(400).json({ success: false, message: 'eventType is required.' });
+  }
+  const result = registry.syncCrossProjectEvent(eventType, payload, correlationId);
+  await db.appendAuditLog({
+    action: 'CROSS_PROJECT_EVENT_SYNC',
+    actor: req.portalUser.username,
+    eventType,
+    correlationId: result.correlationId,
+    status: result.status
+  }).catch(() => {});
+  return res.status(result.status || 200).json(result);
 });
 
 // POST /api/portal/integrations/:providerId/test-connection

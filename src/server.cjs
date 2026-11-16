@@ -225,6 +225,13 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.use('/api', (req, res) => {
+  return res.status(404).json({
+    success: false,
+    error: 'API endpoint not found'
+  });
+});
+
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
