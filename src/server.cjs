@@ -137,6 +137,9 @@ app.use('/api/portal/leads', portalLeadsRouter);
 const publicEnquiryRouter = require('./routes/publicEnquiryRoutes.cjs');
 app.use('/api/portal/public', publicEnquiryRouter);
 
+const portalIntegrationsRouter = require('./routes/portalIntegrationsRoutes.cjs');
+app.use('/api/portal/integrations', portalIntegrationsRouter);
+
 // Health check endpoints for container and API gateways
 app.get('/health', (req, res) => {
   res.status(200).json({

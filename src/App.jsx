@@ -29,6 +29,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 // ── AVANI UNIFIED BUSINESS GROWTH & LEAD MANAGEMENT PORTAL ──
 import UnifiedAdminPortal from './pages/UnifiedAdminPortal';
+import AdminIntegrationsPage from './pages/AdminIntegrationsPage';
 import BuilderPartnershipPage from './pages/BuilderPartnershipPage';
 import InstitutionalFundingPage from './pages/InstitutionalFundingPage';
 
@@ -104,6 +105,7 @@ export default function App() {
               <Route path="/admin/campaigns" element={<UnifiedAdminPortal initialTab="campaigns" />} />
               <Route path="/admin/analytics" element={<UnifiedAdminPortal initialTab="analytics" />} />
               <Route path="/admin/settings" element={<UnifiedAdminPortal initialTab="settings" />} />
+              <Route path="/admin/integrations" element={<AdminIntegrationsPage />} />
               <Route path="/templates" element={<UnifiedAdminPortal initialTab="templates" />} />
               <Route path="/campaigns" element={<UnifiedAdminPortal initialTab="campaigns" />} />
               <Route path="/builder-partnership" element={<BuilderPartnershipPage />} />
