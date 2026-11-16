@@ -10,6 +10,34 @@ const router = express.Router();
 const { requirePortalAuth, requirePortalCsrf, requireRole } = require('../middleware/portalAuthMiddleware.cjs');
 const db = require('../models/portalDatabase.cjs');
 const registry = require('../services/ecosystemIntegrationRegistry.cjs');
+const { verifyServiceTokenAndRequest } = require('../services/serviceAuthGuard.cjs');
+
+// Allows either authenticated Portal User OR signed S2S caller (svc-ai-crm, svc-loan-agents, svc-ai-calling)
+async function requirePortalOrServiceAuth(req, res, next) {
+  if (req.headers['x-service-auth']) {
+    const rawBody = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(req.body || {});
+    const verified = verifyServiceTokenAndRequest({
+      authHeader: req.headers['x-service-auth'],
+      serviceIdHeader: req.headers['x-service-id'],
+      timestampHeader: req.headers['x-service-timestamp'],
+      signatureHeader: req.headers['x-service-signature'],
+      rawBody,
+      expectedAudience: 'svc-loan-api'
+    });
+    if (!verified.ok) {
+      return res.status(verified.status || 401).json({
+        success: false,
+        code: verified.code,
+        message: verified.error
+      });
+    }
+    req.serviceCaller = { serviceId: verified.serviceId, keyId: verified.keyId, jti: verified.claims.jti };
+    return next();
+  }
+  return requirePortalAuth(req, res, () => requirePortalCsrf(req, res, () => {
+    return requireRole('Super Administrator', 'Administrator', 'Sales Manager', 'Sales Executive')(req, res, next);
+  }));
+}
 
 // GET /api/portal/integrations
 router.get('/', requirePortalAuth, (req, res) => {
@@ -39,15 +67,44 @@ router.get('/health', requirePortalAuth, (req, res) => {
 });
 
 // POST /api/portal/integrations/cross-project/event
-router.post('/cross-project/event', requirePortalAuth, requirePortalCsrf, requireRole('Super Administrator', 'Administrator', 'Sales Manager', 'Sales Executive'), async (req, res) => {
+router.post('/cross-project/event', requirePortalOrServiceAuth, async (req, res) => {
   const { eventType, payload = {}, correlationId = null } = req.body || {};
   if (!eventType) {
     return res.status(400).json({ success: false, message: 'eventType is required.' });
   }
-  const result = registry.syncCrossProjectEvent(eventType, payload, correlationId);
+  const actor = req.serviceCaller ? `s2s:${req.serviceCaller.serviceId}` : (req.portalUser && req.portalUser.username) || 'unknown';
+  const result = registry.syncCrossProjectEvent(eventType, {
+    ...payload,
+    ...(req.serviceCaller && !payload.sourceProject ? { sourceProject: req.serviceCaller.serviceId } : {})
+  }, correlationId || req.headers['x-correlation-id'] || null);
   await db.appendAuditLog({
     action: 'CROSS_PROJECT_EVENT_SYNC',
+    actor,
+    eventType,
+    correlationId: result.correlationId,
+    status: result.status
+  }).catch(() => {});
+  return res.status(result.status || 200).json(result);
+});
+
+// POST /api/portal/integrations/s2s/dispatch (Authenticated Project 1 -> Projects 2/3/4)
+router.post('/s2s/dispatch', requirePortalAuth, requirePortalCsrf, requireRole('Super Administrator', 'Administrator', 'Sales Manager'), async (req, res) => {
+  const { targetProjectId, eventType, payload = {}, correlationId = null, idempotencyKey = null, targetUrl = null } = req.body || {};
+  if (!targetProjectId || !eventType) {
+    return res.status(400).json({ success: false, message: 'targetProjectId and eventType are required.' });
+  }
+  const result = await registry.dispatchToConnectedService({
+    targetProjectId,
+    eventType,
+    payload,
+    correlationId,
+    idempotencyKey,
+    targetUrl
+  });
+  await db.appendAuditLog({
+    action: 'CROSS_PROJECT_S2S_DISPATCH',
     actor: req.portalUser.username,
+    targetProjectId,
     eventType,
     correlationId: result.correlationId,
     status: result.status

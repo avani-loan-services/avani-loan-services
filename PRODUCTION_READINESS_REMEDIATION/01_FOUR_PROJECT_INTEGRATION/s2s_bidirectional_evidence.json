@@ -1,0 +1,185 @@
+{
+  "executedAtUtc": "2026-11-16T11:47:02.982Z",
+  "executionScope": "Local authenticated HTTP S2S servers across Projects 1-4 + Live remote API VM probe",
+  "directionsVerifiedLocally": 6,
+  "securityNegativeChecks": {
+    "unauthenticatedRejectedStatus": 401,
+    "jwtReplayRejectedStatus": 409,
+    "downstreamFailureDlqEnqueuedId": "DLQ-1794829614979-201"
+  },
+  "traces": [
+    {
+      "timestampUtc": "2026-11-16T11:46:54.875Z",
+      "direction": "Project 1 -> Project 2",
+      "method": "POST",
+      "route": "http://127.0.0.1:52209/api/ecosystem/s2s",
+      "correlationId": "CORR-S2S-P1P2-001",
+      "authenticationResult": "PASS (HS256 JWT + HMAC)",
+      "httpStatus": 200,
+      "sanitizedRequestPayload": {
+        "phone": "+919****10",
+        "loanType": "Doctor Loan"
+      },
+      "sanitizedResponsePayload": {
+        "success": true,
+        "service": "svc-ai-crm",
+        "duplicateSuppressed": false,
+        "correlationId": "CORR-S2S-P1P2-001",
+        "record": {
+          "centralCustomerId": "CUS-AVL-02305B589675",
+          "eventType": "enquiry.received",
+          "leadId": "CRM-1794829614853",
+          "consentStatus": "Approved",
+          "processedAt": "2026-11-16T11:46:54.853Z"
+        }
+      },
+      "notes": "Local HTTP S2S dispatch processed by Project 2 CRM adapter"
+    },
+    {
+      "timestampUtc": "2026-11-16T11:46:54.926Z",
+      "direction": "Project 2 -> Project 1",
+      "method": "POST",
+      "route": "http://127.0.0.1:52208/api/portal/integrations/cross-project/event",
+      "correlationId": "CORR-S2S-P2P1-002",
+      "authenticationResult": "PASS (svc-ai-crm -> svc-loan-api)",
+      "httpStatus": 200,
+      "sanitizedRequestPayload": {
+        "externalId": "CRM-EXT-1",
+        "stage": "QUALIFIED"
+      },
+      "sanitizedResponsePayload": {
+        "success": true,
+        "status": 200,
+        "duplicateSuppressed": false,
+        "correlationId": "CORR-S2S-P2P1-002",
+        "event": {
+          "eventId": "EVT-1794829614921-118",
+          "eventType": "lead.status.updated",
+          "correlationId": "CORR-S2S-P2P1-002",
+          "sourceProject": "Project 2 (svc-ai-crm)",
+          "targetProject": "Project 2",
+          "centralCustomerId": "CUS-AVL-02305B589675",
+          "scrubbedSummary": null,
+          "disposition": null,
+          "timestamp": "2026-11-16T11:46:54.921Z"
+        }
+      },
+      "notes": "Project 1 authenticated svc-ai-crm JWT+HMAC and recorded event"
+    },
+    {
+      "timestampUtc": "2026-11-16T11:46:54.932Z",
+      "direction": "Project 1 -> Project 3",
+      "method": "POST",
+      "route": "http://127.0.0.1:52210/api/ecosystem/s2s",
+      "correlationId": "CORR-S2S-P1P3-003",
+      "authenticationResult": "PASS (svc-loan-api -> svc-loan-agents)",
+      "httpStatus": 200,
+      "sanitizedRequestPayload": {
+        "loanType": "Doctor Loan",
+        "requestedAmount": 1500000
+      },
+      "sanitizedResponsePayload": {
+        "success": true,
+        "service": "svc-loan-agents",
+        "correlationId": "CORR-S2S-P1P3-003",
+        "centralCustomerId": "CUS-AVL-3AF4C1D6D7E5",
+        "advisoryOnly": true,
+        "humanAdvisorEscalation": "Sachin Shinde",
+        "recommendation": {
+          "eligible": true,
+          "status": "Qualified",
+          "loanType": "Doctor Loan",
+          "requestedAmount": 1500000,
+          "preferredLanguage": "Marathi"
+        }
+      },
+      "notes": "Advisory evaluation completed without autonomous sanction claim"
+    },
+    {
+      "timestampUtc": "2026-11-16T11:46:54.937Z",
+      "direction": "Project 3 -> Project 1",
+      "method": "POST",
+      "route": "http://127.0.0.1:52208/api/portal/integrations/cross-project/event",
+      "correlationId": "CORR-S2S-P3P1-004",
+      "authenticationResult": "PASS (svc-loan-agents -> svc-loan-api)",
+      "httpStatus": 200,
+      "sanitizedRequestPayload": {
+        "advisoryStatus": "Qualified"
+      },
+      "sanitizedResponsePayload": {
+        "success": true,
+        "status": 200,
+        "duplicateSuppressed": false,
+        "correlationId": "CORR-S2S-P3P1-004",
+        "event": {
+          "eventId": "EVT-1794829614935-187",
+          "eventType": "lead.qualification.completed",
+          "correlationId": "CORR-S2S-P3P1-004",
+          "sourceProject": "Project 3 (svc-loan-agents)",
+          "targetProject": "Project 2",
+          "centralCustomerId": "CUS-AVL-3AF4C1D6D7E5",
+          "scrubbedSummary": null,
+          "disposition": null,
+          "timestamp": "2026-11-16T11:46:54.935Z"
+        }
+      },
+      "notes": "Project 1 accepted signed outcome from svc-loan-agents"
+    },
+    {
+      "timestampUtc": "2026-11-16T11:46:54.948Z",
+      "direction": "Project 1 -> Project 4",
+      "method": "POST",
+      "route": "http://127.0.0.1:52211/api/ecosystem/s2s",
+      "correlationId": "CORR-S2S-P1P4-005",
+      "authenticationResult": "PASS (svc-loan-api -> svc-ai-calling)",
+      "httpStatus": 200,
+      "sanitizedRequestPayload": {
+        "loanType": "DOCTOR_LOAN",
+        "consent_status": "Approved"
+      },
+      "sanitizedResponsePayload": {
+        "success": true,
+        "service": "svc-ai-calling",
+        "correlationId": "CORR-S2S-P1P4-005",
+        "centralCustomerId": "CUS-AVL-3AF4C1D6D7E5",
+        "callId": "SIM-CALL-1794829614947",
+        "mode": "test_mode"
+      },
+      "notes": "Calling agent initiated test_mode call under Approved consent gate"
+    },
+    {
+      "timestampUtc": "2026-11-16T11:46:54.955Z",
+      "direction": "Project 4 -> Project 1",
+      "method": "POST",
+      "route": "http://127.0.0.1:52208/api/portal/integrations/cross-project/event",
+      "correlationId": "CORR-S2S-P4P1-006",
+      "authenticationResult": "PASS (svc-ai-calling -> svc-loan-api)",
+      "httpStatus": 200,
+      "sanitizedRequestPayload": {
+        "rawDisposition": "interested_customer",
+        "summary": "[CONTAINED_TEST_PAN_AADHAAR]"
+      },
+      "sanitizedResponsePayload": {
+        "success": true,
+        "status": 200,
+        "duplicateSuppressed": false,
+        "correlationId": "CORR-S2S-P4P1-006",
+        "event": {
+          "eventId": "EVT-1794829614953-303",
+          "eventType": "call.completed",
+          "correlationId": "CORR-S2S-P4P1-006",
+          "sourceProject": "Project 4 (svc-ai-calling)",
+          "targetProject": "Project 2",
+          "centralCustomerId": "CUS-AVL-3AF4C1D6D7E5",
+          "scrubbedSummary": "PAN XXXXX1234X Aadhaar XXXXXXXX1234 interested in clinic loan",
+          "disposition": "QUALIFIED_INTERESTED",
+          "timestamp": "2026-11-16T11:46:54.953Z"
+        }
+      },
+      "notes": "Calling outcome scrubbed PII and synchronized to central bus"
+    }
+  ],
+  "liveRemoteApiProbe": {
+    "error": "The operation was aborted due to timeout"
+  }
+}

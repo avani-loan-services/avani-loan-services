@@ -1,0 +1,59 @@
+{
+  "capturedAtUtc": "2026-11-16T11:34:00Z",
+  "executionMode": "autonomous_evidence_driven",
+  "authorizedRoot": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS",
+  "projects": [
+    {
+      "id": "project-1",
+      "name": "1-AVANI LOAN SERVICE FY 26-27",
+      "role": "Central API & Primary Application",
+      "branch": "master",
+      "headSha": "ab9b4125bb56984ce6ebb001f683a710683c99f3",
+      "codeCommitSha": "c3f1cb4d82615d14e00b031cb838cd96227f6330",
+      "remoteUrlSanitized": "https://github.com/avani-loan-services/avani-loan-services.git",
+      "vercelProject": "avani-loan-service-fy-26-27",
+      "productionWebUrl": "https://www.avanifinserv.com/",
+      "productionApiUrl": "https://api.avanifinserv.com/",
+      "baselineVulnerabilities": { "critical": 0, "high": 0, "moderate": 7, "low": 0, "total": 7 }
+    },
+    {
+      "id": "project-2",
+      "name": "3-AVANI AI CRM",
+      "role": "CRM & Customer Relationship Management",
+      "branch": "main",
+      "headSha": "6563424c09348d29f952a5f19286176cf990c492",
+      "remoteUrlSanitized": "https://github.com/avaniagrofoods/avani-ai-crm.git",
+      "vercelProject": "avani-ai-crm",
+      "baselineVulnerabilities": { "critical": 2, "high": 16, "moderate": 8, "low": 0, "total": 26 }
+    },
+    {
+      "id": "project-3",
+      "name": "4-AVANI LOAN AGENTS",
+      "role": "AI Loan Agents & Advisory Workflows",
+      "branch": "main",
+      "headSha": "6484b2deca4dc06e407b814855a4c82d8c3b9484",
+      "remoteUrlSanitized": "https://***@github.com/avaniagrofoods/avani-loan-agents.git",
+      "vercelProject": "avani-loan-agents",
+      "baselineVulnerabilities": { "critical": 2, "high": 18, "moderate": 6, "low": 2, "total": 28 }
+    },
+    {
+      "id": "project-4",
+      "name": "5-AVAVI AI CALLING AGENT",
+      "role": "AI Calling & Voice Integration",
+      "branch": "main",
+      "headSha": "a898738dd3c32d05b4e13f72d473c29916defd0d",
+      "remoteUrlSanitized": "https://***@github.com/avaniagrofoods/avani-calling-agent.git",
+      "baselineVulnerabilities": { "status": "NO_PACKAGE_JSON_OR_LOCKFILE_AT_BASELINE" }
+    }
+  ],
+  "infrastructureState": {
+    "filesystemDrives": { "C_freeGB": 2.57, "D_freeGB": 0, "externalNtfsBackupDrivePresent": false },
+    "sshDirectoryFiles": ["known_hosts", "known_hosts.old"],
+    "vmSshPrivateKeyPresent": false,
+    "liveApiBaseline": {
+      "health": "HTTP 200 application/json",
+      "portalIntegrations": "HTTP 200 text/html (SPA fallback defect)",
+      "nonexistent": "HTTP 200 text/html (SPA fallback defect)"
+    }
+  }
+}

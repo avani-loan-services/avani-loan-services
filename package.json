@@ -61,5 +61,13 @@
     "globals": "^17.4.0",
     "sharp": "^0.35.5",
     "vite": "^6.0.0"
+  },
+  "overrides": {
+    "gaxios": "^7.1.4",
+    "glob": "^14.0.2",
+    "googleapis-common": "^9.0.2",
+    "minimatch": "^11.0.1",
+    "rimraf": "^6.1.4",
+    "uuid": "^11.1.1"
   }
 }

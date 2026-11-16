@@ -1,0 +1,188 @@
+{
+  "executedAtUtc": "2026-11-16T11:59:25.708Z",
+  "mountedExpressRbacCasesPassed": "13/13",
+  "results": [
+    {
+      "label": "Missing Token",
+      "sanitisedRole": "NONE",
+      "method": "GET",
+      "endpoint": "/api/portal/builder/companies",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Authentication required. Please login to access the administration portal."
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Invalid Token",
+      "sanitisedRole": "INVALID",
+      "method": "GET",
+      "endpoint": "/api/portal/integrations",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Session has expired or is invalid. Please log in again."
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Read-Only Analyst READ builder",
+      "sanitisedRole": "Read-Only Analyst",
+      "method": "GET",
+      "endpoint": "/api/portal/builder/companies",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "sanitisedResponse": {
+        "success": true
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Read-Only Analyst WRITE cross-project event (FORBIDDEN)",
+      "sanitisedRole": "Read-Only Analyst",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/cross-project/event",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Access denied. Requires one of the following roles: Super Administrator, Administrator, Sales Manager, Sales Executive"
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Read-Only Analyst ADMIN toggle workflow (FORBIDDEN)",
+      "sanitisedRole": "Read-Only Analyst",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/workflows/WF-08/toggle",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Access denied. Requires one of the following roles: Super Administrator, Administrator"
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Sales Executive READ builder",
+      "sanitisedRole": "Sales Executive",
+      "method": "GET",
+      "endpoint": "/api/portal/builder/companies",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "sanitisedResponse": {
+        "success": true
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Sales Executive WRITE cross-project event (ALLOWED)",
+      "sanitisedRole": "Sales Executive",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/cross-project/event",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "sanitisedResponse": {
+        "success": true
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Sales Executive ADMIN test-connection (FORBIDDEN)",
+      "sanitisedRole": "Sales Executive",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/chatmitra/test-connection",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Access denied. Requires one of the following roles: Super Administrator, Administrator"
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Research Manager READ education",
+      "sanitisedRole": "Research Manager",
+      "method": "GET",
+      "endpoint": "/api/portal/education/institutions",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "sanitisedResponse": {
+        "success": true
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Research Manager WRITE S2S dispatch (FORBIDDEN)",
+      "sanitisedRole": "Research Manager",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/s2s/dispatch",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Access denied. Requires one of the following roles: Super Administrator, Administrator, Sales Manager"
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Sales Manager WRITE cross-project event (ALLOWED)",
+      "sanitisedRole": "Sales Manager",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/cross-project/event",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "sanitisedResponse": {
+        "success": true
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Sales Manager ADMIN toggle provider (FORBIDDEN)",
+      "sanitisedRole": "Sales Manager",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/hubspot/toggle",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "sanitisedResponse": {
+        "success": false,
+        "message": "Access denied. Requires one of the following roles: Super Administrator, Administrator"
+      },
+      "result": "PASS"
+    },
+    {
+      "label": "Administrator test-connection (ALLOWED)",
+      "sanitisedRole": "Administrator",
+      "method": "POST",
+      "endpoint": "/api/portal/integrations/hubspot/test-connection",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "sanitisedResponse": {
+        "success": true,
+        "message": "HubSpot CRM connection check passed in mock mode."
+      },
+      "result": "PASS"
+    }
+  ],
+  "liveProductionAuthProbes": [
+    {
+      "endpoint": "/api/portal/builder/companies",
+      "missingTokenStatus": 401,
+      "invalidTokenStatus": 401
+    },
+    {
+      "endpoint": "/api/portal/education/institutions",
+      "missingTokenStatus": 401,
+      "invalidTokenStatus": 401
+    },
+    {
+      "endpoint": "/api/portal/dashboard/overview",
+      "missingTokenStatus": 401,
+      "invalidTokenStatus": 401
+    }
+  ],
+  "liveProductionNonAdminUserStatus": "OPEN_OWNER_APPROVAL (Live production admin_users store holds Super Administrator hashes only; no non-admin production user accounts provisioned for remote login testing)"
+}

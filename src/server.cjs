@@ -54,7 +54,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Cookie', 'X-Avani-Portal-Csrf', 'X-Service-Auth', 'X-Service-Id', 'X-Service-Timestamp', 'X-Service-Signature', 'X-Key-Id', 'X-Correlation-Id', 'X-Idempotency-Key']
 }));
 app.use(express.json({
   limit: '20mb',

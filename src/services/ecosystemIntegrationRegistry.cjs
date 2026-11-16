@@ -12,8 +12,19 @@ const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 const { IntegrationGateway } = require('../../apps/integration-gateway/index.cjs');
+const { buildSignedServiceHeaders, sanitizePayloadForAudit } = require('./serviceAuthGuard.cjs');
 
 const gateway = new IntegrationGateway({ mode: process.env.PROVIDER_MODE || 'mock' });
+const PRODUCTION_DISPATCH_STATE = {
+  globalProductionDispatchEnabled: process.env.GLOBAL_PRODUCTION_DISPATCH_ENABLED === 'true',
+  enabledProviders: new Set()
+};
+
+const TARGET_SERVICE_META = {
+  avani_ai_crm: { audience: 'svc-ai-crm', envUrlKey: 'AVANI_CRM_URL', defaultPath: '/api/ecosystem/s2s' },
+  avani_loan_agents: { audience: 'svc-loan-agents', envUrlKey: 'LOAN_AGENTS_URL', defaultPath: '/api/ecosystem/s2s' },
+  avavi_calling_agent: { audience: 'svc-ai-calling', envUrlKey: 'CALLING_AGENT_URL', defaultPath: '/api/ecosystem/s2s' }
+};
 
 function loadCallingBridge() {
   const bridgePath = path.resolve(__dirname, '../../../5-AVAVI AI CALLING AGENT/calling-agent-bridge.js');
@@ -64,6 +75,8 @@ const providerRuntimeState = new Map();
 for (const def of PROVIDER_DEFS) {
   providerRuntimeState.set(def.id, {
     enabled: true,
+    productionDispatchEnabled: Boolean(def.alwaysLive),
+    verificationStatus: def.alwaysLive ? 'LIVE_VERIFIED' : 'MOCK_ONLY',
     lastSyncAt: null,
     lastErrorAt: null,
     lastErrorMessage: null,
@@ -138,6 +151,8 @@ function getProviderSnapshot(def) {
     ownerProject: def.ownerProject,
     category: def.category,
     enabled: rt.enabled,
+    productionDispatchEnabled: rt.productionDispatchEnabled,
+    verificationStatus: rt.verificationStatus,
     mode,
     status,
     credentialsConfigured,
@@ -301,10 +316,107 @@ function syncCrossProjectEvent(eventType, payload = {}, correlationId = null) {
   return { success: true, status: 200, duplicateSuppressed: false, correlationId: corrId, event: eventRecord };
 }
 
+function setProviderVerificationState(providerId, { verificationStatus, ownerApproved = false, enableDispatch = false } = {}) {
+  const def = PROVIDER_DEFS.find(p => p.id === providerId);
+  if (!def) return null;
+  const rt = providerRuntimeState.get(providerId);
+  const allowedStatuses = ['MOCK_ONLY', 'CREDENTIAL_MISSING', 'SANDBOX_VERIFIED', 'PRODUCTION_VERIFIED', 'FAILED', 'NOT_TESTED', 'LIVE_VERIFIED'];
+  if (verificationStatus && allowedStatuses.includes(verificationStatus)) {
+    rt.verificationStatus = verificationStatus;
+  }
+  if (enableDispatch === true) {
+    const gatePassed = rt.verificationStatus === 'PRODUCTION_VERIFIED' && ownerApproved === true;
+    if (!gatePassed) {
+      return { success: false, status: 403, reason: 'PROVIDER_ENABLEMENT_GATE_FAILED', statusCurrent: rt.verificationStatus };
+    }
+    rt.productionDispatchEnabled = true;
+    PRODUCTION_DISPATCH_STATE.enabledProviders.add(providerId);
+  } else if (enableDispatch === false) {
+    rt.productionDispatchEnabled = false;
+    PRODUCTION_DISPATCH_STATE.enabledProviders.delete(providerId);
+  }
+  return { success: true, provider: getProviderSnapshot(def), rt };
+}
+
+async function dispatchToConnectedService({
+  targetProjectId,
+  eventType,
+  payload = {},
+  correlationId = null,
+  idempotencyKey = null,
+  targetUrl = null,
+  s2sSecret = null
+} = {}) {
+  const meta = TARGET_SERVICE_META[targetProjectId];
+  if (!meta) {
+    return { success: false, status: 404, error: `Unknown connected service target: ${targetProjectId}` };
+  }
+  const corrId = correlationId || gateway.generateCorrelationId();
+  const baseUrl = targetUrl || process.env[meta.envUrlKey] || '';
+  if (!baseUrl) {
+    const dlqItem = gateway.sendToDLQ(targetProjectId.toUpperCase(), sanitizePayloadForAudit({ eventType, payload }), new Error(`${meta.envUrlKey} not configured`), corrId);
+    return { success: false, status: 503, error: `${meta.envUrlKey} not configured`, dlqId: dlqItem.dlqId, correlationId: corrId };
+  }
+
+  // First enforce central registry guardrails (idempotency, consent, no autonomous financial claims)
+  const syncRes = syncCrossProjectEvent(eventType, {
+    ...payload,
+    sourceProject: payload.sourceProject || 'Project 1 (svc-loan-api)',
+    targetProject: targetProjectId,
+    idempotencyKey
+  }, corrId);
+  if (!syncRes.success) {
+    return syncRes;
+  }
+  if (syncRes.duplicateSuppressed) {
+    return syncRes;
+  }
+
+  const endpoint = `${baseUrl.replace(/\/$/, '')}${meta.defaultPath}`;
+  const wirePayload = {
+    eventType,
+    correlationId: corrId,
+    idempotencyKey: idempotencyKey || `${eventType}:${corrId}`,
+    centralCustomerId: syncRes.event?.centralCustomerId || null,
+    payload: sanitizePayloadForAudit(payload)
+  };
+  const { headers, serializedBody } = buildSignedServiceHeaders({
+    issuer: 'svc-loan-api',
+    audience: meta.audience,
+    body: wirePayload,
+    correlationId: corrId,
+    idempotencyKey: wirePayload.idempotencyKey,
+    secret: s2sSecret
+  });
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: serializedBody,
+      signal: AbortSignal.timeout(Number(process.env.S2S_TIMEOUT_MS || 5000))
+    });
+    const text = await res.text();
+    let json = null;
+    try { json = JSON.parse(text); } catch {}
+    if (!res.ok) {
+      const errMsg = `Downstream ${targetProjectId} returned HTTP ${res.status}`;
+      const dlqItem = gateway.sendToDLQ(targetProjectId.toUpperCase(), wirePayload, new Error(errMsg), corrId);
+      return { success: false, status: res.status, error: errMsg, downstreamBody: json || text.slice(0, 200), dlqId: dlqItem.dlqId, correlationId: corrId };
+    }
+    gateway.recordLedgerEntry(targetProjectId.toUpperCase(), 'S2S_DISPATCH', 'DELIVERED', { correlationId: corrId, leadId: wirePayload.centralCustomerId });
+    return { success: true, status: res.status, correlationId: corrId, targetProjectId, centralCustomerId: wirePayload.centralCustomerId, downstreamResponse: json };
+  } catch (err) {
+    const dlqItem = gateway.sendToDLQ(targetProjectId.toUpperCase(), wirePayload, err, corrId);
+    return { success: false, status: 502, error: err.message, dlqId: dlqItem.dlqId, correlationId: corrId };
+  }
+}
+
 module.exports = {
   gateway,
   customerIdentityIndex,
   crossProjectEvents,
+  PRODUCTION_DISPATCH_STATE,
   listIntegrations,
   listWorkflows,
   testProviderConnection,
@@ -313,6 +425,8 @@ module.exports = {
   executeConsentGatedWorkflow,
   generateCentralCustomerId,
   syncCrossProjectEvent,
+  setProviderVerificationState,
+  dispatchToConnectedService,
   scrubSensitiveText,
   mapCallingDisposition,
   getEffectiveMode

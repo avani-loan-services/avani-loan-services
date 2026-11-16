@@ -165,5 +165,38 @@ test('Cross-project ecosystem E2E: Projects 1-4 registry, identity, duplicate su
     });
     assert.equal(replayRes.status, 200);
     assert.equal((await replayRes.json()).success, true);
+
+    // 7. S2S JWT + HMAC inbound authentication & replay rejection (svc-ai-crm -> svc-loan-api)
+    const { buildSignedServiceHeaders } = require('../../src/services/serviceAuthGuard.cjs');
+    const prevSecret = process.env.ECOSYSTEM_SERVICE_SECRET;
+    process.env.ECOSYSTEM_SERVICE_SECRET = 'test_s2s_ecosystem_secret_key_2026_v1';
+    try {
+      const s2sPayload = JSON.stringify({
+        eventType: 'enquiry.received',
+        correlationId: 'CORR-E2E-S2S-01',
+        payload: { phone: '+919876543299', email: 's2s.e2e@example.com', idempotencyKey: 'S2S-E2E-01' }
+      });
+      const signed = buildSignedServiceHeaders({
+        issuer: 'svc-ai-crm',
+        audience: 'svc-loan-api',
+        body: s2sPayload,
+        secret: process.env.ECOSYSTEM_SERVICE_SECRET
+      });
+      const s2sOk = await fetch(`${baseUrl}/api/portal/integrations/cross-project/event`, {
+        method: 'POST',
+        headers: signed.headers,
+        body: s2sPayload
+      });
+      assert.equal(s2sOk.status, 200);
+      const s2sReplay = await fetch(`${baseUrl}/api/portal/integrations/cross-project/event`, {
+        method: 'POST',
+        headers: signed.headers,
+        body: s2sPayload
+      });
+      assert.equal(s2sReplay.status, 409);
+    } finally {
+      if (prevSecret === undefined) delete process.env.ECOSYSTEM_SERVICE_SECRET;
+      else process.env.ECOSYSTEM_SERVICE_SECRET = prevSecret;
+    }
   });
 });

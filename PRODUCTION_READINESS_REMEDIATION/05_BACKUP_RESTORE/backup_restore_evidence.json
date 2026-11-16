@@ -1,0 +1,45 @@
+{
+  "backupCreatedAtUtc": "2026-11-16T11:59:13.457Z",
+  "backupPath": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS\\1-AVANI LOAN SERVICE FY 26-27\\PRODUCTION_READINESS_REMEDIATION\\05_BACKUP_RESTORE\\avani_backup_20261116.json",
+  "backupSizeBytes": 1198087,
+  "backupSha256": "a887df2ab2b2e7e7d94567d4f12347782e763584f01aac35bf517c0bc0bf3e30",
+  "stagingRestoreDestination": "C:\\Users\\ALPHA-1\\Downloads\\21MAY2026\\SACHIN SHINDE DOCUMENTS\\DEVELOPEMENT TOOLS\\1-AVANI LOAN SERVICE FY 26-27\\PRODUCTION_READINESS_REMEDIATION\\05_BACKUP_RESTORE\\staging_restore_db",
+  "restoreStartUtc": "2026-11-16T11:59:13.628Z",
+  "restoreFinishUtc": "2026-11-16T11:59:13.704Z",
+  "checksumVerified": true,
+  "allTableCountsMatched": true,
+  "sourceCounts": {
+    "admin_users": 3,
+    "builder_companies": 80,
+    "builder_contacts": 80,
+    "builder_maharera": 80,
+    "builder_pipeline": 80,
+    "education_institutions": 80,
+    "education_contacts": 80,
+    "education_pipeline": 80,
+    "portal_templates": 7,
+    "portal_campaigns": 4,
+    "portal_leads": 6,
+    "unified_tasks": 43
+  },
+  "restoredCounts": {
+    "admin_users": 3,
+    "builder_companies": 80,
+    "builder_contacts": 80,
+    "builder_maharera": 80,
+    "builder_pipeline": 80,
+    "education_institutions": 80,
+    "education_contacts": 80,
+    "education_pipeline": 80,
+    "portal_templates": 7,
+    "portal_campaigns": 4,
+    "portal_leads": 6,
+    "unified_tasks": 43
+  },
+  "stagingConnectivityAndIntegrityCheck": {
+    "rbacRolesCount": 6,
+    "providersCount": 19,
+    "workflowsCount": 8
+  },
+  "coldExternalHardwareStatus": "OPEN_EXTERNAL_DEPENDENCY (No external >=50 GB NTFS drive attached; C: free=2.57 GB)"
+}
