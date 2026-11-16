@@ -6,7 +6,8 @@
 - `GET /api/portal/dashboard/overview` -> **`HTTP 401`**
 
 ## 2. Live 6-Role Authenticated Checks (`https://api.avanifinserv.com`)
-- **Status:** **`BLOCKED`** (authorized test-account passwords for the 6 production roles were not provided; no plaintext passwords or tokens read/exposed).
+- **Status:** **`BLOCKED`**
+- **Evidence (`task-11634`):** `admin_users.json` contains `3` `Super Administrator` accounts only (`bcrypt` hashes; `0` `Administrator`/`Research Manager`/`Sales Manager`/`Sales Executive`/`Read-Only Analyst` test accounts, and no plaintext passwords provided).
 
 ## 3. Local Verified RBAC Matrix (`hasPermission` + Express Router Test)
 - `Super Administrator`: `builder:read/write=true`, `education:read/write=true`, `automation:control=true`, `users:manage=true`; Express `GET` -> **`200 200 200`**.
