@@ -1,0 +1,40 @@
+{
+  "generatedAtUtc": "2026-11-16T12:18:00Z",
+  "overallVerdict": "PARTIALLY VERIFIED",
+  "productionReadyStatus": "NOT PRODUCTION READY",
+  "repositories": {
+    "project1": {
+      "directory": "1-AVANI LOAN SERVICE FY 26-27",
+      "branch": "master",
+      "codeCommitSha": "acf8159ea6126fd9a60b8b72559474031a8b3dac",
+      "remoteSynced": true
+    },
+    "project2": {
+      "directory": "3-AVANI AI CRM",
+      "branch": "main",
+      "commitSha": "8e4c01195d37bd30ededcb82b816946edfd8fa00",
+      "remoteSynced": true
+    },
+    "project3": {
+      "directory": "4-AVANI LOAN AGENTS",
+      "branch": "main",
+      "commitSha": "ceb7a23432b1438d8be3e30ef31afcb35462554e",
+      "remoteSynced": true
+    },
+    "project4": {
+      "directory": "5-AVAVI AI CALLING AGENT",
+      "branch": "main",
+      "commitSha": "367fc6db9a4d59b610e9ef1f9f453fafd5776518",
+      "remoteSynced": true
+    }
+  },
+  "vercelProductionDeployment": {
+    "project": "avani-loan-service-fy-26-27",
+    "deploymentId": "dpl_DqPeg31EZcHgSi187GMyPHmGcdoQ",
+    "readyState": "READY",
+    "url": "https://avani-loan-service-fy-26-27-jkg7psr7v.vercel.app",
+    "productionUrl": "https://www.avanifinserv.com",
+    "inspectorUrl": "https://vercel.com/avaniagrofoods1356-4705s-projects/avani-loan-service-fy-26-27/DqPeg31EZcHgSi187GMyPHmGcdoQ"
+  },
+  "apiVmDeploymentStatus": "OPEN_INFRASTRUCTURE_ACCESS (No authorized SSH key in local ~/.ssh)"
+}

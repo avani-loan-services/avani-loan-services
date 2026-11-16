@@ -1,0 +1,83 @@
+{
+  "generatedAtUtc": "2026-11-16T12:18:00Z",
+  "overallStatus": "PARTIALLY VERIFIED",
+  "productionReadiness": "NOT PRODUCTION READY",
+  "blockersClosedCount": 0,
+  "blockersOpenCount": 5,
+  "blockerRegister": [
+    {
+      "id": "BLK-001",
+      "blocker": "Four-project live integration",
+      "initialStatus": "Open",
+      "finalStatus": "OPEN_INFRASTRUCTURE_ACCESS",
+      "localDirectionsVerified": 6,
+      "liveRemoteDirectionsVerified": 0,
+      "reason": "6/6 bidirectional HTTP directions passed locally with HS256 JWT + HMAC + replay protection; live remote api.avanifinserv.com S2S endpoint awaits BLK-003 API VM deployment",
+      "evidence": "PRODUCTION_READINESS_REMEDIATION/01_FOUR_PROJECT_INTEGRATION/s2s_bidirectional_evidence.json"
+    },
+    {
+      "id": "BLK-002",
+      "blocker": "Nine external providers",
+      "initialStatus": "Open",
+      "finalStatus": "OPEN_CREDENTIAL_REQUIRED",
+      "verifiedReadOnlyCount": 4,
+      "failedCount": 2,
+      "credentialMissingCount": 3,
+      "globalProductionDispatchEnabled": false,
+      "evidence": "PRODUCTION_READINESS_REMEDIATION/02_EXTERNAL_PROVIDER_VERIFICATION/nine_providers_live_audit.json"
+    },
+    {
+      "id": "BLK-003",
+      "blocker": "API VM and reverse proxy",
+      "initialStatus": "Open",
+      "finalStatus": "OPEN_INFRASTRUCTURE_ACCESS",
+      "liveHealth": "PASS_VERIFIED",
+      "liveIntegrationsRoute": "FAIL_VERIFIED",
+      "liveUnknownApiRoute": "FAIL_VERIFIED",
+      "reason": "Workstation ~/.ssh contains only known_hosts; live VM serves Wed 04 Nov 2026 HTML build on /api/portal/integrations and /api/nonexistent",
+      "evidence": "PRODUCTION_READINESS_REMEDIATION/03_API_VM_AND_PROXY/live_curl_evidence.txt"
+    },
+    {
+      "id": "BLK-004",
+      "blocker": "Security vulnerabilities",
+      "initialStatus": "Open",
+      "finalStatus": "OPEN_SECURITY_REMEDIATION",
+      "vulnerabilities": {
+        "project1": { "critical": 0, "high": 0, "moderate": 0, "low": 0, "status": "PASS_VERIFIED" },
+        "project2": { "critical": 0, "high": 0, "moderate": 14, "low": 0, "status": "PASS_VERIFIED" },
+        "project3": { "critical": 0, "high": 6, "moderate": 15, "low": 5, "status": "OPEN_SECURITY_REMEDIATION", "remainingHighPackages": ["@ai-sdk/google", "@ai-sdk/provider-utils", "@ai-sdk/react", "@ai-sdk/ui-utils", "ai", "zod"], "ghsas": ["GHSA-866g-f22w-33x8", "GHSA-rwvc-j5jr-mgvh", "GHSA-mrhx-c7xc-m3w5"] },
+        "project4": { "critical": 0, "high": 0, "moderate": 0, "low": 0, "status": "PASS_VERIFIED" }
+      },
+      "evidence": "PRODUCTION_READINESS_REMEDIATION/04_SECURITY_AUDITS/"
+    },
+    {
+      "id": "BLK-005",
+      "blocker": "Operational readiness",
+      "initialStatus": "Open",
+      "finalStatus": "OPEN_EXTERNAL_DEPENDENCY",
+      "backupSha256": "a887df2ab2b2e7e7d94567d4f12347782e763584f01aac35bf517c0bc0bf3e30",
+      "stagingRestoreMatched": true,
+      "mountedNonAdminRbacPassed": "13/13",
+      "externalColdDrivePresent": false,
+      "liveNonAdminAccountsStatus": "OPEN_OWNER_APPROVAL",
+      "evidence": [
+        "PRODUCTION_READINESS_REMEDIATION/05_BACKUP_RESTORE/backup_restore_evidence.json",
+        "PRODUCTION_READINESS_REMEDIATION/06_RBAC_TESTS/non_admin_rbac_evidence.json"
+      ]
+    }
+  ],
+  "repositories": {
+    "project1": { "branch": "master", "codeCommitSha": "acf8159ea6126fd9a60b8b72559474031a8b3dac" },
+    "project2": { "branch": "main", "commitSha": "8e4c01195d37bd30ededcb82b816946edfd8fa00" },
+    "project3": { "branch": "main", "commitSha": "ceb7a23432b1438d8be3e30ef31afcb35462554e" },
+    "project4": { "branch": "main", "commitSha": "367fc6db9a4d59b610e9ef1f9f453fafd5776518" }
+  },
+  "deployments": {
+    "vercelProject1Web": {
+      "deploymentId": "dpl_DqPeg31EZcHgSi187GMyPHmGcdoQ",
+      "readyState": "READY",
+      "productionUrl": "https://www.avanifinserv.com"
+    },
+    "apiVm": { "status": "OPEN_INFRASTRUCTURE_ACCESS" }
+  }
+}
